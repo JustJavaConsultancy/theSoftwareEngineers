@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{processInstance.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{processInstance.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/processInstances/add}" class="btn btn-primary ms-2">[[#{processInstance.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${processInstances.empty}">[[#{processInstance.list.empty}]]</div>
+            <div th:if="${!processInstances.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">[[#{processInstance.id.label}]]</th>
+                            <th scope="col">[[#{processInstance.processName.label}]]</th>
+                            <th scope="col">[[#{processInstance.businessKey.label}]]</th>
+                            <th scope="col">[[#{processInstance.status.label}]]</th>
+                            <th scope="col">[[#{processInstance.process.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="processInstance : ${processInstances}">
+                            <td>[[${processInstance.id}]]</td>
+                            <td>[[${processInstance.processName}]]</td>
+                            <td>[[${processInstance.businessKey}]]</td>
+                            <td>[[${processInstance.status}]]</td>
+                            <td>[[${processInstance.process}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/processInstances/edit/{id}(id=${processInstance.id})}" class="btn btn-sm btn-secondary">[[#{processInstance.list.edit}]]</a>
+                                    <form th:action="@{/processInstances/delete/{id}(id=${processInstance.id})}"
+                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{processInstance.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

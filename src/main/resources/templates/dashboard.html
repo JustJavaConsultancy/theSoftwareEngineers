@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<!-- Example dashboard cards -->
+<div layout:fragment="content">
+<h2 class="mb-4">Dashboard</h2>
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card-stat">
+      <div class="h5 mb-1">Active Processes</div>
+      <div class="fs-4 fw-bold">12</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card-stat">
+      <div class="h5 mb-1">Open Tasks</div>
+      <div class="fs-4 fw-bold">35</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card-stat">
+      <div class="h5 mb-1">Completed Tasks</div>
+      <div class="fs-4 fw-bold">150</div>
+    </div>
+  </div>
+</div>
+
+  <a th:href="@{/processes/startProcess}"
+     class="btn btn-primary mb-4"
+     role="button">Start New Process</a>
+
+<h4>Recent Tasks</h4>
+<input type="text" class="search-bar" placeholder="Search">
+
+<div class="table-responsive">
+  <table class="table table-hover bg-white border">
+    <thead>
+    <tr>
+      <th>Task Name</th>
+      <th>Status</th>
+      <th>Due Date</th>
+      <th>Assignee</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>Project Alpha</td>
+      <td><span class="status-pill status-inprogress">In Progress</span></td>
+      <td>2024-03-15</td>
+      <td>Emily Carter</td>
+      <td><a href="#" class="text-primary">Continue</a></td>
+    </tr>
+    <tr>
+      <td>Task Beta</td>
+      <td><span class="status-pill status-open">Open</span></td>
+      <td>2024-03-20</td>
+      <td>David Lee</td>
+      <td><a href="#" class="text-primary">Claim</a></td>
+    </tr>
+    <tr>
+      <td>Project Gamma</td>
+      <td><span class="status-pill status-completed">Completed</span></td>
+      <td>2024-03-01</td>
+      <td>Sophia Clark</td>
+      <td><a href="#" class="text-primary">View Details</a></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <title>Assigned Tasks</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <h1 class="text-3xl font-semibold mb-6 text-gray-800">Assigned Tasks</h1>
+
+    <div class="bg-white rounded-xl shadow p-6 overflow-x-auto">
+        <table class="table table-hover bg-white border">
+            <thead class="text-gray-500 uppercase tracking-wider border-b">
+            <tr>
+                <th class="py-3">Task Name</th>
+                <th class="py-3">Assignee</th>
+                <th class="py-3">Due Date</th>
+                <th class="py-3">Priority</th>
+                <th class="py-3">Status</th>
+                <th class="py-3">Description</th>
+                <th class="py-3">Action</th>
+            </tr>
+            </thead>
+            <tbody class="text-gray-700 divide-y">
+            <!-- Sample row -->
+            <tr>
+            <tr>
+                <td class="py-4 px-4 whitespace-normal max-w-xs text-right">Project Alpha - Phase 1</td>
+                <td class="py-4 px-4 whitespace-normal text-right">Sophia Chen</td>
+                <td class="py-4 px-4">2024-03-15</td>
+                <td class="py-4 px-4 text-right">
+                    <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs">High</span>
+                </td>
+                <td class="py-4 px-4 text-right">
+                    <span class="bg-gray-100 px-3 py-1 rounded-full text-xs">Open</span>
+                </td>
+                <td class="py-4 px-4 text-blue-600 underline whitespace-normal break-words max-w-sm text-right">
+                    Initiate project planning and resource allocation.
+                </td>
+                <td class="py-4 px-4 text-blue-600 font-medium cursor-pointer text-right">Claim</td>
+            </tr>
+            <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

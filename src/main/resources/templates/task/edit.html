@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{task.edit.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{task.edit.headline}]]</h1>
+                <div>
+                    <a th:href="@{/tasks}" class="btn btn-secondary">[[#{task.edit.back}]]</a>
+                </div>
+            </div>
+            <div th:replace="~{fragments/forms::globalErrors('task')}" />
+            <form th:action="${requestUri}" method="post" novalidate="">
+                <div th:replace="~{fragments/forms::inputRow(object='task', field='id', disabled=true, type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='task', field='taskName')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='task', field='taskForm')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='task', field='taskVariable', type='textarea')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='task', field='fields', type='textarea')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='task', field='taskStatus', required=true, type='radio')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='task', field='processInstance', type='select')}" />
+                <input type="submit" th:value="#{task.edit.headline}" class="btn btn-primary mt-4" />
+            </form>
+        </div>
+    </body>
+</html>

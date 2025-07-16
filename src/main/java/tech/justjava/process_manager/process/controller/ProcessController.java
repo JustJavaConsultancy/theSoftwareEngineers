@@ -1,0 +1,223 @@
+package tech.justjava.process_manager.process.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
+import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.engine.RepositoryService;
+import org.flowable.engine.RuntimeService;
+import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.engine.runtime.ProcessInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import tech.justjava.process_manager.file.model.FileData;
+import tech.justjava.process_manager.file.service.FileDataService;
+import tech.justjava.process_manager.process.model.ProcessDTO;
+import tech.justjava.process_manager.process.service.ProcessService;
+import tech.justjava.process_manager.process.service.ProcessServiceAI;
+import tech.justjava.process_manager.process.service.TemplateRenderer;
+import tech.justjava.process_manager.util.JsonStringFormatter;
+import tech.justjava.process_manager.util.ReferencedWarning;
+import tech.justjava.process_manager.util.WebUtils;
+
+import java.util.List;
+import java.util.Map;
+
+
+@Controller
+@RequestMapping("/processes")
+public class ProcessController {
+
+
+    @Autowired
+    private RepositoryService repositoryService;
+
+    @Autowired
+    TemplateRenderer templateRenderer;
+
+
+    private final RuntimeService  runtimeService;
+    private final ProcessServiceAI  processServiceAI;
+
+    private final ProcessService processService;
+    private final ObjectMapper objectMapper;
+    private final FileDataService fileDataService;
+
+    public ProcessController(RuntimeService runtimeService, ProcessServiceAI processServiceAI, final ProcessService processService, final ObjectMapper objectMapper,
+                             final FileDataService fileDataService) {
+        this.runtimeService = runtimeService;
+        this.processServiceAI = processServiceAI;
+        this.processService = processService;
+        this.objectMapper = objectMapper;
+        this.fileDataService = fileDataService;
+    }
+
+    @InitBinder
+    public void jsonFormatting(final WebDataBinder binder) {
+        binder.addCustomFormatter(new JsonStringFormatter<FileData>(objectMapper) {
+        }, "diagram");
+    }
+
+    @GetMapping
+    public String list(final Model model) {
+/*        System.out.println(" I'm in the Process List....");
+        List<ProcessDefinition> processDefinitionList= repositoryService
+                .createProcessDefinitionQuery()
+                .latestVersion()
+                .orderByProcessDefinitionName()
+                .asc()
+                .list();
+        model.addAttribute("processes", processDefinitionList);*/
+
+        return "process/processInstance";
+    }
+
+    @GetMapping("/add")
+    public String add(@ModelAttribute("process") final ProcessDTO processDTO) {
+        return "process/add";
+    }
+
+    @PostMapping("/add")
+    public String add(@ModelAttribute("process") @Valid final ProcessDTO processDTO,
+            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "process/add";
+        }
+        processService.create(processDTO);
+        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("process.create.success"));
+        return "redirect:/processes";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable(name = "id") final Long id, final Model model) {
+        model.addAttribute("process", processService.get(id));
+        model.addAttribute("withDownloads", true);
+        return "process/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String edit(@PathVariable(name = "id") final Long id,
+            @ModelAttribute("process") @Valid final ProcessDTO processDTO,
+            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "process/edit";
+        }
+        processService.update(id, processDTO);
+        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("process.update.success"));
+        return "redirect:/processes";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable(name = "id") final Long id,
+            final RedirectAttributes redirectAttributes) {
+        final ReferencedWarning referencedWarning = processService.getReferencedWarning(id);
+        if (referencedWarning != null) {
+            redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR,
+                    WebUtils.getMessage(referencedWarning.getKey(), referencedWarning.getParams().toArray()));
+        } else {
+            processService.delete(id);
+            redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("process.delete.success"));
+        }
+        return "redirect:/processes";
+    }
+
+    @GetMapping("/{id}/diagram/{filename}")
+    public ResponseEntity<InputStreamResource> downloadDiagram(
+            @PathVariable(name = "id") final Long id) {
+        final ProcessDTO processDTO = processService.get(id);
+        return fileDataService.provideDownload(processDTO.getDiagram());
+    }
+    @GetMapping("/start/{id}")
+    public String startForm(@PathVariable(name = "id") final String id,
+                        Model model) {
+
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(id);
+
+        org.flowable.bpmn.model.Process process = bpmnModel.getMainProcess();
+        System.out.println(" process name===="+process.getName());
+        System.out.println(" process documentation ===="+process.getDocumentation());
+
+
+        String userPrompt= process.getDocumentation();
+/*
+                """
+                Create a form to collect the following information:
+                                
+                1. Full Name:
+                   - Type: text
+                   - Label: Full Name
+                   - Placeholder: Enter your full name
+                   - Required
+                                
+                2. Email Address:
+                   - Type: email
+                   - Label: Email
+                   - Placeholder: Enter your email
+                   - Required
+                                
+                3. Date of Birth:
+                   - Type: date
+                   - Label: Date of Birth
+                   - Required
+                                
+                4. Gender:
+                   - Type: select
+                   - Label: Gender
+                   - Options: Male, Female, Other
+                   - Required
+                                
+                5. Newsletter Subscription:
+                   - Type: checkbox
+                   - Label: Subscribe to our newsletter
+                                
+                6. Message:
+                   - Type: textarea
+                   - Label: Message
+                   - Placeholder: Write your message here
+                   - Not required
+                                
+                Include HTMX attributes to submit the form asynchronously to `/submitForm`, and replace the form container with the response.
+                                
+                                
+                """;
+*/
+
+        String formThymeleaf=processServiceAI.generateThymeleafForm(userPrompt);
+        formThymeleaf=formThymeleaf.replace("```","").replace("html","");
+        Map<String, Object> formData = Map.of("id", id,"email","akinrinde@justjava.com.ng");
+
+
+
+        String formHtml=templateRenderer.render(formThymeleaf,formData);
+
+        System.out.println(" The Form Fragment==="+formHtml);
+
+
+
+        model.addAttribute("formData",formData);
+        model.addAttribute("id",id);
+        model.addAttribute("email","akinrinde@justjava.com.ng");
+        model.addAttribute("formHtml",formHtml);
+
+        return "process/form-fragment";
+    }
+    @PostMapping("/start")
+    public String handleFormSubmit(@RequestParam Map<String,Object> formData) {
+        System.out.println(" The Form Data==="+formData);
+
+        ProcessInstance processInstance=runtimeService.startProcessInstanceById(formData.get("id").toString(),formData);
+
+        System.out.println("  The Process Instance Variables ==="+processInstance.getProcessVariables());
+        return "redirect:/processes";
+    }
+    @GetMapping("/startProcess")
+    public String startProcess() {
+       return "process/startProcess";
+    }
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{process.add.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{process.add.headline}]]</h1>
+                <div>
+                    <a th:href="@{/processes}" class="btn btn-secondary">[[#{process.add.back}]]</a>
+                </div>
+            </div>
+            <div th:replace="~{fragments/forms::globalErrors('process')}" />
+            <form th:action="${requestUri}" method="post" novalidate="" enctype="multipart/form-data">
+                <div th:replace="~{fragments/forms::inputRow(object='process', field='modelId', required=true)}" />
+                <div th:replace="~{fragments/forms::inputRow(object='process', field='processName', required=true)}" />
+                <div th:replace="~{fragments/forms::inputRow(object='process', field='diagram', type='file')}" />
+                <input type="submit" th:value="#{process.add.headline}" class="btn btn-primary mt-4" />
+            </form>
+        </div>
+    </body>
+</html>
