@@ -2,25 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{layout}">
     <head>
-        <title>[[#{process.list.headline}]]</title>
+        <title>Processes</title>
     </head>
     <body>
         <div layout:fragment="content">
-            <div class="d-flex flex-wrap mb-4">
-                <h1 class="flex-grow-1">[[#{process.list.headline}]]</h1>
+            <div class="d-flex justify-content-between align-items-center mb-2">
                 <div>
-                    <a th:href="@{/processes/add}" class="btn btn-primary ms-2">[[#{process.list.createNew}]]</a>
+                    <h2 class="mb-1" style="font-weight: 700;">Processes</h2>
+                    <div class="text-muted" style="font-size: 1.1rem;">Manage and track all your business processes</div>
                 </div>
+                <a th:href="@{/processes/add}" class="btn btn-primary px-4 py-2" style="font-weight: 600; border-radius: 2rem; background: #2563eb; border: none;" role="button">Add Process</a>
             </div>
-            <div th:if="${processes.empty}">[[#{process.list.empty}]]</div>
+            <div class="d-flex justify-content-end mb-2">
+                <input type="text" class="form-control w-25" placeholder="Search" style="max-width: 250px; border-radius: 2rem;">
+            </div>
+            <div th:if="${processes.empty}">No processes found.</div>
             <div th:if="${!processes.empty}" class="table-responsive">
-                <table class="table table-striped table-hover align-middle">
-                    <thead>
+                <table class="table align-middle mb-0" style="background: #fff; border-radius: 1rem; overflow: hidden;">
+                    <thead style="background: #f4f8fb;">
                         <tr>
-                            <th scope="col">[[#{process.id.label}]]</th>
-                            <th scope="col">[[#{process.modelId.label}]]</th>
-                            <th scope="col">[[#{process.processName.label}]]</th>
-                            <th><!-- --></th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Model ID</th>
+                            <th scope="col">Process Name</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -28,14 +32,14 @@
                             <td>[[${process.id}]]</td>
                             <td>[[${process.key}]]</td>
                             <td>[[${process.name}]]</td>
-                            <td>
-                                <div class="float-end text-nowrap">
-                                    <a th:href="@{/processes/start/{id}(id=${process.id})}" class="btn btn-sm btn-secondary">[[#{process.list.edit}]]</a>
-<!--                                    <form th:action="@{/processes/delete/{id}(id=${process.id})}"
-                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{process.list.delete}]]</button>
-                                    </form>-->
-                                </div>
+                            <td class="text-end">
+                                <a th:href="@{/processes/start/{id}(id=${process.id})}" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                                <!--
+                                <form th:action="@{/processes/delete/{id}(id=${process.id})}"
+                                        th:hx-confirm="Are you sure you want to delete this process?" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                                -->
                             </td>
                         </tr>
                     </tbody>

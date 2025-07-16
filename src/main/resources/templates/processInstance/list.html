@@ -2,48 +2,62 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{layout}">
     <head>
-        <title>[[#{processInstance.list.headline}]]</title>
+        <title>Process Instances</title>
     </head>
     <body>
         <div layout:fragment="content">
-            <div class="d-flex flex-wrap mb-4">
-                <h1 class="flex-grow-1">[[#{processInstance.list.headline}]]</h1>
+            <div class="d-flex justify-content-between align-items-center mb-2">
                 <div>
-                    <a th:href="@{/processInstances/add}" class="btn btn-primary ms-2">[[#{processInstance.list.createNew}]]</a>
+                    <h2 class="mb-1" style="font-weight: 700;">Process Instances</h2>
+                    <div class="text-muted" style="font-size: 1.1rem;">Track and manage your process instances and workflows</div>
                 </div>
+                <a href="#" class="btn btn-primary px-4 py-2" style="font-weight: 600; border-radius: 2rem; background: #2563eb; border: none;" role="button">Export Report</a>
             </div>
-            <div th:if="${processInstances.empty}">[[#{processInstance.list.empty}]]</div>
-            <div th:if="${!processInstances.empty}" class="table-responsive">
-                <table class="table table-striped table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th scope="col">[[#{processInstance.id.label}]]</th>
-                            <th scope="col">[[#{processInstance.processName.label}]]</th>
-                            <th scope="col">[[#{processInstance.businessKey.label}]]</th>
-                            <th scope="col">[[#{processInstance.status.label}]]</th>
-                            <th scope="col">[[#{processInstance.process.label}]]</th>
-                            <th><!-- --></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="processInstance : ${processInstances}">
-                            <td>[[${processInstance.id}]]</td>
-                            <td>[[${processInstance.processName}]]</td>
-                            <td>[[${processInstance.businessKey}]]</td>
-                            <td>[[${processInstance.status}]]</td>
-                            <td>[[${processInstance.process}]]</td>
-                            <td>
-                                <div class="float-end text-nowrap">
-                                    <a th:href="@{/processInstances/edit/{id}(id=${processInstance.id})}" class="btn btn-sm btn-secondary">[[#{processInstance.list.edit}]]</a>
-                                    <form th:action="@{/processInstances/delete/{id}(id=${processInstance.id})}"
-                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{processInstance.list.delete}]]</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="row g-3">
+                <!-- Example static cards, replace with th:each for dynamic data -->
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="card h-100 p-3" style="border-radius: 1rem; background: #f8f9fa;">
+                        <div class="fw-bold" style="font-size: 1.1rem;">#TSK1001</div>
+                        <div class="mb-2">Onboard New Employee</div>
+                        <div class="d-flex align-items-center mb-1">
+                            <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Kemi Adeleke" style="width:32px; height:32px; border-radius:50%; margin-right:8px;">
+                            <div>
+                                <div class="fw-semibold">Kemi Adeleke</div>
+                                <span class="status-pill status-inprogress">In Progress</span>
+                            </div>
+                        </div>
+                        <div class="text-muted small">Time: 32h</div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="card h-100 p-3" style="border-radius: 1rem; background: #f8f9fa;">
+                        <div class="fw-bold" style="font-size: 1.1rem;">#TSK1002</div>
+                        <div class="mb-2">Prepare Project Plan</div>
+                        <div class="d-flex align-items-center mb-1">
+                            <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Ibrahim Musa" style="width:32px; height:32px; border-radius:50%; margin-right:8px;">
+                            <div>
+                                <div class="fw-semibold">Ibrahim Musa</div>
+                                <span class="status-pill status-open">Opened</span>
+                            </div>
+                        </div>
+                        <div class="text-muted small">Time: 24h</div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="card h-100 p-3" style="border-radius: 1rem; background: #f8f9fa;">
+                        <div class="fw-bold" style="font-size: 1.1rem;">#TSK1003</div>
+                        <div class="mb-2">Conduct Team Meeting</div>
+                        <div class="d-flex align-items-center mb-1">
+                            <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="Grace Okonkwo" style="width:32px; height:32px; border-radius:50%; margin-right:8px;">
+                            <div>
+                                <div class="fw-semibold">Grace Okonkwo</div>
+                                <span class="status-pill status-completed">Completed</span>
+                            </div>
+                        </div>
+                        <div class="text-muted small">Time: 1w</div>
+                    </div>
+                </div>
+                <!-- Add more cards as needed -->
             </div>
         </div>
     </body>

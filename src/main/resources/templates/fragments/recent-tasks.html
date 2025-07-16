@@ -1,0 +1,49 @@
+<!-- fragments/recent-tasks.html -->
+<div th:fragment="recentTasksTable">
+    <div class="table-responsive" style="background: #fff; border-radius: 1rem;">
+        <table class="table align-middle mb-0">
+            <thead style="background: #f4f8fb;">
+            <tr>
+                <th>Task ID</th>
+                <th>Task Title</th>
+                <th>Start Date</th>
+                <th>Due Date</th>
+                <th>Assignee</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Example static rows, replace with th:each for dynamic data -->
+            <tr>
+                <td>TSK1001</td>
+                <td>Onboard New Employee</td>
+                <td>2024-05-01</td>
+                <td>2024-06-01</td>
+                <td><img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Kemi Adeleke" style="width:32px; height:32px; border-radius:50%; margin-right:8px;"> Kemi Adeleke</td>
+                <td><span class="status-pill status-inprogress">In Progress</span></td>
+                <td><i class="fas fa-ellipsis-h"></i></td>
+            </tr>
+            <tr>
+                <td>TSK1002</td>
+                <td>Prepare Project Plan</td>
+                <td>2024-04-15</td>
+                <td>2024-05-20</td>
+                <td><img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Ibrahim Musa" style="width:32px; height:32px; border-radius:50%; margin-right:8px;"> Ibrahim Musa</td>
+                <td><span class="status-pill status-open">Opened</span></td>
+                <td><i class="fas fa-ellipsis-h"></i></td>
+            </tr>
+            <tr>
+                <td>TSK1003</td>
+                <td>Conduct Team Meeting</td>
+                <td>2024-03-10</td>
+                <td>2024-04-10</td>
+                <td><img src="https://randomuser.me/api/portraits/women/3.jpg" alt="Grace Okonkwo" style="width:32px; height:32px; border-radius:50%; margin-right:8px;"> Grace Okonkwo</td>
+                <td><span class="status-pill status-completed">Completed</span></td>
+                <td><i class="fas fa-ellipsis-h"></i></td>
+            </tr>
+            <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+    </div>
+</div> 

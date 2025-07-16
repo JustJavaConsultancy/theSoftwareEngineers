@@ -6,10 +6,16 @@
 </head>
 <body>
 <section layout:fragment="content">
-  <h2 class="fw-bold mb-4">Past Processes</h2>
-  <div class="table-responsive">
-    <table class="table table-hover bg-white border">
-      <thead>
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <div>
+      <h2 class="mb-1 fw-bold">Past Processes</h2>
+      <div class="text-muted" style="font-size: 1.1rem;">Review the history of your completed and active processes</div>
+    </div>
+    <input type="text" class="form-control w-25" placeholder="Search" style="max-width: 250px; border-radius: 2rem;">
+  </div>
+  <div class="table-responsive" style="background: #fff; border-radius: 1rem;">
+    <table class="table align-middle mb-0">
+      <thead style="background: #f4f8fb;">
       <tr>
         <th>Process Name</th>
         <th>Status</th>
@@ -21,28 +27,28 @@
       <tbody>
       <tr>
         <td>Project Alpha</td>
-        <td><span class="status-pill">Completed</span></td>
+        <td><span class="status-pill status-completed">Completed</span></td>
         <td class="text-muted">2023-01-15</td>
         <td class="text-muted">2023-02-28</td>
         <td><a href="#" class="text-decoration-none fw-semibold">View Details</a></td>
       </tr>
       <tr>
         <td>Project Beta</td>
-        <td><span class="status-pill">Active</span></td>
+        <td><span class="status-pill status-inprogress">Active</span></td>
         <td class="text-muted">2023-03-01</td>
         <td class="text-muted">2023-04-15</td>
         <td><a href="#" class="text-decoration-none fw-semibold">View Details</a></td>
       </tr>
       <tr>
         <td>Project Gamma</td>
-        <td><span class="status-pill">Completed</span></td>
+        <td><span class="status-pill status-completed">Completed</span></td>
         <td class="text-muted">2023-04-20</td>
         <td class="text-muted">2023-05-30</td>
         <td><a href="#" class="text-decoration-none fw-semibold">View Details</a></td>
       </tr>
       <tr>
         <td>Project Delta</td>
-        <td><span class="status-pill">Active</span></td>
+        <td><span class="status-pill status-inprogress">Active</span></td>
         <td class="text-muted">2023-06-05</td>
         <td class="text-muted">2023-05-30</td>
         <td><a href="#" class="text-decoration-none fw-semibold">View Details</a></td>
@@ -51,3 +57,5 @@
     </table>
   </div>
 </section>
+</body>
+</html>
