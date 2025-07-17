@@ -30,7 +30,17 @@
                     </div>
                 </td>
                 <td><span class="status-pill status-inprogress">In Progress</span></td>
-                <td><i class="fas fa-ellipsis-h"></i></td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-play-circle me-2"></i>Continue</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                        </ul>
+                    </div>
+                </td>
             </tr>
             <tr>
                 <td>TSK1002</td>
@@ -46,7 +56,17 @@
                     </div>
                 </td>
                 <td><span class="status-pill status-open">Opened</span></td>
-                <td><i class="fas fa-ellipsis-h"></i></td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-hand-paper me-2"></i>Claim</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                        </ul>
+                    </div>
+                </td>
             </tr>
             <tr>
                 <td>TSK1003</td>
@@ -62,7 +82,17 @@
                     </div>
                 </td>
                 <td><span class="status-pill status-completed">Completed</span></td>
-                <td><i class="fas fa-ellipsis-h"></i></td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-download me-2"></i>Download Report</a></li>
+                        </ul>
+                    </div>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -76,17 +106,25 @@
                     <div class="fw-bold">TSK1001</div>
                     <div class="text-muted small">Onboard New Employee</div>
                 </div>
-                <span class="status-pill status-inprogress">In Progress</span>
+                <div class="d-flex align-items-start">
+                    <span class="status-pill status-inprogress me-2">In Progress</span>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted p-1" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-play-circle me-2"></i>Continue</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="d-flex align-items-center mb-2">
                 <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Kemi Adeleke" 
                      style="width:24px; height:24px; border-radius:50%; margin-right:8px;">
                 <span class="small">Kemi Adeleke</span>
             </div>
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="text-muted small">Due: 2024-06-01</div>
-                <i class="fas fa-ellipsis-h text-muted"></i>
-            </div>
+            <div class="text-muted small">Due: 2024-06-01</div>
         </div>
         
         <div class="task-card mb-3 p-3" style="background: #fff; border-radius: 1rem; border: 1px solid #e0e0e0;">
@@ -95,17 +133,25 @@
                     <div class="fw-bold">TSK1002</div>
                     <div class="text-muted small">Prepare Project Plan</div>
                 </div>
-                <span class="status-pill status-open">Opened</span>
+                <div class="d-flex align-items-start">
+                    <span class="status-pill status-open me-2">Opened</span>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted p-1" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-hand-paper me-2"></i>Claim</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="d-flex align-items-center mb-2">
                 <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Ibrahim Musa" 
                      style="width:24px; height:24px; border-radius:50%; margin-right:8px;">
                 <span class="small">Ibrahim Musa</span>
             </div>
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="text-muted small">Due: 2024-05-20</div>
-                <i class="fas fa-ellipsis-h text-muted"></i>
-            </div>
+            <div class="text-muted small">Due: 2024-05-20</div>
         </div>
         
         <div class="task-card mb-3 p-3" style="background: #fff; border-radius: 1rem; border: 1px solid #e0e0e0;">
@@ -114,17 +160,25 @@
                     <div class="fw-bold">TSK1003</div>
                     <div class="text-muted small">Conduct Team Meeting</div>
                 </div>
-                <span class="status-pill status-completed">Completed</span>
+                <div class="d-flex align-items-start">
+                    <span class="status-pill status-completed me-2">Completed</span>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted p-1" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-download me-2"></i>Download Report</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="d-flex align-items-center mb-2">
                 <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="Grace Okonkwo" 
                      style="width:24px; height:24px; border-radius:50%; margin-right:8px;">
                 <span class="small">Grace Okonkwo</span>
             </div>
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="text-muted small">Due: 2024-04-10</div>
-                <i class="fas fa-ellipsis-h text-muted"></i>
-            </div>
+            <div class="text-muted small">Due: 2024-04-10</div>
         </div>
     </div>
 </div> 
