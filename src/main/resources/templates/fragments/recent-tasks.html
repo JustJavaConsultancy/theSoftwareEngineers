@@ -1,12 +1,13 @@
 <!-- fragments/recent-tasks.html -->
 <div th:fragment="recentTasksTable">
-    <div class="table-responsive" style="background: #fff; border-radius: 1rem;">
+    <!-- Desktop/Tablet Table View -->
+    <div class="table-responsive d-none d-md-block" style="background: #fff; border-radius: 1rem;">
         <table class="table align-middle mb-0">
             <thead style="background: #f4f8fb;">
             <tr>
                 <th>Task ID</th>
                 <th>Task Title</th>
-                <th>Start Date</th>
+                <th class="d-none d-lg-table-cell">Start Date</th>
                 <th>Due Date</th>
                 <th>Assignee</th>
                 <th>Status</th>
@@ -18,32 +19,112 @@
             <tr>
                 <td>TSK1001</td>
                 <td>Onboard New Employee</td>
-                <td>2024-05-01</td>
+                <td class="d-none d-lg-table-cell">2024-05-01</td>
                 <td>2024-06-01</td>
-                <td><img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Kemi Adeleke" style="width:32px; height:32px; border-radius:50%; margin-right:8px;"> Kemi Adeleke</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Kemi Adeleke" 
+                             style="width:32px; height:32px; border-radius:50%; margin-right:8px;" 
+                             class="d-none d-lg-inline"> 
+                        <span>Kemi Adeleke</span>
+                    </div>
+                </td>
                 <td><span class="status-pill status-inprogress">In Progress</span></td>
                 <td><i class="fas fa-ellipsis-h"></i></td>
             </tr>
             <tr>
                 <td>TSK1002</td>
                 <td>Prepare Project Plan</td>
-                <td>2024-04-15</td>
+                <td class="d-none d-lg-table-cell">2024-04-15</td>
                 <td>2024-05-20</td>
-                <td><img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Ibrahim Musa" style="width:32px; height:32px; border-radius:50%; margin-right:8px;"> Ibrahim Musa</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Ibrahim Musa" 
+                             style="width:32px; height:32px; border-radius:50%; margin-right:8px;" 
+                             class="d-none d-lg-inline"> 
+                        <span>Ibrahim Musa</span>
+                    </div>
+                </td>
                 <td><span class="status-pill status-open">Opened</span></td>
                 <td><i class="fas fa-ellipsis-h"></i></td>
             </tr>
             <tr>
                 <td>TSK1003</td>
                 <td>Conduct Team Meeting</td>
-                <td>2024-03-10</td>
+                <td class="d-none d-lg-table-cell">2024-03-10</td>
                 <td>2024-04-10</td>
-                <td><img src="https://randomuser.me/api/portraits/women/3.jpg" alt="Grace Okonkwo" style="width:32px; height:32px; border-radius:50%; margin-right:8px;"> Grace Okonkwo</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="Grace Okonkwo" 
+                             style="width:32px; height:32px; border-radius:50%; margin-right:8px;" 
+                             class="d-none d-lg-inline"> 
+                        <span>Grace Okonkwo</span>
+                    </div>
+                </td>
                 <td><span class="status-pill status-completed">Completed</span></td>
                 <td><i class="fas fa-ellipsis-h"></i></td>
             </tr>
-            <!-- Add more rows as needed -->
             </tbody>
         </table>
+    </div>
+    
+    <!-- Mobile Card View -->
+    <div class="d-md-none">
+        <div class="task-card mb-3 p-3" style="background: #fff; border-radius: 1rem; border: 1px solid #e0e0e0;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <div class="fw-bold">TSK1001</div>
+                    <div class="text-muted small">Onboard New Employee</div>
+                </div>
+                <span class="status-pill status-inprogress">In Progress</span>
+            </div>
+            <div class="d-flex align-items-center mb-2">
+                <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Kemi Adeleke" 
+                     style="width:24px; height:24px; border-radius:50%; margin-right:8px;">
+                <span class="small">Kemi Adeleke</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">Due: 2024-06-01</div>
+                <i class="fas fa-ellipsis-h text-muted"></i>
+            </div>
+        </div>
+        
+        <div class="task-card mb-3 p-3" style="background: #fff; border-radius: 1rem; border: 1px solid #e0e0e0;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <div class="fw-bold">TSK1002</div>
+                    <div class="text-muted small">Prepare Project Plan</div>
+                </div>
+                <span class="status-pill status-open">Opened</span>
+            </div>
+            <div class="d-flex align-items-center mb-2">
+                <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Ibrahim Musa" 
+                     style="width:24px; height:24px; border-radius:50%; margin-right:8px;">
+                <span class="small">Ibrahim Musa</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">Due: 2024-05-20</div>
+                <i class="fas fa-ellipsis-h text-muted"></i>
+            </div>
+        </div>
+        
+        <div class="task-card mb-3 p-3" style="background: #fff; border-radius: 1rem; border: 1px solid #e0e0e0;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <div class="fw-bold">TSK1003</div>
+                    <div class="text-muted small">Conduct Team Meeting</div>
+                </div>
+                <span class="status-pill status-completed">Completed</span>
+            </div>
+            <div class="d-flex align-items-center mb-2">
+                <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="Grace Okonkwo" 
+                     style="width:24px; height:24px; border-radius:50%; margin-right:8px;">
+                <span class="small">Grace Okonkwo</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">Due: 2024-04-10</div>
+                <i class="fas fa-ellipsis-h text-muted"></i>
+            </div>
+        </div>
     </div>
 </div> 
