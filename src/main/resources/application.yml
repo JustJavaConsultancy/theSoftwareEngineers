@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/processManager}
-    username: ${JDBC_DATABASE_USERNAME:process_user}
-    password: ${JDBC_DATABASE_PASSWORD:rashy0207}
+    username: ${JDBC_DATABASE_USERNAME:postgres}
+    password: ${JDBC_DATABASE_PASSWORD:Cyber 123$}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
