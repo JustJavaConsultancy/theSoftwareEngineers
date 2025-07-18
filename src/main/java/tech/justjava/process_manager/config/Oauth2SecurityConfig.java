@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInit
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @RequiredArgsConstructor
 @Configuration
@@ -26,8 +28,9 @@ public class Oauth2SecurityConfig {
     private ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
-    protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+    protected SecurityFilterChain configure(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         log.debug("Configuring security");
+
 
         http.anonymous(AnonymousConfigurer::disable)
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
@@ -37,8 +40,7 @@ public class Oauth2SecurityConfig {
                 .oauth2Login(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authorize -> authorize
-                                .requestMatchers("/actuator/*","/websocket," +
-                                        "/websocket/*","/checkoutWebhook")
+                                .requestMatchers(new MvcRequestMatcher(introspector, "/login"))
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

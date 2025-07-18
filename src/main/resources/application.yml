@@ -31,6 +31,20 @@ spring:
       chat:
         options:
           model: gpt-4o-mini
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: ${ISSUER_URI:http://localhost:8080/realms/justjavarealm}
+
+        registration:
+          keycloak:
+            provider: keycloak
+            client_id: ${KEYCLOAK_CLIENT_ID:bluepay}
+            client_secret: ${KEYCLOAK_CLIENT_SECRET:5VURBxi7H5I35xPKV0S9iiRInod5sDK0}
+            authorization-grant-type: authorization_code
+            scope: openid,profile,email
 error:
   handling:
     http-status-in-json-response: true
@@ -49,18 +63,5 @@ server:
 springdoc:
   pathsToMatch: /api/**
 
-  security:
-    oauth2:
-      client:
-        provider:
-          keycloak:
-            issuer-uri: ${ISSUER_URI:http://localhost:8080/realms/Project_Manager}
 
-        registration:
-          keycloak:
-            provider: keycloak
-            client_id: ${KEYCLOAK_CLIENT_ID:processManager}
-            client_secret: ${KEYCLOAK_CLIENT_SECRET:NimACtZSkTfaDppnO1iAT029Lk3jSYbt}
-            grant-type: authorization_code
-            scope: openid,profile,email
 
