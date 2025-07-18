@@ -9,11 +9,9 @@
     <title>TaskMaster - Process Workflow Management</title>
 
     <!-- Bootstrap CSS -->
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            crossorigin="anonymous">
-
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <!-- Font Awesome CSS -->
     <link
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -24,80 +22,61 @@
     <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
 
-<body>
-    <!-- Sidebar Overlay for Mobile -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">
-                <img th:src="@{https://cdn.prod.website-files.com/682d78beddbacb64fe9c2745/682f8695a22759294a819f0f_JJ-LOGO-2.svg}" alt="Logo">
-            </div>
-            <p class="sidebar-subtitle">Manage your tasks efficiently</p>
+
+<body class="flex h-screen">
+<div class="sidebar-overlay"></div>
+<aside class="sidebar w-64 p-6 flex flex-col justify-between fixed lg:relative h-full">
+    <div>
+        <div class="flex items-center mb-10">
+            <span class="material-icons text-3xl text-blue-500 mr-2">layers</span>
+            <h1 class="text-2xl font-bold text-white">LEXFLOW</h1>
         </div>
-        <nav class="sidebar-nav">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a th:href="@{/dashboard}" class="nav-link">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/tasks}" class="nav-link">
-                        <i class="fas fa-list"></i>
-                        <span>Tasks</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/processes}" class="nav-link">
-                        <i class="fas fa-folder"></i>
-                        <span>Processes</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Reports</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                </li>
-            </ul>
+        <nav class="space-y-4">
+            <a class="flex items-center px-4 py-3 bg-blue-600 text-white rounded-lg" th:href="@{/dashboard}" >
+                <span class="material-icons mr-3">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/tasks}">
+                <span class="material-icons mr-3">task_alt</span>
+                <span>Tasks</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/processes}">
+            <span class="material-icons mr-3">sync_alt</span>
+                <span>Process Instances</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" href="#">
+                <span class="material-icons mr-3">bar_chart</span>
+                <span>Reports</span>
+            </a>
         </nav>
-    </aside>
-
-    <!-- Main Content Wrapper -->
-    <div class="main-wrapper" id="mainWrapper">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left">
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="header-brand">
-                    <i class="fas fa-star"></i>
-                    <span class="brand-text">TheProcess</span>
-                </div>
-            </div>
-            <div class="header-right">
-                <img th:src="@{https://img.icons8.com/?size=100&id=114317&format=png&color=000000}" alt="Profile" class="profile-img">
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="content">
-            <section layout:fragment="content">
-            </section>
-        </main>
     </div>
+</aside>
+<main class="main-content flex-1 flex flex-col overflow-x-hidden">
+    <header class="flex items-center justify-between p-4 md:p-6 border-b border-slate-800">
+        <div class="flex items-center">
+            <button id="menu-toggle" class="text-slate-400 mr-4 lg:hidden">
+                <span class="material-icons">menu</span>
+            </button>
+            <div class="search-container relative">
+                <span class="material-icons search-icon">search</span>
+                <input class="search-input text-white rounded-lg pl-10 pr-4 py-2 w-40 md:w-64 lg:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search" type="text"/>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4 md:space-x-6">
+            <button class="text-slate-400">
+                <span class="material-icons">nightlight_round</span>
+            </button>
+            <button class="text-slate-400 relative">
+                <span class="material-icons">notifications</span>
+                <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+            <img alt="User avatar" class="w-8 h-8 md:w-10 md:h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1TNQQ4ccZFKvYjRCc-rE6p0QuKlFhfQYUbx1rZZS3ODc_DtNgl6b-1LYcXbxLfeyClRY0GHzY0wvA4-gyFvp5IfVYOVVgdn9H8XRZv3JFNrNWD46u6DL1PQ9JlEVx6QzF2e1pOeuEa8VmW1V-2uuTOORkf0lCwPlKUWwAJnIPGOrCMC99VYhvwvozKwbk84CId3PYToMrt_Q3zg6mp4TZb_REXlsSWHPsOl7wS56kpGKt71JHpGs9hK7omvmX9jsYW33esDwKMlVU"/>
+        </div>
+    </header>
+    <section layout:fragment="content">
+    </section>
 
-    <!-- Bootstrap JS -->
+</main>    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     
     <!-- Custom JS -->

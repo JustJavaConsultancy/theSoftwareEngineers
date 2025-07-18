@@ -1,79 +1,94 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
-<div layout:fragment="content">
-    <!-- Header Section - Responsive -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-2">
-        <div class="mb-2 mb-md-0">
-            <h2 class="mb-1 fw-bold">Dashboard</h2>
-            <div class="text-muted fs-5">Overview of your process management system</div>
-        </div>
-        <a th:href="@{/processes/startProcess}"
-           class="btn btn-primary px-3 px-md-4 py-2 w-100 w-md-auto"
-           role="button">Start New Process</a>
-    </div>
-    
-    <!-- Metric Cards - Responsive Grid -->
-    <div class="row g-2 g-md-3 mb-3 mb-md-4">
-        <div class="col-6 col-md-3">
-            <div class="card-stat">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <div class="text-muted small">Active Processes</div>
-                    <div class="text-success small">+12%</div>
-                </div>
-                <div class="fw-bold text-start fs-2 text-primary">12</div>
+    <div layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-bold text-white">Dashboard</h2>
+                <p class="text-slate-400 mt-1">Overview of your process management system</p>
             </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card-stat">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <div class="text-muted small">Active Tasks</div>
-                    <div class="text-success small">+3%</div>
-                </div>
-                <div class="fw-bold text-start fs-2 text-primary">8</div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card-stat">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <div class="text-muted small">Suspended Tasks</div>
-                    <div class="text-danger small">-9%</div>
-                </div>
-                <div class="fw-bold text-start fs-2 text-primary">2</div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card-stat">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <div class="text-muted small">Completed Tasks</div>
-                    <div class="text-success small">+23%</div>
-                </div>
-                <div class="fw-bold text-start fs-2 text-primary">145</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Recent Tasks Header - Responsive -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-2">
-        <h4 class="mb-2 mb-md-0 fw-semibold">Recent Tasks</h4>
-        <input type="text" class="form-control search-bar" placeholder="Search">
-    </div>
-    
-    <!-- Recent Tasks - Dashboard Empty State -->
-    <div class="text-center py-5 bg-white rounded">
-        <div class="mb-3">
-            <i class="fas fa-tasks fa-3x text-muted opacity-50"></i>
-        </div>
-        <h5 class="text-muted mb-2">No Recent Tasks</h5>
-        <p class="text-muted small mb-3">Recent tasks will appear here once processes are started and tasks are created.</p>
-        <div class="d-flex justify-content-center gap-2 flex-wrap">
-            <a th:href="@{/processes/startProcess}" class="btn btn-primary btn-sm">
-                <i class="fas fa-rocket me-2"></i>Start Process
-            </a>
-            <a th:href="@{/tasks}" class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-list me-2"></i>View All Tasks
+            <a style="text-decoration:none" th:href="@{/processes/startProcess}">
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg flex items-center w-full md:w-auto justify-center">
+                <span class="material-icons mr-2">add</span>
+                Start New Process
+            </button>
             </a>
         </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+            <div class="card p-4 md:p-6 rounded-xl">
+                <p class="text-slate-300">Active Processes</p>
+                <div class="flex justify-between items-end">
+                    <p th:text="${processInstancesCount}" class="text-3xl md:text-5xl font-bold text-white mt-2">12</p>
+                </div>
+            </div>
+            <div class="card p-4 md:p-6 rounded-xl">
+                <p class="text-slate-300">Active Tasks</p>
+                <div class="flex justify-between items-end">
+                    <p th:text="${activeTasksCount}" class="text-3xl md:text-5xl font-bold text-white mt-2">8</p>
+                </div>
+            </div>
+            <div class="card p-4 md:p-6 rounded-xl">
+                <p class="text-slate-300">Completed Tasks</p>
+                <div class="flex justify-between items-end">
+                    <p th:text="${completedTasksCount}" class="text-3xl md:text-5xl font-bold text-white mt-2">145</p>
+                </div>
+            </div>
+        </div>
+        <div class="table-container rounded-xl p-4 md:p-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex items-center space-x-2">
+                    <button class="bg-slate-700 p-2 rounded-lg text-slate-300"><span class="material-icons">add</span></button>
+                    <button class="bg-slate-700 p-2 rounded-lg text-slate-300"><span class="material-icons">filter_list</span></button>
+                </div>
+                <div class="search-container relative w-full md:w-auto">
+                    <span class="material-icons search-icon">search</span>
+                    <input class="search-input text-white rounded-lg pl-10 pr-4 py-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search" type="text"/>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(activeTasks)}" class="empty-state">
+                <span class="material-icons empty-state-icon">inbox</span>
+                <h3 class="empty-state-title">No tasks found</h3>
+                <p class="empty-state-description">
+                    There are currently no tasks matching your criteria. Create a new task or adjust your filters to see results.
+                </p>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg flex items-center">
+                    <span class="material-icons mr-2">add</span>
+                    Create New Task
+                </button>
+            </div>
+            <div th:if="${!#lists.isEmpty(activeTasks)}" class="table-scroll-container">
+                <table class="w-full text-left">
+                    <thead class="table-header">
+                    <tr>
+                        <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Task Title</th>
+                        <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Start Date</th>
+                        <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Due Date</th>
+                        <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Assignee</th>
+                        <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Status</th>
+                        <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="task : ${tasks}" class="table-row">
+                        <td th:text="${task.name}" class="py-3 px-2 md:py-4 md:px-3">Onboard New Employee</td>
+                        <td th:text="${task.createTime}" class="py-3 px-2 md:py-4 md:px-3">2024-05-01</td>
+                        <td th:text="${task.dueDate}" class="py-3 px-2 md:py-4 md:px-3">2024-06-01</td>
+                        <td class="py-3 px-2 md:py-4 md:px-3 flex items-center">
+                            <img alt="Kemi Adeleke avatar" class="w-6 h-6 md:w-8 md:h-8 rounded-full mr-2 md:mr-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCO9e_EFxYd4HqyHaG9OJqep8vFCgyztrDinlbVA0CqTFw4JzVqprM2NPmhqGlU6dwgJDzu8mWDZhuI1YXgelH346XBJRpNGHqWVqZADmQjJMGHeK0MtZfgqpCMKCS0PUw8CfIfnJGb1ooPJZRojU2YWDbeF0S65dVN22WhvqX5LodjeE1QeNuRQFwmEMUduJrx3_zh1wjF3NnIpw8J8Hvs6hkd48TirnMJTEraQnDlEowueMbvhPydVMM_za7FHJaZUZrhNGzddPZv"/>
+                            <span th:text="${task.assignee}" class="truncate max-w-[80px] md:max-w-none">Kemi Adeleke</span>
+                        </td>
+                        <td class="py-3 px-2 md:py-4 md:px-3">
+                            <span th:text="${#strings.toUpperCase(task.state)}" class="status-in-progress text-xs font-medium px-2 py-1 md:px-3 md:py-1 rounded-full">In Progress</span>
+                        </td>
+                        <td class="py-3 px-2 md:py-4 md:px-3">
+                            <button class="text-slate-400 hover:text-white">
+                                <span class="material-icons">more_vert</span>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-</div>
 </html>

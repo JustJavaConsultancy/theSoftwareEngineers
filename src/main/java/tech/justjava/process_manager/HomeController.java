@@ -42,7 +42,7 @@ public class HomeController {
                 .processDefinitionKey(processKey)
                 .active()
                 .list();
-
+        System.out.println(activeTasks);
         long activeTasksCount=taskService.createTaskQuery()
                 .processDefinitionKey(processKey)
                 .active()

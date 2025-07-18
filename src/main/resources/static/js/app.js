@@ -19,40 +19,27 @@ handleEvent('click', '.js-file-delete', function(event) {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebar = document.getElementById('sidebar');
-    const mainWrapper = document.getElementById('mainWrapper');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    
-    function toggleSidebar() {
-        const isMobile = window.innerWidth <= 768;
-        
-        if (isMobile) {
-            sidebar.classList.toggle('show');
-            sidebarOverlay.classList.toggle('show');
-        } else {
-            sidebar.classList.toggle('collapsed');
-            mainWrapper.classList.toggle('expanded');
-        }
-    }
-    
-    sidebarToggle.addEventListener('click', toggleSidebar);
-    
-    sidebarOverlay.addEventListener('click', function() {
-        sidebar.classList.remove('show');
-        sidebarOverlay.classList.remove('show');
-    });
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        const isMobile = window.innerWidth <= 768;
-        
-        if (!isMobile) {
-            sidebar.classList.remove('show');
-            sidebarOverlay.classList.remove('show');
-        } else {
-            sidebar.classList.remove('collapsed');
-            mainWrapper.classList.remove('expanded');
-        }
-    });
-});
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarOverlay = document.querySelector('.sidebar-overlay');
+
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            });
+
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
+
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMenuToggle = menuToggle.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnMenuToggle && window.innerWidth < 768) {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
+        });
