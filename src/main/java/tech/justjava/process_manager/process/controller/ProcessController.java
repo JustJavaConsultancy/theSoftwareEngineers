@@ -141,34 +141,33 @@ public class ProcessController {
         final ProcessDTO processDTO = processService.get(id);
         return fileDataService.provideDownload(processDTO.getDiagram());
     }
-    @GetMapping("/start/{id}")
-    public String startForm(@PathVariable(name = "id") final String id,
-                        Model model) {
+    @GetMapping("/newProcess")
+    public String startForm(Model model) {
 
-        BpmnModel bpmnModel = repositoryService.getBpmnModel(id);
-
-        org.flowable.bpmn.model.Process process = bpmnModel.getMainProcess();
-        System.out.println(" process name===="+process.getName());
-        System.out.println(" process documentation ===="+process.getDocumentation());
-
-
-        String userPrompt= process.getDocumentation();
-        String formThymeleaf=processServiceAI.generateThymeleafForm(userPrompt);
-        formThymeleaf=formThymeleaf.replace("```","").replace("html","");
-        Map<String, Object> formData = Map.of("id", id,"email","akinrinde@justjava.com.ng");
-
-
-
-        String formHtml=templateRenderer.render(formThymeleaf,formData);
-
-        System.out.println(" The Form Fragment==="+formHtml);
-
-
-
-        model.addAttribute("formData",formData);
-        model.addAttribute("id",id);
-        model.addAttribute("email","akinrinde@justjava.com.ng");
-        model.addAttribute("formHtml",formHtml);
+//        BpmnModel bpmnModel = repositoryService.getBpmnModel(id);
+//
+//        org.flowable.bpmn.model.Process process = bpmnModel.getMainProcess();
+//        System.out.println(" process name===="+process.getName());
+//        System.out.println(" process documentation ===="+process.getDocumentation());
+//
+//
+//        String userPrompt= process.getDocumentation();
+//        String formThymeleaf=processServiceAI.generateThymeleafForm(userPrompt);
+//        formThymeleaf=formThymeleaf.replace("```","").replace("html","");
+//        Map<String, Object> formData = Map.of("id", id,"email","akinrinde@justjava.com.ng");
+//
+//
+//
+//        String formHtml=templateRenderer.render(formThymeleaf,formData);
+//
+//        System.out.println(" The Form Fragment==="+formHtml);
+//
+//
+//
+//        model.addAttribute("formData",formData);
+//        model.addAttribute("id",id);
+//        model.addAttribute("email","akinrinde@justjava.com.ng");
+//        model.addAttribute("formHtml",formHtml);
 
         return "process/form-fragment";
     }

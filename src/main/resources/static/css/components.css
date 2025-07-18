@@ -7,6 +7,11 @@
     text-align: center;
 }
 
+.form-card {
+    background-color: #1E293B;
+    border: 1px solid #334155;
+}
+
 /* Status Pills */
 .status-pill {
     display: inline-block;
