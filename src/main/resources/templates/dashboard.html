@@ -17,36 +17,28 @@
             <div class="card-stat p-3" style="border-radius: 1rem;">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="text-muted">Active Processes</div>
-                    <div class="text-success small">+12%</div>
+                    <div class="text-success small"></div>
                 </div>
-                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;">12</div>
+                <div class="fw-bold" style="font-size: 2rem; color: #2563eb;
+                text-align: left;" th:text="${processInstancesCount}">12</div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card-stat p-3" style="border-radius: 1rem;">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="text-muted">Active Tasks</div>
-                    <div class="text-success small">+3%</div>
+                    <div class="text-success small"></div>
                 </div>
-                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;">8</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card-stat p-3" style="border-radius: 1rem;">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <div class="text-muted">Suspended Tasks</div>
-                    <div class="text-danger small">-9%</div>
-                </div>
-                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;">2</div>
+                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;" th:text="${activeTasksCount}">8</div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card-stat p-3" style="border-radius: 1rem;">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="text-muted">Completed Tasks</div>
-                    <div class="text-success small">+23%</div>
+                    <div class="text-success small"></div>
                 </div>
-                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;">145</div>
+                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;" th:text="${completedTasksCount}">145</div>
             </div>
         </div>
     </div>
@@ -54,6 +46,6 @@
         <h4 class="mb-0" style="font-weight: 600;">Recent Tasks</h4>
         <input type="text" class="form-control w-25" placeholder="Search" style="max-width: 250px; border-radius: 2rem;">
     </div>
-    <div th:replace="fragments/recent-tasks :: recentTasksTable"></div>
+    <div th:replace="fragments/recent-tasks :: recentTasksTable(${activeTasks})"></div>
 </div>
 </html>

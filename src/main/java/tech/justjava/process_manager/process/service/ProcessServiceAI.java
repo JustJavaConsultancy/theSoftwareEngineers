@@ -92,7 +92,7 @@ public class ProcessServiceAI {
 
             Always include the hidden id input.
 
-Test Case: %s
+User Prompt: %s
           """;
     public ProcessServiceAI(OpenAIService openAIService) {
         this.openAIService = openAIService;

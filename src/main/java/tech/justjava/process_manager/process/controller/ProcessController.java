@@ -34,7 +34,7 @@ import java.util.Map;
 @RequestMapping("/processes")
 public class ProcessController {
 
-
+    private final String  processKey = "softwareEngineeringProcess";
     @Autowired
     private RepositoryService repositoryService;
 
@@ -66,14 +66,22 @@ public class ProcessController {
 
     @GetMapping
     public String list(final Model model) {
-/*        System.out.println(" I'm in the Process List....");
-        List<ProcessDefinition> processDefinitionList= repositoryService
-                .createProcessDefinitionQuery()
-                .latestVersion()
-                .orderByProcessDefinitionName()
-                .asc()
+        System.out.println(" I'm in the Process List....");
+        List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery()
+                .processDefinitionKey(processKey)
+                .active()
                 .list();
-        model.addAttribute("processes", processDefinitionList);*/
+        processInstances.forEach(processInstance -> {
+                    System.out.println(" The Process Instance Variables ==="+processInstance.getProcessVariables()+
+                            " The Process Instance Id ==="+processInstance.getId()+
+                            " The Process Instance Name ==="+processInstance.getProcessDefinitionName()+
+                            " The Process Instance Business Key ==="+processInstance.getBusinessKey()+
+                            " The Process Instance Start Time ==="+processInstance.getStartTime()+
+                            " The Process Instance Description ==="+processInstance.isEnded()+
+                            " The Process Instance Suspended ==="+processInstance.isSuspended());
+                }
+        );
+        model.addAttribute("processes", processInstances);
 
         return "process/processInstance";
     }
@@ -145,49 +153,6 @@ public class ProcessController {
 
 
         String userPrompt= process.getDocumentation();
-/*
-                """
-                Create a form to collect the following information:
-                                
-                1. Full Name:
-                   - Type: text
-                   - Label: Full Name
-                   - Placeholder: Enter your full name
-                   - Required
-                                
-                2. Email Address:
-                   - Type: email
-                   - Label: Email
-                   - Placeholder: Enter your email
-                   - Required
-                                
-                3. Date of Birth:
-                   - Type: date
-                   - Label: Date of Birth
-                   - Required
-                                
-                4. Gender:
-                   - Type: select
-                   - Label: Gender
-                   - Options: Male, Female, Other
-                   - Required
-                                
-                5. Newsletter Subscription:
-                   - Type: checkbox
-                   - Label: Subscribe to our newsletter
-                                
-                6. Message:
-                   - Type: textarea
-                   - Label: Message
-                   - Placeholder: Write your message here
-                   - Not required
-                                
-                Include HTMX attributes to submit the form asynchronously to `/submitForm`, and replace the form container with the response.
-                                
-                                
-                """;
-*/
-
         String formThymeleaf=processServiceAI.generateThymeleafForm(userPrompt);
         formThymeleaf=formThymeleaf.replace("```","").replace("html","");
         Map<String, Object> formData = Map.of("id", id,"email","akinrinde@justjava.com.ng");
@@ -211,7 +176,8 @@ public class ProcessController {
     public String handleFormSubmit(@RequestParam Map<String,Object> formData) {
         System.out.println(" The Form Data==="+formData);
 
-        ProcessInstance processInstance=runtimeService.startProcessInstanceById(formData.get("id").toString(),formData);
+        ProcessInstance processInstance=
+                runtimeService.startProcessInstanceById(formData.get("id").toString(),formData);
 
         System.out.println("  The Process Instance Variables ==="+processInstance.getProcessVariables());
         return "redirect:/processes";

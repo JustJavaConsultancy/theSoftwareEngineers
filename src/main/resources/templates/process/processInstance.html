@@ -20,37 +20,14 @@
         <th>Process Name</th>
         <th>Status</th>
         <th>Start Date</th>
-        <th>End Date</th>
         <th>Action</th>
       </tr>
       </thead>
       <tbody>
-      <tr>
-        <td>Project Alpha</td>
-        <td><span class="status-pill status-completed">Completed</span></td>
-        <td class="text-muted">2023-01-15</td>
-        <td class="text-muted">2023-02-28</td>
-        <td><a href="#" class="text-decoration-none fw-semibold">View Details</a></td>
-      </tr>
-      <tr>
-        <td>Project Beta</td>
-        <td><span class="status-pill status-inprogress">Active</span></td>
-        <td class="text-muted">2023-03-01</td>
-        <td class="text-muted">2023-04-15</td>
-        <td><a href="#" class="text-decoration-none fw-semibold">View Details</a></td>
-      </tr>
-      <tr>
-        <td>Project Gamma</td>
-        <td><span class="status-pill status-completed">Completed</span></td>
-        <td class="text-muted">2023-04-20</td>
-        <td class="text-muted">2023-05-30</td>
-        <td><a href="#" class="text-decoration-none fw-semibold">View Details</a></td>
-      </tr>
-      <tr>
-        <td>Project Delta</td>
-        <td><span class="status-pill status-inprogress">Active</span></td>
-        <td class="text-muted">2023-06-05</td>
-        <td class="text-muted">2023-05-30</td>
+      <tr th:each="process : ${processes}">
+        <td th:text="${process.processDefinitionName}">Project Alpha</td>
+        <td><span class="status-pill status-completed" th:text="${process.ended?'COMPLETED':'ACTIVE'}">Completed</span></td>
+        <td class="text-muted" th:text="${process.startTime}">2023-01-15</td>
         <td><a href="#" class="text-decoration-none fw-semibold">View Details</a></td>
       </tr>
       </tbody>

@@ -20,7 +20,7 @@
     <div class="d-flex justify-content-end mb-2">
         <input type="text" class="form-control w-25" placeholder="Search" style="max-width: 250px; border-radius: 2rem;">
     </div>
-    <div th:replace="fragments/recent-tasks :: recentTasksTable"></div>
+    <div th:replace="fragments/recent-tasks :: recentTasksTable(${tasks})"></div>
 </main>
 </body>
 </html>
