@@ -36,13 +36,13 @@ spring:
       client:
         provider:
           keycloak:
-            issuer-uri: ${ISSUER_URI:http://localhost:8080/realms/justjavarealm}
+            issuer-uri: ${ISSUER_URI:https://ngcloak.onrender.com/realms/ProcessManagement}
 
         registration:
           keycloak:
             provider: keycloak
-            client_id: ${KEYCLOAK_CLIENT_ID:bluepay}
-            client_secret: ${KEYCLOAK_CLIENT_SECRET:5VURBxi7H5I35xPKV0S9iiRInod5sDK0}
+            client_id: ${KEYCLOAK_CLIENT_ID:processManager}
+            client_secret: ${KEYCLOAK_CLIENT_SECRET:ttXmZIEHmwmO4E2NeSUCllD3NIEVpZUW}
             authorization-grant-type: authorization_code
             scope: openid,profile,email
 error:
