@@ -1,11 +1,24 @@
 <!-- fragments/recent-tasks.html -->
 <div th:fragment="recentTasksTable(tasks)">
-    <div class="table-responsive" style="background: #fff; border-radius: 1rem;">
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(tasks)}" class="text-center py-5">
+        <div class="mb-3">
+            <i class="fas fa-tasks fa-3x text-muted opacity-50"></i>
+        </div>
+        <h5 class="text-muted mb-2">No Tasks Found</h5>
+        <p class="text-muted small mb-3">There are currently no tasks to display. Tasks will appear here once they are created and assigned.</p>
+        <a href="/tasks/add" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-plus me-2"></i>Create First Task
+        </a>
+    </div>
+
+    <!-- Desktop/Tablet Table View -->
+    <div th:unless="${#lists.isEmpty(tasks)}" class="table-responsive d-none d-md-block" style="background: #fff; border-radius: 1rem;">
         <table class="table align-middle mb-0">
             <thead style="background: #f4f8fb;">
             <tr>
                 <th>Task Title</th>
-                <th>Start Date</th>
+                <th class="d-none d-lg-table-cell">Start Date</th>
                 <th>Due Date</th>
                 <th>Assignee</th>
                 <th>Status</th>
@@ -13,19 +26,114 @@
             </tr>
             </thead>
             <tbody>
-            <!-- Example static rows, replace with th:each for dynamic data -->
             <tr th:each="task : ${tasks}">
                 <td th:text="${task.name}">Onboard New Employee</td>
-                <td th:text="${task.createTime}">2024-05-01</td>
-                <td th:text="${task.dueDate}">2024-06-01</td>
-                <td><img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Kemi Adeleke" style="width:32px; height:32px; border-radius:50%; margin-right:8px;">
-                    <span th:text="${task.assignee}">Kemi Adeleke</span>
+                <td class="d-none d-lg-table-cell" th:text="${task.createTime}">2024-05-01</td>
+                <td th:text="${task.dueDate ?: 'No due date'}">2024-06-01</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/women/1.jpg" 
+                             th:alt="${task.assignee ?: 'Unassigned'}" 
+                             style="width:32px; height:32px; border-radius:50%; margin-right:8px;" 
+                             class="d-none d-lg-inline">
+                        <span th:text="${task.assignee ?: 'Unassigned'}">Kemi Adeleke</span>
+                    </div>
                 </td>
-                <td><span class="status-pill status-inprogress" th:text="${#strings.toUpperCase(task.state)}">In Progress</span></td>
-                <td><i class="fas fa-ellipsis-h"></i></td>
+                <td>
+                    <span class="status-pill" 
+                          th:classappend="${task.state == 'CREATED' ? 'status-open' : (task.state == 'COMPLETED' ? 'status-completed' : 'status-inprogress')}"
+                          th:text="${#strings.capitalize(#strings.toLowerCase(task.state ?: 'Open'))}">Open</span>
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <!-- Conditional actions based on task state -->
+                            <li th:if="${task.state == 'CREATED'}">
+                                <a class="dropdown-item" th:href="@{/tasks/edit/{id}(id=${task.id})}">
+                                    <i class="fas fa-hand-paper me-2"></i>Claim
+                                </a>
+                            </li>
+                            <li th:if="${task.state != 'COMPLETED'}">
+                                <a class="dropdown-item" th:href="@{/tasks/edit/{id}(id=${task.id})}">
+                                    <i class="fas fa-play-circle me-2"></i>Continue
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/tasks/edit/{id}(id=${task.id})}">
+                                    <i class="fas fa-eye me-2"></i>View Details
+                                </a>
+                            </li>
+                            <li th:if="${task.state == 'COMPLETED'}">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-download me-2"></i>Download Report
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
             </tr>
-            <!-- Add more rows as needed -->
             </tbody>
         </table>
+    </div>
+    
+    <!-- Mobile Card View -->
+    <div th:unless="${#lists.isEmpty(tasks)}" class="d-md-none">
+        <div class="task-card mb-3 p-3" 
+             style="background: #fff; border-radius: 1rem; border: 1px solid #e0e0e0;"
+             th:each="task : ${tasks}">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <div class="fw-bold" th:text="${task.name}">Task Name</div>
+                    <div class="text-muted small" th:text="${'Created: ' + (task.createTime ?: 'Unknown')}">Created: 2024-05-01</div>
+                </div>
+                <div class="d-flex align-items-start">
+                    <span class="status-pill me-2" 
+                          th:classappend="${task.state == 'CREATED' ? 'status-open' : (task.state == 'COMPLETED' ? 'status-completed' : 'status-inprogress')}"
+                          th:text="${#strings.capitalize(#strings.toLowerCase(task.state ?: 'Open'))}">Open</span>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-muted p-1" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <!-- Conditional actions based on task state -->
+                            <li th:if="${task.state == 'CREATED'}">
+                                <a class="dropdown-item" th:href="@{/tasks/edit/{id}(id=${task.id})}">
+                                    <i class="fas fa-hand-paper me-2"></i>Claim
+                                </a>
+                            </li>
+                            <li th:if="${task.state != 'COMPLETED'}">
+                                <a class="dropdown-item" th:href="@{/tasks/edit/{id}(id=${task.id})}">
+                                    <i class="fas fa-play-circle me-2"></i>Continue
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/tasks/edit/{id}(id=${task.id})}">
+                                    <i class="fas fa-eye me-2"></i>View Details
+                                </a>
+                            </li>
+                            <li th:if="${task.state == 'COMPLETED'}">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-download me-2"></i>Download Report
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center mb-2" th:if="${task.assignee}">
+                <img src="https://randomuser.me/api/portraits/women/1.jpg" 
+                     th:alt="${task.assignee}" 
+                     style="width:24px; height:24px; border-radius:50%; margin-right:8px;">
+                <span class="small" th:text="${task.assignee}">Assignee</span>
+            </div>
+            <div class="text-muted small" th:if="${task.assignee == null}">
+                <i class="fas fa-user-slash me-1"></i>Unassigned
+            </div>
+            <div class="text-muted small" th:if="${task.dueDate}" th:text="${'Due: ' + task.dueDate}">Due: 2024-06-01</div>
+            <div class="text-muted small" th:unless="${task.dueDate}">No due date set</div>
+        </div>
     </div>
 </div> 
