@@ -16,14 +16,7 @@ public class AuthenticationManager {
         return defaultOidcUser.getClaims().get(fieldName);
     }
 
-    public Boolean isMerchant(){
-        List<String> groups = (List<String>) get("group");
-        if(groups==null)
-            return true;
-        return false;
-    }
-
-    public Boolean isComplianceOfficer(){
+    public Boolean isAdmin(){
 
         List<String> groups = (List<String>) get("group");
         if(groups==null)
@@ -31,25 +24,7 @@ public class AuthenticationManager {
 
         return groups
                 .stream()
-                .anyMatch(group->"/compliance".equalsIgnoreCase(group));
-    }
-
-    public Boolean isCustomerSupport(){
-        List<String> groups = (List<String>) get("group");
-        if(groups==null)
-            return false;
-        return groups
-                .stream()
-                .anyMatch(group->"/customer-support".equalsIgnoreCase(group));
-    }
-
-    public Boolean isPgAdmin(){
-        List<String> groups = (List<String>) get("group");
-        if(groups==null)
-            return false;
-        return groups
-                .stream()
-                .anyMatch(group->"/pgAdmin".equalsIgnoreCase(group));
+                .anyMatch(group->"/admin".equalsIgnoreCase(group));
     }
 
 }
