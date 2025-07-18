@@ -1,0 +1,89 @@
+/* Typography */
+.fw-bold {
+    font-weight: 700 !important;
+}
+
+.fw-semibold {
+    font-weight: 600 !important;
+}
+
+/* Colors */
+.text-muted {
+    color: #666 !important;
+}
+
+/* Spacing */
+.mb-1 {
+    margin-bottom: 0.25rem !important;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.me-1 {
+    margin-right: 0.25rem !important;
+}
+
+.me-2 {
+    margin-right: 0.5rem !important;
+}
+
+.ms-2 {
+    margin-left: 0.5rem !important;
+}
+
+/* Flex Utilities */
+.d-flex {
+    display: flex !important;
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.justify-content-between {
+    justify-content: space-between !important;
+}
+
+.justify-content-center {
+    justify-content: center !important;
+}
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+    .d-md-none {
+        display: none !important;
+    }
+    
+    .d-md-block {
+        display: block !important;
+    }
+    
+    .w-md-auto {
+        width: auto !important;
+    }
+}
+
+/* Border Radius */
+.rounded-circle {
+    border-radius: 50% !important;
+}
+
+.rounded {
+    border-radius: 0.5rem !important;
+}
+
+/* Image */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+} 

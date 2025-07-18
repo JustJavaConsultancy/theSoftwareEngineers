@@ -5,65 +5,62 @@
     <!-- Header Section - Responsive -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-2">
         <div class="mb-2 mb-md-0">
-            <h2 class="mb-1" style="font-weight: 700;">Dashboard</h2>
-            <div class="text-muted" style="font-size: 1rem; font-size: 1.1rem;">Overview of your process management system</div>
+            <h2 class="mb-1 fw-bold">Dashboard</h2>
+            <div class="text-muted fs-5">Overview of your process management system</div>
         </div>
         <a th:href="@{/processes/startProcess}"
            class="btn btn-primary px-3 px-md-4 py-2 w-100 w-md-auto"
-           style="font-weight: 600; border-radius: 2rem; background: #2563eb; border: none; max-width: 250px;"
            role="button">Start New Process</a>
     </div>
     
     <!-- Metric Cards - Responsive Grid -->
     <div class="row g-2 g-md-3 mb-3 mb-md-4">
         <div class="col-6 col-md-3">
-            <div class="card-stat p-2 p-md-3" style="border-radius: 1rem;">
+            <div class="card-stat">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="text-muted small">Active Processes</div>
                     <div class="text-success small">+12%</div>
                 </div>
-                <div class="fw-bold text-start" style="font-size: 1.5rem; font-size: 2rem; color: #2563eb;">12</div>
+                <div class="fw-bold text-start fs-2 text-primary">12</div>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card-stat p-2 p-md-3" style="border-radius: 1rem;">
+            <div class="card-stat">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="text-muted small">Active Tasks</div>
                     <div class="text-success small">+3%</div>
                 </div>
-                <div class="fw-bold text-start" style="font-size: 1.5rem; font-size: 2rem; color: #2563eb;">8</div>
+                <div class="fw-bold text-start fs-2 text-primary">8</div>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card-stat p-2 p-md-3" style="border-radius: 1rem;">
+            <div class="card-stat">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="text-muted small">Suspended Tasks</div>
                     <div class="text-danger small">-9%</div>
                 </div>
-                <div class="fw-bold text-start" style="font-size: 1.5rem; font-size: 2rem; color: #2563eb;">2</div>
+                <div class="fw-bold text-start fs-2 text-primary">2</div>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="card-stat p-2 p-md-3" style="border-radius: 1rem;">
+            <div class="card-stat">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="text-muted small">Completed Tasks</div>
                     <div class="text-success small">+23%</div>
                 </div>
-                <div class="fw-bold text-start" style="font-size: 1.5rem; font-size: 2rem; color: #2563eb;">145</div>
+                <div class="fw-bold text-start fs-2 text-primary">145</div>
             </div>
         </div>
     </div>
     
     <!-- Recent Tasks Header - Responsive -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-2">
-        <h4 class="mb-2 mb-md-0" style="font-weight: 600;">Recent Tasks</h4>
-        <input type="text" class="form-control w-100" 
-               placeholder="Search" 
-               style="max-width: 100%; max-width: 250px; border-radius: 2rem;">
+        <h4 class="mb-2 mb-md-0 fw-semibold">Recent Tasks</h4>
+        <input type="text" class="form-control search-bar" placeholder="Search">
     </div>
     
     <!-- Recent Tasks - Dashboard Empty State -->
-    <div class="text-center py-5" style="background: #fff; border-radius: 1rem;">
+    <div class="text-center py-5 bg-white rounded">
         <div class="mb-3">
             <i class="fas fa-tasks fa-3x text-muted opacity-50"></i>
         </div>
