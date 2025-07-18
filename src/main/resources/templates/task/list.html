@@ -1,22 +1,64 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout.html}">
-<head>
-    <title>Tasks Management</title>
-</head>
-<body>
-<main layout:fragment="content">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-2">
-        <div class="mb-2 mb-md-0">
-            <h2 class="mb-1 fw-bold">Tasks Management</h2>
-            <div class="text-muted fs-5">Monitor and manage all your process tasks</div>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<div layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
+        <div>
+            <h2 class="text-2xl md:text-3xl font-bold text-white">Tasks Management</h2>
+            <p class="text-slate-400 mt-1">Monitor and manage all your process tasks</p>
         </div>
     </div>
-    <div class="d-flex justify-content-end mb-2">
-        <input type="text" class="form-control search-bar" placeholder="Search">
+    <div class="table-container rounded-xl p-4 md:p-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="flex items-center space-x-2">
+                <button class="bg-slate-700 p-2 rounded-lg text-slate-300"><span class="material-icons">add</span></button>
+                <button class="bg-slate-700 p-2 rounded-lg text-slate-300"><span class="material-icons">filter_list</span></button>
+            </div>
+            <div class="search-container relative w-full md:w-auto">
+                <span class="material-icons search-icon">search</span>
+                <input class="search-input text-white rounded-lg pl-10 pr-4 py-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search" type="text"/>
+            </div>
+        </div>
+        <div th:if="${#lists.isEmpty(tasks)}" class="empty-state">
+            <span class="material-icons empty-state-icon">inbox</span>
+            <h3 class="empty-state-title">No tasks found</h3>
+            <p class="empty-state-description">
+                There are currently no tasks matching your criteria. Create a new task or adjust your filters to see results.
+            </p>
+        </div>
+        <div th:if="${!#lists.isEmpty(tasks)}" class="table-scroll-container">
+            <table class="w-full text-left">
+                <thead class="table-header">
+                <tr>
+                    <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Task Title</th>
+                    <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Start Date</th>
+                    <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Due Date</th>
+                    <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Assignee</th>
+                    <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Status</th>
+                    <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="task : ${tasks}" class="table-row">
+                    <td th:text="${task.name}" class="py-3 px-2 md:py-4 md:px-3">Onboard New Employee</td>
+                    <td th:text="${task.createTime}" class="py-3 px-2 md:py-4 md:px-3">2024-05-01</td>
+                    <td th:text="${task.dueDate}" class="py-3 px-2 md:py-4 md:px-3">2024-06-01</td>
+                    <td class="py-3 px-2 md:py-4 md:px-3 flex items-center">
+                        <img alt="Kemi Adeleke avatar" class="w-6 h-6 md:w-8 md:h-8 rounded-full mr-2 md:mr-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCO9e_EFxYd4HqyHaG9OJqep8vFCgyztrDinlbVA0CqTFw4JzVqprM2NPmhqGlU6dwgJDzu8mWDZhuI1YXgelH346XBJRpNGHqWVqZADmQjJMGHeK0MtZfgqpCMKCS0PUw8CfIfnJGb1ooPJZRojU2YWDbeF0S65dVN22WhvqX5LodjeE1QeNuRQFwmEMUduJrx3_zh1wjF3NnIpw8J8Hvs6hkd48TirnMJTEraQnDlEowueMbvhPydVMM_za7FHJaZUZrhNGzddPZv"/>
+                        <span th:text="${task.assignee}" class="truncate max-w-[80px] md:max-w-none">Kemi Adeleke</span>
+                    </td>
+                    <td class="py-3 px-2 md:py-4 md:px-3">
+                        <span th:text="${#strings.toUpperCase(task.state)}" class="status-in-progress text-xs font-medium px-2 py-1 md:px-3 md:py-1 rounded-full">In Progress</span>
+                    </td>
+                    <td class="py-3 px-2 md:py-4 md:px-3">
+                        <button class="text-slate-400 hover:text-white">
+                            <span class="material-icons">more_vert</span>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div th:replace="fragments/recent-tasks :: recentTasksTable(${tasks})"></div>
-</main>
-</body>
+</div>
 </html>

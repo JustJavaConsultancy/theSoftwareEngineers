@@ -51,10 +51,6 @@
                 <p class="empty-state-description">
                     There are currently no tasks matching your criteria. Create a new task or adjust your filters to see results.
                 </p>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg flex items-center">
-                    <span class="material-icons mr-2">add</span>
-                    Create New Task
-                </button>
             </div>
             <div th:if="${!#lists.isEmpty(activeTasks)}" class="table-scroll-container">
                 <table class="w-full text-left">
@@ -69,7 +65,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="task : ${tasks}" class="table-row">
+                    <tr th:each="task : ${activeTasks}" class="table-row">
                         <td th:text="${task.name}" class="py-3 px-2 md:py-4 md:px-3">Onboard New Employee</td>
                         <td th:text="${task.createTime}" class="py-3 px-2 md:py-4 md:px-3">2024-05-01</td>
                         <td th:text="${task.dueDate}" class="py-3 px-2 md:py-4 md:px-3">2024-06-01</td>
