@@ -2,32 +2,184 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-  <title>Start Process</title>
+    <title>Start Process</title>
 </head>
+<body>
 <section layout:fragment="content">
-  <div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-      <h2 class="fw-bold">Start Process</h2>
-      <div class="fw-semibold">Process Details</div>
-      <div class="text-muted">Onboarding New Employee</div>
+    <!-- Header Section - Responsive -->
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start mb-4">
+        <div class="mb-3 mb-lg-0">
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Processes</a></li>
+                    <li class="breadcrumb-item active">Start Process</li>
+                </ol>
+            </nav>
+            <h2 class="mb-1" style="font-weight: 700; color: #1a202c;">Start New Process</h2>
+            <p class="text-muted mb-0">Configure and initiate your business process workflow</p>
+        </div>
+        <div class="process-preview d-none d-lg-block">
+            <div class="card border-0 shadow-sm" style="border-radius: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white text-center p-4">
+                    <i class="fas fa-rocket fa-2x mb-2"></i>
+                    <div class="fw-bold">Process Ready</div>
+                    <small>Employee Onboarding</small>
+                </div>
+            </div>
+        </div>
     </div>
-    <img src="https://via.placeholder.com/150x120" alt="Process" class="rounded">
-  </div>
 
-  <form>
-    <div class="mb-3">
-      <label class="form-label">Employee Name</label>
-      <input type="text" class="form-control" placeholder="Enter employee name">
+    <!-- Progress Indicator -->
+    <div class="progress mb-4" style="height: 4px; border-radius: 2px;">
+        <div class="progress-bar" style="width: 33%; background: linear-gradient(90deg, #4f8cff 0%, #6fd6ff 100%);" role="progressbar"></div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Department</label>
-      <input type="text" class="form-control" placeholder="Enter department">
+
+    <!-- Main Form Container -->
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Process Information Card -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 1rem;">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h5 class="fw-bold mb-1" style="color: #2563eb;">
+                        <i class="fas fa-info-circle me-2"></i>Process Information
+                    </h5>
+                    <p class="text-muted small mb-0">Basic details about the process you're starting</p>
+                </div>
+                <div class="card-body pt-3">
+                    <form id="startProcessForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Process Name *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="fas fa-tasks text-muted"></i>
+                                    </span>
+                                    <input type="text" class="form-control border-start-0" 
+                                           placeholder="Employee Onboarding" 
+                                           value="Employee Onboarding" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Priority Level</label>
+                                <select class="form-select">
+                                    <option value="medium" selected>Medium Priority</option>
+                                    <option value="high">High Priority</option>
+                                    <option value="low">Low Priority</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Employee Details Card -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 1rem;">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h5 class="fw-bold mb-1" style="color: #2563eb;">
+                        <i class="fas fa-user me-2"></i>Employee Details
+                    </h5>
+                    <p class="text-muted small mb-0">Information about the new employee</p>
+                </div>
+                <div class="card-body pt-3">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Full Name *</label>
+                            <input type="text" class="form-control" 
+                                   placeholder="Enter employee's full name"
+                                   style="border-radius: 0.5rem;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Email Address *</label>
+                            <input type="email" class="form-control" 
+                                   placeholder="employee@company.com"
+                                   style="border-radius: 0.5rem;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Department *</label>
+                            <select class="form-select" style="border-radius: 0.5rem;">
+                                <option value="">Select Department</option>
+                                <option value="engineering">Engineering</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="sales">Sales</option>
+                                <option value="hr">Human Resources</option>
+                                <option value="finance">Finance</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Position *</label>
+                            <input type="text" class="form-control" 
+                                   placeholder="Job title/position"
+                                   style="border-radius: 0.5rem;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Start Date *</label>
+                            <input type="date" class="form-control" 
+                                   style="border-radius: 0.5rem;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Manager</label>
+                            <select class="form-select" style="border-radius: 0.5rem;">
+                                <option value="">Select Manager</option>
+                                <option value="john-doe">John Doe - Engineering Lead</option>
+                                <option value="jane-smith">Jane Smith - Marketing Director</option>
+                                <option value="mike-johnson">Mike Johnson - Sales Manager</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Process Summary Card -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 1rem;">
+                <div class="card-header bg-transparent border-0">
+                    <h6 class="fw-bold mb-0" style="color: #2563eb;">
+                        <i class="fas fa-chart-line me-2"></i>Process Summary
+                    </h6>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Estimated Duration:</span>
+                        <span class="fw-semibold small">5-7 days</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Approval Required:</span>
+                        <span class="fw-semibold small">Yes</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted small">Stakeholders:</span>
+                        <span class="fw-semibold small">HR, IT, Manager</span>
+                    </div>
+                    <div class="alert alert-primary border-0" style="background: #eaf4ff; border-radius: 0.75rem;">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-lightbulb text-primary me-2 mt-1"></i>
+                            <div>
+                                <small class="fw-semibold text-primary">Quick Tip</small>
+                                <small class="d-block text-primary">Ensure all required documents are ready before starting the process.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg" 
+                        style="border-radius: 0.75rem; background: linear-gradient(90deg, #4f8cff 0%, #6fd6ff 100%); border: none; font-weight: 600;">
+                    <i class="fas fa-rocket me-2"></i>Start Process
+                </button>
+                <button type="button" class="btn btn-outline-secondary" 
+                        style="border-radius: 0.75rem; font-weight: 600;">
+                    <i class="fas fa-save me-2"></i>Save as Draft
+                </button>
+                <a href="#" class="btn btn-link text-center text-muted">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Processes
+                </a>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Start Date</label>
-      <input type="date" class="form-control">
-    </div>
-    <button type="submit" class="btn btn-rounded">Start</button>
-  </form>
 </section>
+</body>
 </html>

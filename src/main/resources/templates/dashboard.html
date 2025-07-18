@@ -2,49 +2,64 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <div layout:fragment="content">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <div>
+    <!-- Header Section - Responsive -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-2">
+        <div class="mb-2 mb-md-0">
             <h2 class="mb-1" style="font-weight: 700;">Dashboard</h2>
-            <div class="text-muted" style="font-size: 1.1rem;">Overview of your process management system</div>
+            <div class="text-muted" style="font-size: 1rem; font-size: 1.1rem;">Overview of your process management system</div>
         </div>
         <a th:href="@{/processes/startProcess}"
-           class="btn btn-primary px-4 py-2"
-           style="font-weight: 600; border-radius: 2rem; background: #2563eb; border: none;"
+           class="btn btn-primary px-3 px-md-4 py-2 w-100 w-md-auto"
+           style="font-weight: 600; border-radius: 2rem; background: #2563eb; border: none; max-width: 250px;"
            role="button">Start New Process</a>
     </div>
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card-stat p-3" style="border-radius: 1rem;">
+
+    <!-- Metric Cards - Responsive Grid -->
+    <div class="row g-2 g-md-3 mb-3 mb-md-4">
+        <div class="col-6 col-md-3">
+            <div class="card-stat p-2 p-md-3" style="border-radius: 1rem;">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="text-muted">Active Processes</div>
-                    <div class="text-success small"></div>
+                    <div class="text-success small">+12%</div>
                 </div>
-                <div class="fw-bold" style="font-size: 2rem; color: #2563eb;
-                text-align: left;" th:text="${processInstancesCount}">12</div>
+                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;">12</div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card-stat p-3" style="border-radius: 1rem;">
+        <div class="col-6 col-md-3">
+            <div class="card-stat p-2 p-md-3" style="border-radius: 1rem;">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="text-muted">Active Tasks</div>
-                    <div class="text-success small"></div>
+                    <div class="text-success small">+3%</div>
                 </div>
-                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;" th:text="${activeTasksCount}">8</div>
+                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;">8</div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card-stat p-3" style="border-radius: 1rem;">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-                    <div class="text-muted">Completed Tasks</div>
-                    <div class="text-success small"></div>
+                    <div class="text-muted">Suspended Tasks</div>
+                    <div class="text-danger small">-9%</div>
                 </div>
-                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;" th:text="${completedTasksCount}">145</div>
+                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;">2</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card-stat p-2 p-md-3" style="border-radius: 1rem;">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div class="text-muted">Completed Tasks</div>
+                    <div class="text-success small">+23%</div>
+                </div>
+                <div class="fw-bold" style="font-size: 2rem; color: #2563eb; text-align: left;">145</div>
             </div>
         </div>
     </div>
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0" style="font-weight: 600;">Recent Tasks</h4>
-        <input type="text" class="form-control w-25" placeholder="Search" style="max-width: 250px; border-radius: 2rem;">
+
+    <!-- Recent Tasks Header - Responsive -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-2">
+        <h4 class="mb-2 mb-md-0" style="font-weight: 600;">Recent Tasks</h4>
+        <input type="text" class="form-control w-100"
+               placeholder="Search"
+               style="max-width: 100%; max-width: 250px; border-radius: 2rem;">
     </div>
     <div th:replace="fragments/recent-tasks :: recentTasksTable(${activeTasks})"></div>
 </div>
