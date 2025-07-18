@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5433/processManager}
-    username: ${JDBC_DATABASE_USERNAME:postgres}
-    password: ${JDBC_DATABASE_PASSWORD:020775Rashy!}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/processManager}
+    username: ${JDBC_DATABASE_USERNAME:process_user}
+    password: ${JDBC_DATABASE_PASSWORD:rashy0207}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
@@ -48,4 +48,19 @@ server:
   port: 9000
 springdoc:
   pathsToMatch: /api/**
+
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: ${ISSUER_URI:http://localhost:8080/realms/Project_Manager}
+
+        registration:
+          keycloak:
+            provider: keycloak
+            client_id: ${KEYCLOAK_CLIENT_ID:processManager}
+            client_secret: ${KEYCLOAK_CLIENT_SECRET:NimACtZSkTfaDppnO1iAT029Lk3jSYbt}
+            grant-type: authorization_code
+            scope: openid,profile,email
 
