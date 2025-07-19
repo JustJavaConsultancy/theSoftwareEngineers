@@ -105,4 +105,26 @@
 
 .progress-bar {
     background: linear-gradient(90deg, #4f8cff 0%, #6fd6ff 100%);
-} 
+}
+
+/* Modal */
+.modal-backdrop {
+   background-color: rgba(0, 0, 0, 0.5);
+ }
+
+.timeline-circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.timeline-circle-inactive {
+  border: 2px solid #94a3b8;
+  background-color: transparent;
+}
+
+.timeline-circle-active {
+  border: 2px solid #3b82f6;
+  background-color: #3b82f6;
+}
