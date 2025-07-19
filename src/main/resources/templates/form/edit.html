@@ -13,32 +13,32 @@
   </style>
 </head>
 <body>
-<main layout:fragment="content">
-  <h1 class="text-2xl font-semibold mb-6">Edit Form</h1>
+<main layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
+  <h1 class="text-2xl md:text-3xl font-bold text-white">Edit Form</h1>
 
   <form th:action="@{'/forms/update/' + ${form.id}}" method="post" th:object="${form}">
     <input type="hidden" th:field="*{id}"/>
 
     <!-- Form Name -->
-    <div>
+    <div style="margin-top:20px">
       <label class="block text-sm font-medium text-slate-300 mb-1">Form Name</label>
-      <input type="text" th:field="*{formName}" required class="w-full border rounded p-2"/>
+      <input type="text" th:field="*{formName}" required class="w-full border text-black rounded p-2"/>
     </div>
 
     <!-- Form Code -->
-    <div>
+    <div style="margin-top:20px">
       <label class="block text-sm font-medium text-slate-300 mb-1">Form Code</label>
-      <input type="text" th:field="*{formCode}" required class="w-full border rounded p-2"/>
+      <input type="text" th:field="*{formCode}" required class="w-full border rounded p-2 text-black"/>
     </div>
 
     <!-- Form Details -->
-    <div>
+    <div style="margin-top:20px">
       <label class="block text-sm font-medium text-slate-300 mb-1">Form Details</label>
-      <textarea th:field="*{formDetails}" required class="w-full border rounded p-2 h-32"></textarea>
+      <textarea th:field="*{formDetails}" required class="w-full border rounded p-2 h-32 text-black"></textarea>
     </div>
 
     <!-- Form Interface (rich code editor) -->
-    <div>
+    <div style="margin-top:20px">
       <label class="block text-sm font-medium text-slate-300 mb-1">Form Interface</label>
       <textarea id="interfaceEditor" name="formInterface" th:text="${form.formInterface}"
                 required class="hidden "></textarea>
