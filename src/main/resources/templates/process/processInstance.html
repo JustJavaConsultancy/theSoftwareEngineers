@@ -3,28 +3,6 @@
       layout:decorate="~{layout}">
 <head>
   <title>Past Processes</title>
-  <style>
-    .modal-backdrop {
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .timeline-circle {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .timeline-circle-inactive {
-      border: 2px solid #94a3b8;
-      background-color: transparent;
-    }
-
-    .timeline-circle-active {
-      border: 2px solid #3B82F6;
-      background-color: #3B82F6;
-    }
-  </style>
 </head>
 <body>
 <div layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
@@ -111,8 +89,7 @@
               <i class="fas fa-spinner mr-1"></i> Running
             </div>
             <div class="relative">
-              <button class="dropdown-toggle text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-700"
-                      th:onclick="'openProcessModal(\'' + ${process.processDefinitionName} + '\', \'' + ${process.id} + '\')'">
+              <button class="dropdown-toggle text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-700">
                 <i class="fas fa-ellipsis-h"></i>
               </button>
             </div>
@@ -121,145 +98,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Process Timeline Modal -->
-  <div id="processModal" class="fixed inset-0 modal-backdrop flex items-center justify-center z-50 hidden">
-    <!-- Modal Container -->
-    <div class="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-      <!-- Modal Header -->
-      <header class="px-6 py-4 border-b border-gray-600">
-        <div class="flex items-center justify-between">
-          <h1 class="text-xl font-bold text-white">Process Timeline</h1>
-          <button id="closeModalBtn" class="text-slate-300 hover:text-white text-2xl leading-none" aria-label="Close modal">
-            ×
-          </button>
-        </div>
-      </header>
-
-      <!-- Modal Content -->
-      <div class="px-6 py-6">
-        <!-- Task Information -->
-        <section class="mb-6">
-          <p class="text-base mb-2">
-            <span class="font-bold text-white">Process:</span>
-            <span id="modalProcessName" class="font-normal text-slate-300">Onboard New Employee</span>
-          </p>
-          <p class="text-base">
-            <span class="font-bold text-white">ID:</span>
-            <span id="modalProcessId" class="font-normal text-slate-300">TSK1001</span>
-          </p>
-        </section>
-
-        <!-- Timeline -->
-        <section class="space-y-6">
-          <!-- Initiation Step -->
-          <article class="flex items-start justify-between">
-            <div class="flex items-start space-x-3">
-              <div class="timeline-circle timeline-circle-inactive mt-1"></div>
-              <div>
-                <h3 class="text-base font-medium text-white">Initiation</h3>
-                <p class="text-sm text-slate-300">Assignee: Unassigned</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- Planning Step -->
-          <article class="flex items-start justify-between">
-            <div class="flex items-start space-x-3">
-              <div class="timeline-circle timeline-circle-inactive mt-1"></div>
-              <div>
-                <h3 class="text-base font-medium text-white">Planning</h3>
-                <p class="text-sm text-slate-300">Assignee: Unassigned</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- Execution Step (Active) -->
-          <article class="flex items-start justify-between">
-            <div class="flex items-start space-x-3">
-              <div class="timeline-circle timeline-circle-active mt-1"></div>
-              <div>
-                <h3 class="text-base font-medium text-white">Execution</h3>
-                <p class="text-sm text-slate-300">Assignee: Kemi Adeleke</p>
-                <p class="text-sm text-slate-300">Started: 2024-05-01 09:00</p>
-                <p class="text-sm text-slate-300">Due: 2024-05-10 18:00</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- Monitoring Step -->
-          <article class="flex items-start justify-between">
-            <div class="flex items-start space-x-3">
-              <div class="timeline-circle timeline-circle-inactive mt-1"></div>
-              <div>
-                <h3 class="text-base font-medium text-white">Monitoring</h3>
-                <p class="text-sm text-slate-300">Assignee: Unassigned</p>
-              </div>
-            </div>
-          </article>
-
-          <!-- Closure Step -->
-          <article class="flex items-start justify-between">
-            <div class="flex items-start space-x-3">
-              <div class="timeline-circle timeline-circle-inactive mt-1"></div>
-              <div>
-                <h3 class="text-base font-medium text-white">Closure</h3>
-                <p class="text-sm text-slate-300">Assignee: Unassigned</p>
-              </div>
-            </div>
-          </article>
-        </section>
-      </div>
-    </div>
-  </div>
 </div>
-
-<script>
-  // Modal functionality
-  const modal = document.getElementById('processModal');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-  const modalProcessName = document.getElementById('modalProcessName');
-  const modalProcessId = document.getElementById('modalProcessId');
-
-  // Function to open modal with process data
-  function openProcessModal(processName, processId) {
-    // Update modal content with the selected process data
-    modalProcessName.textContent = processName;
-    modalProcessId.textContent = processId;
-
-    // Show modal
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
-  }
-
-  // Function to close modal
-  function closeModal() {
-    modal.classList.add('hidden');
-    document.body.style.overflow = 'auto'; // Restore background scrolling
-  }
-
-  // Event listeners
-  if (closeModalBtn) {
-    closeModalBtn.addEventListener('click', closeModal);
-  }
-
-  // Close modal when clicking on backdrop
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) {
-      closeModal();
-    }
-  });
-
-  // Close modal with Escape key
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-      closeModal();
-    }
-  });
-
-  // Expose functions globally
-  window.openProcessModal = openProcessModal;
-  window.closeProcessModal = closeModal;
-</script>
 </body>
 </html>
