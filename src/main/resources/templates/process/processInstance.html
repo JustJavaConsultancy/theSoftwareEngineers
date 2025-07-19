@@ -5,128 +5,99 @@
   <title>Past Processes</title>
 </head>
 <body>
-<section layout:fragment="content">
-  <!-- Header Section - Responsive -->
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-2">
-    <div class="mb-2 mb-md-0">
-      <h2 class="mb-1 fw-bold">Past Processes</h2>
-      <div class="text-muted" style="font-size: 1rem; font-size: 1.1rem;">Review the history of your completed and active processes</div>
+  <div layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+      <div class="mb-4 md:mb-0">
+        <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">Past Processes</h2>
+        <p class="text-slate-400">Review the history of your completed and active processes</p>
+      </div>
+      <div class="w-full md:w-auto">
+        <input type="text" class="search-input rounded-full px-4 py-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search">
+      </div>
     </div>
-    <input type="text" class="form-control w-100" 
-           placeholder="Search" 
-           style="max-width: 100%; max-width: 250px; border-radius: 2rem;">
-  </div>
 
-  <!-- Empty State -->
-  <div th:if="${#lists.isEmpty(processes)}" class="text-center py-5" style="background: #fff; border-radius: 1rem;">
-    <div class="mb-3">
-      <i class="fas fa-history fa-3x text-muted opacity-50"></i>
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(processes)}" class="processes-card text-center p-8" style="height: auto;">
+      <div class="mb-4">
+        <i class="fas fa-history text-4xl text-slate-500 opacity-50"></i>
+      </div>
+      <h3 class="text-xl font-medium text-slate-300 mb-2">No Process History</h3>
+      <p class="text-slate-400 mb-6">No processes have been executed yet. Process instances will appear here once workflows are started.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a th:href="@{/processes/newProcess}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg flex items-center justify-center">
+          <i class="fas fa-rocket mr-2"></i>Start First Process
+        </a>
+      </div>
     </div>
-    <h5 class="text-muted mb-2">No Process History</h5>
-    <p class="text-muted small mb-3">No processes have been executed yet. Process instances will appear here once workflows are started.</p>
-    <div class="d-flex justify-content-center gap-2 flex-wrap">
-      <a th:href="@{/processes/startProcess}" class="btn btn-primary btn-sm">
-        <i class="fas fa-rocket me-2"></i>Start First Process
-      </a>
-      <a th:href="@{/processes}" class="btn btn-outline-secondary btn-sm">
-        <i class="fas fa-folder me-2"></i>Browse Processes
-      </a>
-    </div>
-  </div>
 
-  <!-- Process Cards Grid -->
-  <div th:unless="${#lists.isEmpty(processes)}" class="row g-3">
-    <div class="col-md-6 col-lg-4 mb-3" th:each="process : ${processes}">
-      <div class="card h-100 p-3" style="border-radius: 1rem; background: #f8f9fa; border: 1px solid #e0e0e0;">
-        <!-- Card Header -->
-        <div class="d-flex justify-content-between align-items-start mb-3">
-          <div class="flex-grow-1">
-            <div class="fw-bold mb-1" style="font-size: 1.1rem;" th:text="${process.processDefinitionName}">Project Alpha</div>
-            <div class="text-muted small" th:text="${'Process ID: ' + process.id}">Process ID: 12345</div>
-          </div>
-          <span class="status-pill ms-2" 
-                th:classappend="${process.ended ? 'status-completed' : 'status-inprogress'}"
-                th:text="${process.ended ? 'COMPLETED' : 'ACTIVE'}">COMPLETED</span>
-        </div>
-
-        <!-- Process Details -->
-        <div class="mb-3">
-          <div class="d-flex align-items-center mb-2">
-            <i class="fas fa-calendar-alt text-muted me-2" style="width: 16px;"></i>
-            <div>
-              <div class="small text-muted">Started</div>
-              <div class="fw-semibold small" th:text="${process.startTime}">2023-01-15</div>
+    <!-- Process Cards Grid -->
+    <div th:if="${!#lists.isEmpty(activeTasks)}">
+    <div th:each="process : ${processes}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Completed Process Card -->
+      <div class="h-full">
+        <div class="processes-card p-4 rounded-xl h-full">
+          <div class="card-content">
+            <div class="flex justify-between items-start mb-3">
+              <div class="flex-grow-1">
+                <h3 class="font-bold text-lg text-white mb-1">Employee Onboarding</h3>
+                <p th:text="${'Process ID: ' + process.id}" class="text-slate-400 text-sm">Process ID: PI-2023-001</p>
+              </div>
+              <span class="status-pill "
+                    th:classappend="${process.ended ? 'status-completed' : 'status-inprogress'}"
+                    th:text="${process.ended ? 'COMPLETED' : 'ACTIVE'}"
+              >COMPLETED</span>
             </div>
-          </div>
-          
-          <div class="d-flex align-items-center mb-2" th:if="${process.ended}">
-            <i class="fas fa-check-circle text-success me-2" style="width: 16px;"></i>
-            <div>
-              <div class="small text-muted">Completed</div>
-              <div class="fw-semibold small" th:text="${process.endTime ?: 'Recently'}">2023-02-28</div>
-            </div>
-          </div>
 
-          <div class="d-flex align-items-center mb-2" th:unless="${process.ended}">
-            <i class="fas fa-clock text-warning me-2" style="width: 16px;"></i>
-            <div>
-              <div class="small text-muted">Duration</div>
-              <div class="fw-semibold small">In Progress</div>
+            <div class="space-y-3 mb-4">
+              <div class="flex items-center">
+                <i class="fas fa-calendar-alt text-slate-400 mr-3 w-4"></i>
+                <div>
+                  <p class="text-xs text-slate-400">Started</p>
+                  <p th:text="${process.startTime}" class="text-sm font-medium">2023-01-15 09:30</p>
+                </div>
+              </div>
+              <div th:if="${process.ended}" class="flex items-center">
+                <i class="fas fa-check-circle text-green-400 mr-3 w-4"></i>
+                <div>
+                  <p class="text-xs text-slate-400">Completed</p>
+                  <p th:text="${process.endTime ?: 'Recently'}" class="text-sm font-medium">2023-01-20 16:45</p>
+                </div>
+              </div>
+              <div th:unless="${process.ended}" class="flex items-center">
+                <i class="fas fa-clock text-yellow-400 mr-3 w-4"></i>
+                <div>
+                  <p class="text-xs text-slate-400">Status</p>
+                  <p class="text-sm font-medium">In Progress</p>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-key text-slate-400 mr-3 w-4"></i>
+                <div>
+                  <p class="text-xs text-slate-400">Business Key</p>
+                  <p th:text="${process.businessKey}" class="text-sm font-medium">EMP-2023-001</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="d-flex align-items-center" th:if="${process.businessKey}">
-            <i class="fas fa-key text-muted me-2" style="width: 16px;"></i>
-            <div>
-              <div class="small text-muted">Business Key</div>
-              <div class="fw-semibold small" th:text="${process.businessKey}">EMP-2024-001</div>
+          <div class="flex justify-between items-center pt-3 border-t border-slate-700">
+            <div th:if="${process.ended}" class="text-slate-400 text-sm">
+              <i class="fas fa-tasks mr-1"></i><span th:text="${process.taskCount ?: '0'}">3</span> tasks
             </div>
-          </div>
-        </div>
-
-        <!-- Card Actions -->
-        <div class="d-flex justify-content-between align-items-center mt-auto">
-          <div class="dropdown">
-            <button class="btn btn-sm btn-link text-muted p-1" type="button" data-bs-toggle="dropdown">
-              <i class="fas fa-ellipsis-h"></i>
-            </button>
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-eye me-2"></i>View Details
-                </a>
-              </li>
-              <li th:if="${process.ended}">
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-download me-2"></i>Download Report
-                </a>
-              </li>
-              <li th:unless="${process.ended}">
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-pause me-2"></i>Pause Process
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-history me-2"></i>View Timeline
-                </a>
-              </li>
-            </ul>
-          </div>
-          
-          <div class="text-end">
-            <div class="small text-muted" th:if="${process.ended}">
-              <i class="fas fa-tasks me-1"></i>
-              <span th:text="${process.taskCount ?: '0'}">3</span> tasks
+            <div th:unless="${process.ended}" class="text-slate-400 text-sm">
+              <i class="fas fa-spinner mr-1"></i> Running
             </div>
-            <div class="small text-muted" th:unless="${process.ended}">
-              <i class="fas fa-spinner me-1"></i>Running
+            <div class="relative">
+              <button class="dropdown-toggle text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-700">
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
+    </div>
   </div>
-</section>
 </body>
 </html>

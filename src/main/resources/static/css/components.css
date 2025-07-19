@@ -11,6 +11,29 @@
     background-color: #1E293B;
     border: 1px solid #334155;
 }
+ .status-completed {
+            background-color: #166534;
+            color: #BBF7D0;
+        }
+        .status-inprogress {
+            background-color: #1D4ED8;
+            color: #BFDBFE;
+        }
+        .status-pill {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+         .processes-card {
+                    background-color: #1E293B;
+                    border: 1px solid #334155;
+                    display: flex;
+                    flex-direction: column;
+                    height: 100%;
+                }
 
 /* Status Pills */
 .status-pill {
@@ -22,19 +45,11 @@
     color: #333;
 }
 
-.status-inprogress {
-    background: #d1ecf1;
-    color: #0c5460;
-}
+
 
 .status-open {
     background: #fff3cd;
     color: #856404;
-}
-
-.status-completed {
-    background: #d4edda;
-    color: #155724;
 }
 
 /* Search Bar */
