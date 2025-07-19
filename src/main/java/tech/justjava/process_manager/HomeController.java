@@ -29,10 +29,6 @@ public class HomeController {
     public String index() {
         return "redirect:/dashboard";
     }
-    @GetMapping("/pro")
-    public String ins() {
-        return "processInstance/processInstance";
-    }
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
 
