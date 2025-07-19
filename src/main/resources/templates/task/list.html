@@ -51,9 +51,19 @@
                         <span th:text="${#strings.toUpperCase(task.state)}" class="status-in-progress text-xs font-medium px-2 py-1 md:px-3 md:py-1 rounded-full">In Progress</span>
                     </td>
                     <td class="py-3 px-2 md:py-4 md:px-3">
-                        <button class="text-slate-400 hover:text-white">
-                            <span class="material-icons">more_vert</span>
-                        </button>
+                        <div class="dropdown">
+                            <button class="dropdown-toggle text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-700" data-task-id="TSK1003">
+                                <span class="material-icons">more_vert</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a th:if="${task.state == 'created'}" th:href="@{/tasks/add}" class="dropdown-item">
+                                    <span>Claim Task</span>
+                                </a>
+                                <a th:if="${task.state != 'created'}" th:href="@{/tasks/add}" class="dropdown-item">
+                                    <span>Complete Task</span>
+                                </a>
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 </tbody>

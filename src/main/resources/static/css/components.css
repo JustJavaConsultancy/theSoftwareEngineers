@@ -39,7 +39,29 @@
     background: #fff3cd;
     color: #856404;
 }
-
+.dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            z-index: 10;
+            min-width: 160px;
+            background-color: #1E293B;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-item {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: #E2E8F0;
+            text-decoration: none;
+        }
+        .dropdown-item:hover {
+            background-color: #334155;
+        }
 /* Search Bar */
 .search-bar {
     background: #fff;
