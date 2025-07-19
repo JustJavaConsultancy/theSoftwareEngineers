@@ -77,4 +77,59 @@ document.addEventListener('DOMContentLoaded', function() {
                                 });
                             }
                         });
+
+           // Simple modal functionality
+           function openProcessModal() {
+                              const modal = document.getElementById('processModal');
+                              modal.classList.remove('hidden', 'hide');
+                              modal.classList.add('show');
+                              document.body.style.overflow = 'hidden';
+                            }
+
+                            function closeProcessModal() {
+                              const modal = document.getElementById('processModal');
+                              modal.classList.remove('show');
+                              modal.classList.add('hide');
+                              // Wait for animation to finish before hiding
+                              modal.addEventListener('animationend', function handleAnimationEnd() {
+                                modal.classList.add('hidden');
+                                modal.classList.remove('hide');
+                                modal.removeEventListener('animationend', handleAnimationEnd);
+                              });
+                              document.body.style.overflow = 'auto';
+                            }
+
+                            document.querySelectorAll('.process-modal-toggle').forEach(button => {
+                                  button.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    openProcessModal();
+                                  });
+                                });
+
+                                // Handle close button
+                                const closeButton = document.getElementById('closeModal');
+                                if (closeButton) {
+                                  closeButton.addEventListener('click', closeProcessModal);
+                                }
+
+                                // Close modal when clicking backdrop
+                                const modal = document.getElementById('processModal');
+                                if (modal) {
+                                  modal.addEventListener('click', function(e) {
+                                    if (e.target === modal) {
+                                      closeProcessModal();
+                                    }
+                                  });
+                                }
+
+                                // Close modal with Escape key
+                                document.addEventListener('keydown', function(e) {
+                                  if (e.key === 'Escape') {
+                                    const modal = document.getElementById('processModal');
+                                    if (modal && !modal.classList.contains('hidden')) {
+                                      closeProcessModal();
+                                    }
+                                  }
+                                })
         });
