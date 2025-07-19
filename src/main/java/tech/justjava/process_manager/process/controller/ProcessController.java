@@ -214,8 +214,11 @@ public class ProcessController {
     @GetMapping("/processInstance/{processInstanceId}")
     public String processInstanceDetail(@PathVariable(name = "processInstanceId")
                                             final String processInstanceId, Model model) {
+        ProcessInstance processInstance=runtimeService.createProcessInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .singleResult();
         List<UserTask> userTasks = new ArrayList<>();
-        BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstanceId);
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId());
         userTasks.addAll(bpmnModel.getMainProcess().findFlowElementsOfType(UserTask.class));
         userTasks.forEach(userTask -> {
             System.out.println(" The User Task Name ==="+userTask.getName()+
@@ -227,6 +230,8 @@ public class ProcessController {
 
 
         model.addAttribute("tasks",userTasks);
-        return "process/processTasks";
+        model.addAttribute("processId",processInstance.getId());
+        model.addAttribute("processName",processInstance.getProcessDefinitionName());
+        return "process/processModal :: content";
     }
 }
