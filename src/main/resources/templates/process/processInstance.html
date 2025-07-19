@@ -3,6 +3,51 @@
       layout:decorate="~{layout}">
 <head>
   <title>Past Processes</title>
+  <style>
+    @keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+
+.process-modal.show {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.process-modal.hide {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+    .timeline-circle {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .timeline-circle-inactive {
+      border: 2px solid #94a3b8;
+      background-color: transparent;
+    }
+
+    .timeline-circle-active {
+      border: 2px solid #3B82F6;
+      background-color: #3B82F6;
+    }
+
+    .modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Ensure modal appears above everything */
+    .process-modal {
+      z-index: 9999;
+    }
+  </style>
 </head>
 <body>
 <div layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
@@ -17,24 +62,23 @@
     </div>
   </div>
 
-    <!-- Empty State -->
-    <div th:if="${#lists.isEmpty(processes)}" class="processes-card text-center p-8" style="height: auto;">
-      <div class="mb-4">
-        <i class="fas fa-history text-4xl text-slate-500 opacity-50"></i>
-      </div>
-      <h3 class="text-xl font-medium text-slate-300 mb-2">No Process History</h3>
-      <p class="text-slate-400 mb-6">No processes have been executed yet. Process instances will appear here once workflows are started.</p>
-      <div class="flex flex-col sm:flex-row justify-center gap-3">
-        <a th:href="@{/processes/newProcess}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg flex items-center justify-center">
-          <i class="fas fa-rocket mr-2"></i>Start First Process
-        </a>
-      </div>
+  <!-- Empty State -->
+  <div th:if="${#lists.isEmpty(processes)}" class="processes-card text-center p-8" style="height: auto;">
+    <div class="mb-4">
+      <i class="fas fa-history text-4xl text-slate-500 opacity-50"></i>
     </div>
+    <h3 class="text-xl font-medium text-slate-300 mb-2">No Process History</h3>
+    <p class="text-slate-400 mb-6">No processes have been executed yet. Process instances will appear here once workflows are started.</p>
+    <div class="flex flex-col sm:flex-row justify-center gap-3">
+      <a th:href="@{/processes/newProcess}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg flex items-center justify-center">
+        <i class="fas fa-rocket mr-2"></i>Start First Process
+      </a>
+    </div>
+  </div>
 
-    <!-- Process Cards Grid -->
-    <div th:if="${!#lists.isEmpty(processes)}">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div th:each="process : ${processes}">
+  <!-- Process Cards Grid -->
+  <div th:if="${!#lists.isEmpty(processes)}">
+    <div th:each="process : ${processes}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <!-- Completed Process Card -->
       <div class="h-full">
         <div class="processes-card p-4 rounded-xl h-full">
@@ -90,8 +134,7 @@
               <i class="fas fa-spinner mr-1"></i> Running
             </div>
             <div class="relative">
-              <button class="dropdown-toggle text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-700"
-                      data-bs-toggle="modal" data-bs-target="#processModal">
+              <button class="dropdown-toggle text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-700">
                 <i class="fas fa-ellipsis-h"></i>
               </button>
             </div>
@@ -100,8 +143,97 @@
       </div>
     </div>
   </div>
+
+  <!-- Process Timeline Modal -->
+  <div id="processModal" class="process-modal fixed inset-0 modal-backdrop flex items-center justify-center hidden">
+    <!-- Modal Container -->
+    <div class="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <!-- Modal Header -->
+      <header class="px-6 py-4 border-b border-gray-600">
+        <div class="flex items-center justify-between">
+          <h1 class="text-xl font-bold text-white">Process Timeline</h1>
+          <button id="closeModal" class="text-slate-300 hover:text-white text-2xl leading-none" aria-label="Close modal">
+            ×
+          </button>
+        </div>
+      </header>
+
+      <!-- Modal Content -->
+      <div class="px-6 py-6">
+        <!-- Task Information -->
+        <section class="mb-6">
+          <p class="text-base mb-2">
+            <span class="font-bold text-white">Process:</span>
+            <span class="font-normal text-slate-300">Onboard New Employee</span>
+          </p>
+          <p class="text-base">
+            <span class="font-bold text-white">ID:</span>
+            <span class="font-normal text-slate-300">TSK1001</span>
+          </p>
+        </section>
+
+        <!-- Timeline -->
+        <section class="space-y-6">
+          <!-- Initiation Step -->
+          <article class="flex items-start justify-between">
+            <div class="flex items-start space-x-3">
+              <div class="timeline-circle timeline-circle-inactive mt-1"></div>
+              <div>
+                <h3 class="text-base font-medium text-white">Initiation</h3>
+                <p class="text-sm text-slate-300">Assignee: Unassigned</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Planning Step -->
+          <article class="flex items-start justify-between">
+            <div class="flex items-start space-x-3">
+              <div class="timeline-circle timeline-circle-inactive mt-1"></div>
+              <div>
+                <h3 class="text-base font-medium text-white">Planning</h3>
+                <p class="text-sm text-slate-300">Assignee: Unassigned</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Execution Step (Active) -->
+          <article class="flex items-start justify-between">
+            <div class="flex items-start space-x-3">
+              <div class="timeline-circle timeline-circle-active mt-1"></div>
+              <div>
+                <h3 class="text-base font-medium text-white">Execution</h3>
+                <p class="text-sm text-slate-300">Assignee: Kemi Adeleke</p>
+                <p class="text-sm text-slate-300">Started: 2024-05-01 09:00</p>
+                <p class="text-sm text-slate-300">Due: 2024-05-10 18:00</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Monitoring Step -->
+          <article class="flex items-start justify-between">
+            <div class="flex items-start space-x-3">
+              <div class="timeline-circle timeline-circle-inactive mt-1"></div>
+              <div>
+                <h3 class="text-base font-medium text-white">Monitoring</h3>
+                <p class="text-sm text-slate-300">Assignee: Unassigned</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Closure Step -->
+          <article class="flex items-start justify-between">
+            <div class="flex items-start space-x-3">
+              <div class="timeline-circle timeline-circle-inactive mt-1"></div>
+              <div>
+                <h3 class="text-base font-medium text-white">Closure</h3>
+                <p class="text-sm text-slate-300">Assignee: Unassigned</p>
+              </div>
+            </div>
+          </article>
+        </section>
+      </div>
     </div>
   </div>
-
+</div>
 </body>
 </html>
