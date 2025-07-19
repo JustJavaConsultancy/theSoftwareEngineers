@@ -3,10 +3,12 @@ package tech.justjava.process_manager.process.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +48,7 @@ public class ProcessController {
 
 
     private final RuntimeService  runtimeService;
+    private final HistoryService historyService;
     private final ProcessServiceAI  processServiceAI;
 
     private final ProcessService processService;
@@ -53,9 +56,10 @@ public class ProcessController {
     private final FileDataService fileDataService;
     private final FormService formService;
 
-    public ProcessController(RuntimeService runtimeService, ProcessServiceAI processServiceAI, final ProcessService processService, final ObjectMapper objectMapper,
+    public ProcessController(RuntimeService runtimeService, HistoricTaskInstance historicTaskInstance, HistoryService historyService, ProcessServiceAI processServiceAI, final ProcessService processService, final ObjectMapper objectMapper,
                              final FileDataService fileDataService, FormService formService) {
         this.runtimeService = runtimeService;
+        this.historyService = historyService;
         this.processServiceAI = processServiceAI;
         this.processService = processService;
         this.objectMapper = objectMapper;
@@ -204,5 +208,15 @@ public class ProcessController {
     @GetMapping("/startProcess")
     public String startProcess() {
        return "process/startProcess";
+    }
+    @GetMapping("/processInstance/{processInstanceId}")
+    public String processInstanceDetail(@PathVariable(name = "processInstanceId")
+                                            final String processInstanceId, Model model) {
+        List<HistoricTaskInstance> historicTaskInstances = historyService
+                .createHistoricTaskInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .list();
+        model.addAttribute("tasks",historicTaskInstances);
+        return "process/processTasks";
     }
 }
