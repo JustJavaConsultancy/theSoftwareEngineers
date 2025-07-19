@@ -217,6 +217,6 @@ public class ProcessController {
                 .processInstanceId(processInstanceId)
                 .list();
         model.addAttribute("tasks",historicTaskInstances);
-        return "process/processTasks";
+        return "process/processModal :: content";
     }
 }

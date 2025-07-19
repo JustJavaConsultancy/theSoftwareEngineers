@@ -135,8 +135,8 @@
               <i class="fas fa-spinner mr-1"></i> Running
             </div>
             <div class="relative">
-              <a class="process-modal-toggle" style="text-decoration:none" th:data-fragment="@{'/mobile/transaction-details/' + ${transaction.id}}"
-                 th:hx-get="@{'/mobile/transaction-details/' + ${transaction.id}}"
+              <a class="process-modal-toggle" style="text-decoration:none" th:data-fragment="@{'/processes/processInstance/' + ${process.id}}"
+                 th:hx-get="@{'/processes/processInstance/' + ${process.id}}"
                  hx-swap="innerHTML"
                  hx-trigger="click"
                  hx-indicator=".loading-indicator"

@@ -1,4 +1,5 @@
-<section th:fragment="content" class="mb-6" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="content" xmlns:th="http://www.thymeleaf.org">
+<section class="mb-6" >
     <p class="text-base mb-2">
         <span class="font-bold text-white">Process:</span>
         <span class="font-normal text-slate-300">Onboard New Employee</span>
@@ -12,7 +13,7 @@
 <!-- Timeline -->
 <section class="space-y-6">
     <!-- Initiation Step -->
-    <article class="flex items-start justify-between">
+    <article th:each="process : ${processes}" class="flex items-start justify-between">
         <div class="flex items-start space-x-3">
             <div class="timeline-circle timeline-circle-inactive mt-1"></div>
             <div>
@@ -83,3 +84,4 @@
         </button>
     </article>
 </section>
+</div>
