@@ -32,7 +32,7 @@
     </div>
 
     <!-- Process Cards Grid -->
-    <div th:if="${!#lists.isEmpty(activeTasks)}">
+    <div th:if="${!#lists.isEmpty(processes)}">
     <div th:each="process : ${processes}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <!-- Completed Process Card -->
       <div class="h-full">
@@ -40,7 +40,7 @@
           <div class="card-content">
             <div class="flex justify-between items-start mb-3">
               <div class="flex-grow-1">
-                <h3 class="font-bold text-lg text-white mb-1">Employee Onboarding</h3>
+                <h3 class="font-bold text-lg text-white mb-1" th:text="${process.processDefinitionName}">Employee Onboarding</h3>
                 <p th:text="${'Process ID: ' + process.id}" class="text-slate-400 text-sm">Process ID: PI-2023-001</p>
               </div>
               <span class="status-pill "
