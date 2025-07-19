@@ -216,6 +216,17 @@ public class ProcessController {
                 .createHistoricTaskInstanceQuery()
                 .processInstanceId(processInstanceId)
                 .list();
+        historicTaskInstances.forEach(historicTaskInstance -> {
+                    System.out.println(" The Historic Task Instance Variables ==="+historicTaskInstance.getProcessVariables()+
+                            " The Historic Task Instance Id ==="+historicTaskInstance.getId()+
+                            " The Historic Task Instance Name ==="+historicTaskInstance.getName()+
+                            " The Historic Task Instance Business Key ==="+historicTaskInstance.getAssignee()+
+                            " The Historic Task Instance Start Time ==="+historicTaskInstance.getStartTime()+
+                            " The Historic Task Instance Description ==="+historicTaskInstance.getDescription()+
+                            " The Historic Task Instance Suspended ==="+historicTaskInstance.getState());
+
+                }
+        );
         model.addAttribute("tasks",historicTaskInstances);
         return "process/processModal :: content";
     }
