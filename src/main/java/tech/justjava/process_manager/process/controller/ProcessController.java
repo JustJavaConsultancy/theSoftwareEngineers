@@ -232,6 +232,7 @@ public class ProcessController {
         model.addAttribute("tasks",userTasks);
         model.addAttribute("processId",processInstance.getId());
         model.addAttribute("processName",processInstance.getProcessDefinitionName());
+        model.addAttribute("currentTask","UAT");
         return "process/processModal :: content";
     }
 }
