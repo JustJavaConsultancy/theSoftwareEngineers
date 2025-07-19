@@ -56,7 +56,7 @@ public class ProcessController {
     private final FileDataService fileDataService;
     private final FormService formService;
 
-    public ProcessController(RuntimeService runtimeService, HistoricTaskInstance historicTaskInstance, HistoryService historyService, ProcessServiceAI processServiceAI, final ProcessService processService, final ObjectMapper objectMapper,
+    public ProcessController(RuntimeService runtimeService, HistoryService historyService, ProcessServiceAI processServiceAI, final ProcessService processService, final ObjectMapper objectMapper,
                              final FileDataService fileDataService, FormService formService) {
         this.runtimeService = runtimeService;
         this.historyService = historyService;
