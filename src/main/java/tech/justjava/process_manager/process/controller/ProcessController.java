@@ -3,6 +3,7 @@ package tech.justjava.process_manager.process.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.UserTask;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
@@ -30,6 +31,7 @@ import tech.justjava.process_manager.util.JsonStringFormatter;
 import tech.justjava.process_manager.util.ReferencedWarning;
 import tech.justjava.process_manager.util.WebUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -212,22 +214,19 @@ public class ProcessController {
     @GetMapping("/processInstance/{processInstanceId}")
     public String processInstanceDetail(@PathVariable(name = "processInstanceId")
                                             final String processInstanceId, Model model) {
-        List<HistoricTaskInstance> historicTaskInstances = historyService
-                .createHistoricTaskInstanceQuery()
-                .processInstanceId(processInstanceId)
-                .list();
-        historicTaskInstances.forEach(historicTaskInstance -> {
-                    System.out.println(" The Historic Task Instance Variables ==="+historicTaskInstance.getProcessVariables()+
-                            " The Historic Task Instance Id ==="+historicTaskInstance.getId()+
-                            " The Historic Task Instance Name ==="+historicTaskInstance.getName()+
-                            " The Historic Task Instance Business Key ==="+historicTaskInstance.getAssignee()+
-                            " The Historic Task Instance Start Time ==="+historicTaskInstance.getStartTime()+
-                            " The Historic Task Instance Description ==="+historicTaskInstance.getDescription()+
-                            " The Historic Task Instance Suspended ==="+historicTaskInstance.getState());
-
+        List<UserTask> userTasks = new ArrayList<>();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstanceId);
+        userTasks.addAll(bpmnModel.getMainProcess().findFlowElementsOfType(UserTask.class));
+        userTasks.forEach(userTask -> {
+            System.out.println(" The User Task Name ==="+userTask.getName()+
+                    " The User Task Id ==="+userTask.getId()+
+                    " The User Task Assignee ==="+userTask.getAssignee()+
+                    " The User Task Documentation ==="+userTask.getDocumentation());
                 }
         );
-        model.addAttribute("tasks",historicTaskInstances);
+
+
+        model.addAttribute("tasks",userTasks);
         return "process/processTasks";
     }
 }
