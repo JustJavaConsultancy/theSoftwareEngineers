@@ -31,10 +31,7 @@ import tech.justjava.process_manager.util.JsonStringFormatter;
 import tech.justjava.process_manager.util.ReferencedWarning;
 import tech.justjava.process_manager.util.WebUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Controller
@@ -213,26 +210,29 @@ public class ProcessController {
     }
     @GetMapping("/processInstance/{processInstanceId}")
     public String processInstanceDetail(@PathVariable(name = "processInstanceId")
-                                            final String processInstanceId, Model model) {
-        ProcessInstance processInstance=runtimeService.createProcessInstanceQuery()
+                                        final String processInstanceId, Model model) {
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
                 .processInstanceId(processInstanceId)
                 .singleResult();
         List<UserTask> userTasks = new ArrayList<>();
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId());
         userTasks.addAll(bpmnModel.getMainProcess().findFlowElementsOfType(UserTask.class));
+
+        // Reverse the order of the list
+        Collections.reverse(userTasks);
+
         userTasks.forEach(userTask -> {
-            System.out.println(" The User Task Name ==="+userTask.getName()+
-                    " The User Task Id ==="+userTask.getId()+
-                    " The User Task Assignee ==="+userTask.getAssignee()+
-                    " The User Task Documentation ==="+userTask.getDocumentation());
+                    System.out.println(" The User Task Name ===" + userTask.getName() +
+                            " The User Task Id ===" + userTask.getId() +
+                            " The User Task Assignee ===" + userTask.getAssignee() +
+                            " The User Task Documentation ===" + userTask.getDocumentation());
                 }
         );
 
-
-        model.addAttribute("tasks",userTasks);
-        model.addAttribute("processId",processInstance.getId());
-        model.addAttribute("processName",processInstance.getProcessDefinitionName());
-        model.addAttribute("currentTask","UAT");
+        model.addAttribute("tasks", userTasks);
+        model.addAttribute("processId", processInstance.getId());
+        model.addAttribute("processName", processInstance.getProcessDefinitionName());
+        model.addAttribute("currentTask", "UAT");
         return "process/processModal :: content";
     }
 }
