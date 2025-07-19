@@ -78,7 +78,8 @@
 
   <!-- Process Cards Grid -->
   <div th:if="${!#lists.isEmpty(processes)}">
-    <div th:each="process : ${processes}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div th:each="process : ${processes}">
       <!-- Completed Process Card -->
       <div class="h-full">
         <div class="processes-card p-4 rounded-xl h-full">
@@ -248,6 +249,7 @@
         </section>
       </div>
     </div>
+  </div>
   </div>
 </div>
 
