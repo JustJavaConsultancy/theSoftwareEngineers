@@ -42,4 +42,39 @@ document.addEventListener('DOMContentLoaded', function() {
                     sidebarOverlay.classList.remove('active');
                 }
             });
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+                        dropdownToggles.forEach(toggle => {
+                            toggle.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                const dropdownMenu = this.nextElementSibling;
+                                const isOpen = dropdownMenu.classList.contains('show');
+
+                                // Close all other open dropdowns
+                                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                                    if (menu !== dropdownMenu) {
+                                        menu.classList.remove('show');
+                                    }
+                                });
+
+                                // Toggle current dropdown
+                                dropdownMenu.classList.toggle('show', !isOpen);
+                            });
+                        });
+
+                        // Close dropdowns when clicking outside
+                        document.addEventListener('click', function() {
+                            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                                menu.classList.remove('show');
+                            });
+                        });
+
+                        // Close dropdowns when pressing Escape key
+                        document.addEventListener('keydown', function(e) {
+                            if (e.key === 'Escape') {
+                                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                                    menu.classList.remove('show');
+                                });
+                            }
+                        });
         });
