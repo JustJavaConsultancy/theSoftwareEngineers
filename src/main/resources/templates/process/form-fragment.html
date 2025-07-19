@@ -36,45 +36,7 @@
                     </h5>
                     <p class="text-slate-400 text-sm">Basic details about the process you're starting</p>
                 </div>
-                <div class="p-5">
-                    <form id="startProcessForm">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-1">Process Name *</label>
-                                <input type="text" class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                       placeholder="Enter process name">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-1">Full Name *</label>
-                                <input type="text" class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                       placeholder="Enter employee's full name">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-1">Email Address *</label>
-                                <input type="email" class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                       placeholder="employee@company.com">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-1">Department *</label>
-                                <select class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                                    <option value="">Select Department</option>
-                                    <option value="engineering">Engineering</option>
-                                    <option value="marketing">Marketing</option>
-                                    <option value="sales">Sales</option>
-                                    <option value="hr">Human Resources</option>
-                                    <option value="finance">Finance</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Start Button -->
-                        <div class="flex justify-end">
-                            <button type="submit" class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg transition-colors duration-200">
-                                <span class="material-icons mr-2">play_arrow</span>
-                                Start Process
-                            </button>
-                        </div>
-                    </form>
+                <div class="p-5" th:utext="${formHtml}">
                 </div>
             </div>
         </div>

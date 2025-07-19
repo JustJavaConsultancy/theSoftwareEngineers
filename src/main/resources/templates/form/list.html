@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title>Forms</title>
+</head>
+<body>
+<main layout:fragment="content">
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-semibold">Forms</h1>
+    <a href="/forms/new" class="bg-blue-500 text-white px-4 py-2 rounded">Create New</a>
+  </div>
+  <table class="w-full table-auto bg-white rounded shadow">
+    <thead>
+    <tr class="text-left text-gray-600 uppercase text-sm">
+      <th class="p-4">Name</th>
+      <th class="p-4">Code</th>
+      <th class="p-4 text-right">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="form : ${forms}" class="border-t">
+      <td class="p-4" th:text="${form.formName}"></td>
+      <td class="p-4" th:text="${form.formCode}"></td>
+      <td class="p-4 text-right space-x-2">
+        <a th:href="@{'/forms/edit/' + ${form.id}}" class="text-blue-500">Edit</a>
+        <a th:href="@{'/forms/delete/' + ${form.id}}" class="text-red-500"
+           onclick="return confirm('Are you sure?')">Delete</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import tech.justjava.process_manager.file.model.FileData;
 import tech.justjava.process_manager.file.service.FileDataService;
+import tech.justjava.process_manager.process.form.Form;
+import tech.justjava.process_manager.process.form.FormService;
 import tech.justjava.process_manager.process.model.ProcessDTO;
 import tech.justjava.process_manager.process.service.ProcessService;
 import tech.justjava.process_manager.process.service.ProcessServiceAI;
@@ -28,6 +30,7 @@ import tech.justjava.process_manager.util.WebUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Controller
@@ -48,14 +51,16 @@ public class ProcessController {
     private final ProcessService processService;
     private final ObjectMapper objectMapper;
     private final FileDataService fileDataService;
+    private final FormService formService;
 
     public ProcessController(RuntimeService runtimeService, ProcessServiceAI processServiceAI, final ProcessService processService, final ObjectMapper objectMapper,
-                             final FileDataService fileDataService) {
+                             final FileDataService fileDataService, FormService formService) {
         this.runtimeService = runtimeService;
         this.processServiceAI = processServiceAI;
         this.processService = processService;
         this.objectMapper = objectMapper;
         this.fileDataService = fileDataService;
+        this.formService = formService;
     }
 
     @InitBinder
@@ -143,31 +148,46 @@ public class ProcessController {
     }
     @GetMapping("/newProcess")
     public String startForm(Model model) {
+        ProcessDefinition processDefinition = repositoryService
+                .createProcessDefinitionQuery()
+                .processDefinitionKey(processKey)
+                .latestVersion()
+                .singleResult();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinition.getId());
+        org.flowable.bpmn.model.Process process = bpmnModel.getMainProcess();
+        System.out.println(" process name===="+process.getName());
+        System.out.println(" process documentation ===="+process.getDocumentation());
+        String userPrompt= process.getDocumentation();
+        String formThymeleaf=null;
+        Optional<Form> form=formService.findByFormCode(processKey);
+        if(form.isPresent()){
+            formThymeleaf=form.get().getFormInterface();
+        }else{
+            Form newForm=new Form();
+            newForm.setFormCode(processKey);
+            newForm.setFormName(process.getName());
+            newForm.setFormDetails(process.getDocumentation());
+            formThymeleaf=processServiceAI.generateThymeleafForm(userPrompt);
+            formThymeleaf=formThymeleaf.replace("```","").replace("html","");
+            newForm.setFormInterface(formThymeleaf);
+            formService.save(newForm);
+        }
 
-//        BpmnModel bpmnModel = repositoryService.getBpmnModel(id);
-//
-//        org.flowable.bpmn.model.Process process = bpmnModel.getMainProcess();
-//        System.out.println(" process name===="+process.getName());
-//        System.out.println(" process documentation ===="+process.getDocumentation());
-//
-//
-//        String userPrompt= process.getDocumentation();
-//        String formThymeleaf=processServiceAI.generateThymeleafForm(userPrompt);
-//        formThymeleaf=formThymeleaf.replace("```","").replace("html","");
-//        Map<String, Object> formData = Map.of("id", id,"email","akinrinde@justjava.com.ng");
-//
-//
-//
-//        String formHtml=templateRenderer.render(formThymeleaf,formData);
-//
-//        System.out.println(" The Form Fragment==="+formHtml);
-//
-//
-//
-//        model.addAttribute("formData",formData);
-//        model.addAttribute("id",id);
-//        model.addAttribute("email","akinrinde@justjava.com.ng");
-//        model.addAttribute("formHtml",formHtml);
+
+        Map<String, Object> formData = Map.of("id", processDefinition.getId(),"email","akinrinde@justjava.com.ng");
+
+
+
+        String formHtml=templateRenderer.render(formThymeleaf,formData);
+
+        System.out.println(" The Form Fragment==="+formHtml);
+
+
+
+        model.addAttribute("formData",formData);
+/*        model.addAttribute("id",id);
+        model.addAttribute("email","akinrinde@justjava.com.ng");*/
+        model.addAttribute("formHtml",formHtml);
 
         return "process/form-fragment";
     }
