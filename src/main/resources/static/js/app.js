@@ -19,85 +19,117 @@ handleEvent('click', '.js-file-delete', function(event) {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-  const menuToggle = document.getElementById('menu-toggle');
-  const sidebar = document.querySelector('.sidebar');
-  const sidebarOverlay = document.querySelector('.sidebar-overlay');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarOverlay = document.querySelector('.sidebar-overlay');
 
-  if (menuToggle && sidebar && sidebarOverlay) {
-    menuToggle.addEventListener('click', function() {
-      sidebar.classList.toggle('active');
-      sidebarOverlay.classList.toggle('active');
-    });
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            });
 
-    sidebarOverlay.addEventListener('click', function() {
-      sidebar.classList.remove('active');
-      sidebarOverlay.classList.remove('active');
-    });
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
 
-    document.addEventListener('click', function(event) {
-      const isClickInsideSidebar = sidebar.contains(event.target);
-      const isClickOnMenuToggle = menuToggle.contains(event.target);
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMenuToggle = menuToggle.contains(event.target);
 
-      if (!isClickInsideSidebar && !isClickOnMenuToggle && window.innerWidth < 768) {
-        sidebar.classList.remove('active');
-        sidebarOverlay.classList.remove('active');
-      }
-    });
-  }
+                if (!isClickInsideSidebar && !isClickOnMenuToggle && window.innerWidth < 768) {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
 
-  // Handle dropdown functionality for actual dropdowns (not modal triggers)
-   // Simple modal functionality
-    function openProcessModal() {
-      const modal = document.getElementById('processModal');
-      modal.classList.remove('hidden', 'hide');
-      modal.classList.add('show');
-      document.body.style.overflow = 'hidden';
-    }
+                        dropdownToggles.forEach(toggle => {
+                            toggle.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                const dropdownMenu = this.nextElementSibling;
+                                const isOpen = dropdownMenu.classList.contains('show');
 
-    function closeProcessModal() {
-      const modal = document.getElementById('processModal');
-      modal.classList.remove('show');
-      modal.classList.add('hide');
-      // Wait for animation to finish before hiding
-      modal.addEventListener('animationend', function handleAnimationEnd() {
-        modal.classList.add('hidden');
-        modal.classList.remove('hide');
-        modal.removeEventListener('animationend', handleAnimationEnd);
-      });
-      document.body.style.overflow = 'auto';
-    }
+                                // Close all other open dropdowns
+                                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                                    if (menu !== dropdownMenu) {
+                                        menu.classList.remove('show');
+                                    }
+                                });
 
-    document.querySelectorAll('.dropdown-toggle').forEach(button => {
-          button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            openProcessModal();
-          });
+                                // Toggle current dropdown
+                                dropdownMenu.classList.toggle('show', !isOpen);
+                            });
+                        });
+
+                        // Close dropdowns when clicking outside
+                        document.addEventListener('click', function() {
+                            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                                menu.classList.remove('show');
+                            });
+                        });
+
+                        // Close dropdowns when pressing Escape key
+                        document.addEventListener('keydown', function(e) {
+                            if (e.key === 'Escape') {
+                                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                                    menu.classList.remove('show');
+                                });
+                            }
+                        });
+
+           // Simple modal functionality
+           function openProcessModal() {
+                              const modal = document.getElementById('processModal');
+                              modal.classList.remove('hidden', 'hide');
+                              modal.classList.add('show');
+                              document.body.style.overflow = 'hidden';
+                            }
+
+                            function closeProcessModal() {
+                              const modal = document.getElementById('processModal');
+                              modal.classList.remove('show');
+                              modal.classList.add('hide');
+                              // Wait for animation to finish before hiding
+                              modal.addEventListener('animationend', function handleAnimationEnd() {
+                                modal.classList.add('hidden');
+                                modal.classList.remove('hide');
+                                modal.removeEventListener('animationend', handleAnimationEnd);
+                              });
+                              document.body.style.overflow = 'auto';
+                            }
+
+                            document.querySelectorAll('.process-modal-toggle').forEach(button => {
+                                  button.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    openProcessModal();
+                                  });
+                                });
+
+                                // Handle close button
+                                const closeButton = document.getElementById('closeModal');
+                                if (closeButton) {
+                                  closeButton.addEventListener('click', closeProcessModal);
+                                }
+
+                                // Close modal when clicking backdrop
+                                const modal = document.getElementById('processModal');
+                                if (modal) {
+                                  modal.addEventListener('click', function(e) {
+                                    if (e.target === modal) {
+                                      closeProcessModal();
+                                    }
+                                  });
+                                }
+
+                                // Close modal with Escape key
+                                document.addEventListener('keydown', function(e) {
+                                  if (e.key === 'Escape') {
+                                    const modal = document.getElementById('processModal');
+                                    if (modal && !modal.classList.contains('hidden')) {
+                                      closeProcessModal();
+                                    }
+                                  }
+                                })
         });
-
-        // Handle close button
-        const closeButton = document.getElementById('closeModal');
-        if (closeButton) {
-          closeButton.addEventListener('click', closeProcessModal);
-        }
-
-        // Close modal when clicking backdrop
-        const modal = document.getElementById('processModal');
-        if (modal) {
-          modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-              closeProcessModal();
-            }
-          });
-        }
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') {
-            const modal = document.getElementById('processModal');
-            if (modal && !modal.classList.contains('hidden')) {
-              closeProcessModal();
-            }
-          }
-        });
-});

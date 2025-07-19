@@ -134,7 +134,7 @@
               <i class="fas fa-spinner mr-1"></i> Running
             </div>
             <div class="relative">
-              <button class="dropdown-toggle text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-700">
+              <button class="process-modal-toggle text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-700">
                 <i class="fas fa-ellipsis-h"></i>
               </button>
             </div>
@@ -183,6 +183,9 @@
                 <p class="text-sm text-slate-300">Assignee: Unassigned</p>
               </div>
             </div>
+            <button class="px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-600 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+              Reassign
+            </button>
           </article>
 
           <!-- Planning Step -->
@@ -194,6 +197,9 @@
                 <p class="text-sm text-slate-300">Assignee: Unassigned</p>
               </div>
             </div>
+            <button class="px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-600 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+              Reassign
+            </button>
           </article>
 
           <!-- Execution Step (Active) -->
@@ -207,6 +213,9 @@
                 <p class="text-sm text-slate-300">Due: 2024-05-10 18:00</p>
               </div>
             </div>
+            <button class="px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-600 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+              Reassign
+            </button>
           </article>
 
           <!-- Monitoring Step -->
@@ -218,6 +227,9 @@
                 <p class="text-sm text-slate-300">Assignee: Unassigned</p>
               </div>
             </div>
+            <button class="px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-600 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+              Reassign
+            </button>
           </article>
 
           <!-- Closure Step -->
@@ -229,11 +241,67 @@
                 <p class="text-sm text-slate-300">Assignee: Unassigned</p>
               </div>
             </div>
+            <button class="px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-600 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+              Reassign
+            </button>
           </article>
         </section>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  // Simple modal functionality
+  function openProcessModal() {
+    const modal = document.getElementById('processModal');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProcessModal() {
+    const modal = document.getElementById('processModal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  }
+
+  // Initialize modal functionality when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    // Handle dropdown toggle clicks to open modal
+    document.querySelectorAll('.process-modal-toggle').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openProcessModal();
+      });
+    });
+
+    // Handle close button
+    const closeButton = document.getElementById('closeModal');
+    if (closeButton) {
+      closeButton.addEventListener('click', closeProcessModal);
+    }
+
+    // Close modal when clicking backdrop
+    const modal = document.getElementById('processModal');
+    if (modal) {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeProcessModal();
+        }
+      });
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('processModal');
+        if (modal && !modal.classList.contains('hidden')) {
+          closeProcessModal();
+        }
+      }
+    });
+  });
+</script>
 </body>
 </html>
