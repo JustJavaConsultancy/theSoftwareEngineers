@@ -194,7 +194,7 @@ public class ProcessController {
                 runtimeService.startProcessInstanceById(formData.get("id").toString(),formData);
 
         System.out.println("  The Process Instance Variables ==="+processInstance.getProcessVariables());
-        return "process/success";
+        return "redirect:/processes";
     }
     @GetMapping("/startProcess")
     public String startProcess() {
@@ -210,9 +210,7 @@ public class ProcessController {
         String currentTask= (String) processInstance.getProcessVariables().get("currentTask");
 
         List<UserTask> userTasks = processService.getProcessUserTasks(processInstance.getProcessDefinitionId());
-        userTasks.forEach(userTask -> {
-            System.out.println(" User Task=="+userTask.getName());
-        });
+
 
 
         model.addAttribute("tasks", userTasks);

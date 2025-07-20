@@ -58,9 +58,6 @@ public class ProcessServiceAI {
 
                         ✅ Code Style:
 
-                        Use Bootstrap grid (row, col) for layout.
-
-                        Buttons should have btn btn-primary with a sky blue background (style="background-color: #87CEEB;").
 
                         Use form-floating if it improves elegance.
 
@@ -83,7 +80,7 @@ public class ProcessServiceAI {
                                       </div>
                                       <div class="mb-3">
                                         <label for="message" class="block text-sm font-medium text-slate-300 mb-2">Message</label>
-                                        <textarea th:value="${message}"  id="message" name="message"class="form-input w-full px-4 py-3 rounded-lg border pr-12" rows="4" placeholder="Your message"></textarea>
+                                        <textarea th:value="${message}" th:text="${message}" id="message" name="message"class="form-input w-full px-4 py-3 rounded-lg border pr-12" rows="4" placeholder="Your message"></textarea>
                                       </div>
                                       <button type="submit" class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg transition-colors duration-200">
                                        <span class="material-icons mr-2">play_arrow</span>
@@ -134,6 +131,10 @@ public class ProcessServiceAI {
 
                         All fields must use th:value="${key}" name="key" id="key" instead of th:field="*{key}" so the submitted values are stored in the Map. notation so the submitted values are stored in the Map.
 
+                        When `Type: textarea` is specified, **always use a free, elegant Rich Text Editor** such as:
+                           - [Quill.js](https://quilljs.com) (default)
+                           - Or [Trix Editor](https://trix-editor.org) if explicitly mentioned.
+                           
                         Always include the hidden id input.
                         Always submit the form to http://localhost:9000/tasks/complete 
                         The value hx-post should always be http://localhost:9000/tasks/complete
@@ -179,7 +180,7 @@ public class ProcessServiceAI {
                                       </div>
                                       <div class="mb-3">
                                         <label for="message" class="block text-sm font-medium text-slate-300 mb-2">Message</label>
-                                        <textarea th:value="${message}"  id="message" name="message"class="form-input w-full px-4 py-3 rounded-lg border pr-12" rows="4" placeholder="Your message"></textarea>
+                                        <textarea th:value="${message}" th:text="${message}" id="message" name="message"class="form-input w-full px-4 py-3 rounded-lg border pr-12" rows="4" placeholder="Your message"></textarea>
                                       </div>
                                       <button type="submit" class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg transition-colors duration-200">
                                        <span class="material-icons mr-2">play_arrow</span>

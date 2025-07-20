@@ -76,10 +76,10 @@ public class TaskController {
     }
 
     @GetMapping("/add/{taskId}")
-    public String add(@PathVariable("") final String taskId, final Model model,@ModelAttribute("task") final TaskDTO taskDTO) {
+    public String add(@PathVariable("taskId") final String taskId, Model model) {
 
         Task  task=taskService.findTaskById(taskId);
-        //System.out.println(" Task Documentation=="+task.getDescription());
+        //System.out.println(" Process Variable =="+task.getProcessVariables());
         String formThymeleaf=null;
         Optional<Form> form=formService.findByFormCode(task.getTaskDefinitionKey());
         if(form.isPresent()){
@@ -94,19 +94,13 @@ public class TaskController {
             newForm.setFormInterface(formThymeleaf);
             formService.save(newForm);
         }
-        Map<String, Object> formData = task.getTaskLocalVariables();
 
-        formData.put("id",task.getId());
+        Map<String,Object> formData= task.getProcessVariables();
+
+        formData.put("id", task.getId());
 
         String formHtml=templateRenderer.render(formThymeleaf,formData);
 
-        //System.out.println(" The Form Fragment==="+formHtml);
-
-
-
-        model.addAttribute("formData",formData);
-/*        model.addAttribute("id",id);
-        model.addAttribute("email","akinrinde@justjava.com.ng");*/
         model.addAttribute("formHtml",formHtml);
 
 
