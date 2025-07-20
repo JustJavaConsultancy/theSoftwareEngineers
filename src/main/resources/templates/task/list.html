@@ -56,7 +56,7 @@
                                 <span class="material-icons">more_vert</span>
                             </button>
                             <div class="dropdown-menu">
-                                <a th:if="${task.state == 'created'}" th:href="@{/tasks/add}" class="dropdown-item">
+                                <a th:if="${task.state == 'created'}" th:href="@{'/tasks/add/'+${task.id}}" class="dropdown-item">
                                     <span>Claim Task</span>
                                 </a>
                                 <a th:if="${task.state != 'created'}" th:href="@{/tasks/add}" class="dropdown-item">

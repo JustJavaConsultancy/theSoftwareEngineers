@@ -29,7 +29,7 @@ public class OpenAIService {
 
     public String chatWithSystempromptTemplate(String systemPromptTemplate, String userMessage) {
         systemPromptTemplate = systemPromptTemplate.formatted(userMessage);
-        System.out.println(" systemPromptTemplate==="+systemPromptTemplate);
+        //System.out.println(" systemPromptTemplate==="+systemPromptTemplate);
         String response = chatClient.prompt(systemPromptTemplate).call().content();
         return response;
     }
