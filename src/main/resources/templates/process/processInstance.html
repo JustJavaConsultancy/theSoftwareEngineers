@@ -153,29 +153,29 @@
     </div>
   </div>
 
-  <!-- Process Timeline Modal -->
-  <div id="processModal" class="process-modal fixed inset-0 modal-backdrop flex items-center justify-center hidden">
-    <!-- Modal Container -->
-    <div class="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-      <!-- Modal Header -->
-      <header class="px-6 py-4 border-b border-gray-600">
-        <div class="flex items-center justify-between">
-          <h1 class="text-xl font-bold text-white">Process Timeline</h1>
-          <button id="closeModal" class="text-slate-300 hover:text-white text-2xl leading-none" aria-label="Close modal">
-            ×
-          </button>
-        </div>
-      </header>
+    <!-- Process Timeline Modal -->
+    <div id="processModal" class="process-modal fixed inset-0 modal-backdrop flex items-center justify-center hidden">
+      <!-- Modal Container -->
+      <div class="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col">
+        <!-- Modal Header -->
+        <header class="px-6 py-4 border-b border-gray-600 flex-shrink-0">
+          <div class="flex items-center justify-between">
+            <h1 class="text-xl font-bold text-white">Process Timeline</h1>
+            <button id="closeModal" class="text-slate-300 hover:text-white text-2xl leading-none" aria-label="Close modal">
+              ×
+            </button>
+          </div>
+        </header>
 
-      <!-- Modal Content -->
-      <div class="px-6 py-6" id="processesListing">
-        <!-- Task Information -->
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+        <!-- Scrollable Modal Content -->
+        <div class="px-6 py-6 overflow-y-auto flex-grow" id="processesListing">
+          <!-- Task Information -->
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
   </div>
 </div>
 
