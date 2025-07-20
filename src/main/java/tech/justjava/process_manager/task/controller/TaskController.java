@@ -115,9 +115,12 @@ public class TaskController {
 
     @PostMapping("/complete")
     public String add(@RequestParam Map<String,Object> formData) {
+        formData.put("shortRoute",true);
+        System.out.println("1 Here is the Submitted Data Here==="+formData);
 
-        System.out.println(" The Submitted Data Here==="+formData);
         String taskId = (String) formData.get("id");
+
+        System.out.println("2 Here is the Submitted Data Here==="+formData);
         taskService.completeTask(taskId,formData);
         return "task/successTask";
     }
