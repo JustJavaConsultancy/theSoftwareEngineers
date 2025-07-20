@@ -12,6 +12,34 @@
             integrity="sha384-9ndCyUa6mY2lT2DFbJ8QZbXzBvb3Y6F87nL4rS1A+I1D9r1I6gOGJXcU7k5C6Ufn"
             crossorigin="anonymous"
     >
+    <style>
+        .card {
+           background-color: #1E293B;
+           border-radius: 0.75rem;
+       }
+       .form-input {
+           background-color: #334155;
+           border-color: #475569;
+           color: #E2E8F0;
+       }
+       .form-input:focus {
+           outline: none;
+           border-color: #38BDF8;
+           box-shadow: 0 0 0 2px #0F172A, 0 0 0 4px #38BDF8;
+       }
+       .btn-primary {
+           background-color: #3B82F6;
+       }
+       .btn-primary:hover {
+           background-color: #2563EB;
+       }
+       .progress-bar-bg {
+           background-color: #334155;
+       }
+       .progress-bar {
+           background-color: #3B82F6;
+       }
+    </style>
 </head>
 <body>
     <div layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
@@ -22,22 +50,25 @@
         </div>
 
         <!-- Progress Indicator -->
-        <div class="w-full bg-slate-700 rounded-full h-2 mb-6">
-            <div class="progress-bar h-2 rounded-full" style="width: 33%"></div>
+        <div class="mt-8 w-full progress-bar-bg rounded-full h-2.5">
+            <div class="progress-bar h-2.5 rounded-full" style="width: 45%"></div>
         </div>
 
         <!-- Full-width Form Container -->
         <div class="w-full">
             <!-- Process Information Card -->
-            <div class="form-card rounded-lg overflow-hidden">
-                <div class="p-5 border-b border-slate-700">
-                    <h5 class="font-bold text-lg text-blue-400 mb-1 flex items-center">
-                        <i class="fas fa-info-circle mr-2"></i>Process Information
-                    </h5>
-                    <p class="text-slate-400 text-sm">Basic details about the process you're starting</p>
+
+            <div class="mt-10 card p-8">
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <span class="material-icons text-blue-400 text-3xl">info</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-white">Process Information</h2>
+                        <p class="mt-1 text-slate-400">Basic details about the process you're starting</p>
+                    </div>
                 </div>
-                <div class="p-5" th:utext="${formHtml}">
-                </div>
+                <div class="p-5" th:utext="${formHtml}"></div>
             </div>
         </div>
     </div>

@@ -23,8 +23,8 @@ public class ProcessServiceAI {
 
                         Include labels, placeholders, and validation attributes as per the field descriptions.
                         
-                        Include class="block text-sm font-medium text-slate-300 mb-1" for all the labels
-                        and use class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                        Include class="block text-sm font-medium text-slate-300 mb-2" for all the labels
+                        and use class="form-input w-full px-4 py-3 rounded-lg border pr-12"
                         for all the inputs and select types
                         Use clean, semantic, and indented HTML.
 
@@ -72,18 +72,18 @@ public class ProcessServiceAI {
                                       <input type="hidden" th:value="${id}" id="id" name="id">
                                       <div class="row mb-3">
                                         <div class="col">
-                                          <label for="fullName" class="block text-sm font-medium text-slate-300 mb-1">Full Name</label>
+                                          <label for="fullName" class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
                                           <input type="text"  th:value="${fullName}" name="fullName" id="fullName" 
-                                          class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Enter your full name" required>
+                                          class="form-input w-full px-4 py-3 rounded-lg border pr-12" placeholder="Enter your full name" required>
                                         </div>
                                         <div class="col">
-                                          <label for="email" class="block text-sm font-medium text-slate-300 mb-1">Email</label>
-                                          <input type="email" th:value="${email}" id="email" name="email" class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Enter your email" required>
+                                          <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email</label>
+                                          <input type="email" th:value="${email}" id="email" name="email" class="form-input w-full px-4 py-3 rounded-lg border pr-12" placeholder="Enter your email" required>
                                         </div>
                                       </div>
                                       <div class="mb-3">
-                                        <label for="message" class="block text-sm font-medium text-slate-300 mb-1">Message</label>
-                                        <textarea th:value="${message}"  id="message" name="message" class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" rows="4" placeholder="Your message"></textarea>
+                                        <label for="message" class="block text-sm font-medium text-slate-300 mb-2">Message</label>
+                                        <textarea th:value="${message}"  id="message" name="message"class="form-input w-full px-4 py-3 rounded-lg border pr-12" rows="4" placeholder="Your message"></textarea>
                                       </div>
                                       <button type="submit" class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg transition-colors duration-200">
                                        <span class="material-icons mr-2">play_arrow</span>
