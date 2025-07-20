@@ -5,6 +5,7 @@ import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
 import org.flowable.common.engine.api.delegate.event.FlowableEntityEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
+import org.flowable.engine.RuntimeService;
 import org.flowable.task.api.Task;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -14,8 +15,10 @@ public class JustJavaFlowableListener implements FlowableEventListener {
 
 
     private final SimpMessagingTemplate messagingTemplate;
-    public JustJavaFlowableListener(SimpMessagingTemplate messagingTemplate) {
+    private final RuntimeService runtimeService;
+    public JustJavaFlowableListener(SimpMessagingTemplate messagingTemplate, RuntimeService runtimeService) {
         this.messagingTemplate = messagingTemplate;
+        this.runtimeService = runtimeService;
     }
 
     @Override
@@ -23,15 +26,18 @@ public class JustJavaFlowableListener implements FlowableEventListener {
         if (event instanceof FlowableEntityEvent) {
             FlowableEntityEvent entityEvent = (FlowableEntityEvent) event;
 
+
             // Ensure that the entity is a Task
 
 
             if (entityEvent.getEntity() instanceof Task) {
                 Task task = (Task) entityEvent.getEntity();
+
                 if (event.getType() == FlowableEngineEventType.TASK_CREATED) {
 
-
-
+                    runtimeService.setVariable(task.getProcessInstanceId(), "currentTask", task.getName());
+                    System.out.println(" The full Process Variable Here==="+task.getProcessVariables());
+                    task.getProcessVariables().put("currentTask",task.getName());
 
                     String assignee=task.getAssignee();
 

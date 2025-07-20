@@ -4,20 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import tech.justjava.process_manager.process.form.Form;
+import tech.justjava.process_manager.process.form.FormService;
 import tech.justjava.process_manager.process.service.ProcessServiceAI;
 import tech.justjava.process_manager.process.service.TemplateRenderer;
 import tech.justjava.process_manager.process_instance.domain.ProcessInstance;
@@ -42,12 +41,14 @@ public class TaskController {
     @Autowired
     TemplateRenderer templateRenderer;
     private final TaskService taskService;
+    private final FormService formService;
     private final ObjectMapper objectMapper;
     private final ProcessInstanceRepository processInstanceRepository;
 
-    public TaskController(final TaskService taskService, final ObjectMapper objectMapper,
-            final ProcessInstanceRepository processInstanceRepository) {
+    public TaskController(final TaskService taskService, FormService formService, final ObjectMapper objectMapper,
+                          final ProcessInstanceRepository processInstanceRepository) {
         this.taskService = taskService;
+        this.formService = formService;
         this.objectMapper = objectMapper;
         this.processInstanceRepository = processInstanceRepository;
     }
@@ -74,19 +75,50 @@ public class TaskController {
         return "task/list";
     }
 
-    @GetMapping("/add")
-    public String add(@ModelAttribute("task") final TaskDTO taskDTO) {
+    @GetMapping("/add/{taskId}")
+    public String add(@PathVariable("") final String taskId, final Model model,@ModelAttribute("task") final TaskDTO taskDTO) {
+
+        Task  task=taskService.findTaskById(taskId);
+        //System.out.println(" Task Documentation=="+task.getDescription());
+        String formThymeleaf=null;
+        Optional<Form> form=formService.findByFormCode(task.getTaskDefinitionKey());
+        if(form.isPresent()){
+            formThymeleaf=form.get().getFormInterface();
+        }else{
+            Form newForm=new Form();
+            newForm.setFormCode(task.getTaskDefinitionKey());
+            newForm.setFormName(task.getName());
+            newForm.setFormDetails(task.getDescription());
+            formThymeleaf=processServiceAI.generateTaskThymeleafForm(task.getDescription());
+            formThymeleaf=formThymeleaf.replace("```","").replace("html","");
+            newForm.setFormInterface(formThymeleaf);
+            formService.save(newForm);
+        }
+        Map<String, Object> formData = task.getTaskLocalVariables();
+
+        formData.put("id",task.getId());
+
+        String formHtml=templateRenderer.render(formThymeleaf,formData);
+
+        //System.out.println(" The Form Fragment==="+formHtml);
+
+
+
+        model.addAttribute("formData",formData);
+/*        model.addAttribute("id",id);
+        model.addAttribute("email","akinrinde@justjava.com.ng");*/
+        model.addAttribute("formHtml",formHtml);
+
+
         return "task/add";
     }
 
-    @PostMapping("/add")
-    public String add(@ModelAttribute("task") @Valid final TaskDTO taskDTO,
-            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            return "task/add";
-        }
-        taskService.create(taskDTO);
-        redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("task.create.success"));
+    @PostMapping("/complete")
+    public String add(@RequestParam Map<String,Object> formData) {
+
+        System.out.println(" The Submitted Data Here==="+formData);
+        String taskId = (String) formData.get("id");
+        taskService.completeTask(taskId,formData);
         return "redirect:/tasks";
     }
 
@@ -94,7 +126,7 @@ public class TaskController {
     public String edit(@PathVariable(name = "id") final String id, final Model model) {
         String taskDocumentation=taskService.getTaskDocumentation(id);
 
-        System.out.println(" The Task Documentation==="+taskDocumentation);
+        //System.out.println(" The Task Documentation==="+taskDocumentation);
         String formThymeleaf=processServiceAI.generateThymeleafForm(taskDocumentation);
         formThymeleaf=formThymeleaf.replace("```","").replace("html","");
         Map<String, Object> formData = Map.of("id", id,"email","akinrinde@justjava.com.ng");
@@ -103,7 +135,7 @@ public class TaskController {
 
         String formHtml=templateRenderer.render(formThymeleaf,formData);
 
-        System.out.println(" The Form Fragment==="+formHtml);
+        //System.out.println(" The Form Fragment==="+formHtml);
 
 
 

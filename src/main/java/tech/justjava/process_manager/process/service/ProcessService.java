@@ -1,6 +1,11 @@
 package tech.justjava.process_manager.process.service;
 
-import java.util.List;
+import java.util.*;
+
+import org.flowable.bpmn.model.*;
+import org.flowable.engine.RepositoryService;
+import org.flowable.engine.RuntimeService;
+import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +24,17 @@ public class ProcessService {
 
     private final ProcessRepository processRepository;
     private final FileDataService fileDataService;
+    private final RepositoryService repositoryService;
+    private final RuntimeService runtimeService;
     private final ProcessInstanceRepository processInstanceRepository;
 
     public ProcessService(final ProcessRepository processRepository,
-            final FileDataService fileDataService,
-            final ProcessInstanceRepository processInstanceRepository) {
+                          final FileDataService fileDataService,
+                          RepositoryService repositoryService, RuntimeService runtimeService, final ProcessInstanceRepository processInstanceRepository) {
         this.processRepository = processRepository;
         this.fileDataService = fileDataService;
+        this.repositoryService = repositoryService;
+        this.runtimeService = runtimeService;
         this.processInstanceRepository = processInstanceRepository;
     }
 
@@ -36,6 +45,47 @@ public class ProcessService {
                 .toList();
     }
 
+    public List<UserTask> getProcessUserTasks(String processDefinitionID){
+
+        Set<String> visitedDefinitions = new HashSet<>();
+        List<UserTask> userTasks = new ArrayList<>();
+        collectUserTasksFromDefinition(processDefinitionID, userTasks, visitedDefinitions);
+        return userTasks;
+
+    }
+    private void collectUserTasksFromDefinition(String processDefinitionId, List<UserTask> userTasks,
+                                                Set<String> visitedDefinitions) {
+        // Prevent infinite loop from recursive calls
+        if (visitedDefinitions.contains(processDefinitionId)) return;
+        visitedDefinitions.add(processDefinitionId);
+
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+        if (bpmnModel == null) return;
+
+        org.flowable.bpmn.model.Process mainProcess = bpmnModel.getMainProcess();
+        collectUserTasks(mainProcess.getFlowElements(), userTasks, visitedDefinitions);
+    }
+    private void collectUserTasks(Collection<FlowElement> elements, List<UserTask> userTasks, Set<String> visitedDefinitions) {
+        for (FlowElement element : elements) {
+            if (element instanceof UserTask) {
+                userTasks.add((UserTask) element);
+            } else if (element instanceof SubProcess) {
+                collectUserTasks(((SubProcess) element).getFlowElements(), userTasks, visitedDefinitions);
+            } else if (element instanceof CallActivity callActivity) {
+                String calledProcessDefinitionKey = callActivity.getCalledElement();
+                if (calledProcessDefinitionKey != null) {
+                    // Fetch latest version of the called process
+                    ProcessDefinition calledProcDef = repositoryService.createProcessDefinitionQuery()
+                            .processDefinitionKey(calledProcessDefinitionKey)
+                            .latestVersion()
+                            .singleResult();
+                    if (calledProcDef != null) {
+                        collectUserTasksFromDefinition(calledProcDef.getId(), userTasks, visitedDefinitions);
+                    }
+                }
+            }
+        }
+    }
     public ProcessDTO get(final Long id) {
         return processRepository.findById(id)
                 .map(process -> mapToDTO(process, new ProcessDTO()))

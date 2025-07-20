@@ -3,6 +3,7 @@ package tech.justjava.process_manager.process.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.Process;
 import org.flowable.bpmn.model.UserTask;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
@@ -74,21 +75,12 @@ public class ProcessController {
 
     @GetMapping
     public String list(final Model model) {
-        System.out.println(" I'm in the Process List....");
+        //System.out.println(" I'm in the Process List....");
         List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery()
                 .processDefinitionKey(processKey)
                 .active()
                 .list();
-        processInstances.forEach(processInstance -> {
-                    System.out.println(" The Process Instance Variables ==="+processInstance.getProcessVariables()+
-                            " The Process Instance Id ==="+processInstance.getId()+
-                            " The Process Instance Name ==="+processInstance.getProcessDefinitionName()+
-                            " The Process Instance Business Key ==="+processInstance.getBusinessKey()+
-                            " The Process Instance Start Time ==="+processInstance.getStartTime()+
-                            " The Process Instance Description ==="+processInstance.isEnded()+
-                            " The Process Instance Suspended ==="+processInstance.isSuspended());
-                }
-        );
+
         model.addAttribute("processes", processInstances);
 
         return "process/processInstance";
@@ -158,8 +150,8 @@ public class ProcessController {
                 .singleResult();
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinition.getId());
         org.flowable.bpmn.model.Process process = bpmnModel.getMainProcess();
-        System.out.println(" process name===="+process.getName());
-        System.out.println(" process documentation ===="+process.getDocumentation());
+        //System.out.println(" process name===="+process.getName());
+        //System.out.println(" process documentation ===="+process.getDocumentation());
         String userPrompt= process.getDocumentation();
         String formThymeleaf=null;
         Optional<Form> form=formService.findByFormCode(processKey);
@@ -183,7 +175,7 @@ public class ProcessController {
 
         String formHtml=templateRenderer.render(formThymeleaf,formData);
 
-        System.out.println(" The Form Fragment==="+formHtml);
+        //System.out.println(" The Form Fragment==="+formHtml);
 
 
 
@@ -196,7 +188,7 @@ public class ProcessController {
     }
     @PostMapping("/start")
     public String handleFormSubmit(@RequestParam Map<String,Object> formData) {
-        System.out.println(" The Form Data==="+formData);
+        //System.out.println(" The Form Data==="+formData);
 
         ProcessInstance processInstance=
                 runtimeService.startProcessInstanceById(formData.get("id").toString(),formData);
@@ -211,28 +203,22 @@ public class ProcessController {
     @GetMapping("/processInstance/{processInstanceId}")
     public String processInstanceDetail(@PathVariable(name = "processInstanceId")
                                         final String processInstanceId, Model model) {
-        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+        org.flowable.engine.runtime.ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
                 .processInstanceId(processInstanceId)
+                .includeProcessVariables()
                 .singleResult();
-        List<UserTask> userTasks = new ArrayList<>();
-        BpmnModel bpmnModel = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId());
-        userTasks.addAll(bpmnModel.getMainProcess().findFlowElementsOfType(UserTask.class));
+        String currentTask= (String) processInstance.getProcessVariables().get("currentTask");
 
-        // Reverse the order of the list
-        Collections.reverse(userTasks);
-
+        List<UserTask> userTasks = processService.getProcessUserTasks(processInstance.getProcessDefinitionId());
         userTasks.forEach(userTask -> {
-                    System.out.println(" The User Task Name ===" + userTask.getName() +
-                            " The User Task Id ===" + userTask.getId() +
-                            " The User Task Assignee ===" + userTask.getAssignee() +
-                            " The User Task Documentation ===" + userTask.getDocumentation());
-                }
-        );
+            System.out.println(" User Task=="+userTask.getName());
+        });
+
 
         model.addAttribute("tasks", userTasks);
         model.addAttribute("processId", processInstance.getId());
         model.addAttribute("processName", processInstance.getProcessDefinitionName());
-        model.addAttribute("currentTask", "UAT");
+        model.addAttribute("currentTask", currentTask);
         return "process/processModal :: content";
     }
 }

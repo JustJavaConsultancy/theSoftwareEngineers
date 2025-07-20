@@ -1,6 +1,7 @@
 package tech.justjava.process_manager.task.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.FlowElement;
@@ -40,13 +41,26 @@ public class TaskService {
                 .map(task -> mapToDTO(task, new TaskDTO()))
                 .toList();
     }
+    public void completeTask(String taskId, Map<String,Object> variables) {
+        flowableTaskService.complete(taskId,variables);
+    }
     public List<org.flowable.task.api.Task> findActiveflowableTasks() {
         return flowableTaskService
                 .createTaskQuery()
                 .active()
                 .orderByTaskCreateTime()
-                .asc()
+                .desc()
                 .list();
+    }
+    public org.flowable.task.api.Task findTaskById(String taskId) {
+        return flowableTaskService
+                .createTaskQuery()
+                .active()
+                .includeTaskLocalVariables()
+                .includeProcessVariables()
+                .taskId(taskId)
+                .singleResult();
+
     }
     public String getTaskDocumentation(String taskId) {
         org.flowable.task.api.Task task=flowableTaskService.createTaskQuery().taskId(taskId).singleResult();
