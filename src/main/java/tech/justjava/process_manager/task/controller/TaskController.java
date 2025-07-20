@@ -102,8 +102,7 @@ public class TaskController {
         String formHtml=templateRenderer.render(formThymeleaf,formData);
 
         model.addAttribute("formHtml",formHtml);
-
-
+        model.addAttribute("name",task.getName());
         return "task/add";
     }
 
