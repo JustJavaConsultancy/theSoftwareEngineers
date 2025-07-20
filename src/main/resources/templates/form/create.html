@@ -73,8 +73,8 @@
         <div style="margin-top:20px">
           <label class="form-label">Task</label>
           <select name="tasks" class="input-field">  <!-- Name matches request parameter -->
-            <option value="">-- Select an option --</option>
-            <option th:each="item : ${task}"
+            <option value="">-- Select a task --</option>
+            <option th:each="item : ${tasks}"
                     th:value="${item.id}"
                     th:text="${item.name}">
             </option>

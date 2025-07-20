@@ -1,5 +1,9 @@
 package tech.justjava.process_manager.process.form;
 
+import org.flowable.bpmn.model.UserTask;
+import org.flowable.engine.RepositoryService;
+import org.flowable.engine.RuntimeService;
+import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +11,7 @@ import tech.justjava.process_manager.process.service.ProcessService;
 
 import tech.justjava.process_manager.process.service.ProcessServiceAI;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -15,12 +20,16 @@ public class FormController {
 
     private final FormService formService;
     private final ProcessServiceAI processServiceAI;
-
+    private final String  processKey = "softwareEngineeringProcess";
+    private final RuntimeService runtimeService;
+    private final RepositoryService repositoryService;
     private final ProcessService processService;
 
-    public FormController(FormService formService, ProcessServiceAI processServiceAI, ProcessService processService) {
+    public FormController(FormService formService, ProcessServiceAI processServiceAI, RuntimeService runtimeService, RepositoryService repositoryService, ProcessService processService) {
         this.formService = formService;
         this.processServiceAI = processServiceAI;
+        this.runtimeService = runtimeService;
+        this.repositoryService = repositoryService;
         this.processService = processService;
     }
 
@@ -33,8 +42,13 @@ public class FormController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
 
+//        ProcessInstance processInstance=runtimeService
+//                .createProcessInstanceQuery()
+//                        .processDefinitionKey(processKey)
+//                .list().get(0);
+        List<UserTask> userTasks=processService.getProcessUserTasks("6bc2a77b-63b3-11f0-b782-0a0027000014");
         model.addAttribute("form", new Form());
-
+        model.addAttribute("tasks", userTasks);
         return "form/create";
     }
 
