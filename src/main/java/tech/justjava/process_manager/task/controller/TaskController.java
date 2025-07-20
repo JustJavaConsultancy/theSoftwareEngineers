@@ -108,8 +108,7 @@ public class TaskController {
 /*        model.addAttribute("id",id);
         model.addAttribute("email","akinrinde@justjava.com.ng");*/
         model.addAttribute("formHtml",formHtml);
-
-
+        model.addAttribute("name",task.getName());
         return "task/add";
     }
 

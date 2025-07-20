@@ -1,37 +1,143 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout.html}">
 <head>
-  <title>Create Form</title>
+  <title>Edit Form Snippet</title>
+
+  <!-- CodeMirror CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.min.css">
+  <style>
+    .CodeMirror {
+      height: 300px;
+      font-family: monospace;
+    }
+
+        .btn-primary {
+            background-color: #3B82F6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #2563EB;
+        }
+        .btn-secondary {
+            background-color: #475569;
+            color: #E2E8F0;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #64748B;
+        }
+    .form-container {
+            background-color: #1E293B;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-top: 1.5rem;
+        }
+
+    .form-label {
+            color: #94A3B8;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+    .input-field {
+            background-color: #334155;
+            border: 1px solid #475569;
+            color: #E2E8F0;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3B82F6;
+        }
+
+  </style>
 </head>
 <body>
-<main layout:fragment="content">
-  <h1 class="text-2xl font-semibold mb-6">Create New Form</h1>
+<main layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
+  <h1 class="text-2xl md:text-3xl font-bold text-white">Create Form</h1>
+  <div class="form-container">
+    <div class="space-y-6">
 
-  <form th:action="@{/forms}" method="post"
-        th:object="${form}" class="space-y-4 bg-white p-6 rounded shadow max-w-xl">
-    <div>
-      <label class="block text-gray-700 mb-1">Form Name</label>
-      <input type="text" th:field="*{formName}" required class="w-full border rounded p-2"/>
+      <form th:action="@{/forms}" method="post" th:object="${form}">
+        <input type="hidden" th:field="*{id}"/>
+        <div style="margin-top:20px">
+          <label class="form-label">Task</label>
+          <select name="tasks" class="input-field">  <!-- Name matches request parameter -->
+            <option value="">-- Select an option --</option>
+            <option th:each="item : ${task}"
+                    th:value="${item.id}"
+                    th:text="${item.name}">
+            </option>
+          </select>
+        </div>
+        <!-- Form Name -->
+        <div style="margin-top:20px">
+          <label class="form-label">Form Name</label>
+          <input type="text" th:field="*{formName}" required class="input-field"/>
+        </div>
+
+        <!-- Form Code -->
+        <div style="margin-top:20px">
+          <label class="form-label">Form Code</label>
+          <input type="text" th:field="*{formCode}" required class="input-field"/>
+        </div>
+
+        <!-- Form Details -->
+        <div style="margin-top:20px">
+          <label class="form-label">Form Details</label>
+          <textarea th:field="*{formDetails}" required class="input-field" rows="6"></textarea>
+        </div>
+        <!-- Submit -->
+        <div class="mt-8 flex justify-end space-x-4">
+          <button type="submit" class="btn-primary">Generate Form</button>
+        </div>
+
+        <!-- Form Interface (rich code editor) -->
+        <div style="margin-top:20px">
+          <label class="form-label">Generate Form</label>
+          <textarea id="interfaceEditor" name="formInterface" th:text="${form.formInterface}"
+                    required class="hidden "></textarea>
+          <div id="interfaceEditorContainer" class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"></div>
+        </div>
+      </form>
     </div>
-    <div>
-      <label class="block text-gray-700 mb-1">Form Code</label>
-      <input type="text" th:field="*{formCode}" required class="w-full border rounded p-2"/>
-    </div>
-    <div>
-      <label class="block text-gray-700 mb-1">Form Details</label>
-      <textarea th:field="*{formDetails}" required class="w-full border rounded p-2"></textarea>
-    </div>
-    <div>
-      <label class="block text-gray-700 mb-1">Form Interface</label>
-      <input type="text" th:field="*{formInterface}" required class="w-full border rounded p-2"/>
-    </div>
-    <div class="text-right">
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
-        Save
-      </button>
-    </div>
-  </form>
+  </div>
+
+  <!-- CodeMirror Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/htmlmixed/htmlmixed.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/xml/xml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/javascript/javascript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/css/css.js"></script>
+
+  <script>
+    // Initialize CodeMirror and sync with hidden textarea
+    const textarea = document.getElementById("interfaceEditor");
+    const container = document.getElementById("interfaceEditorContainer");
+
+    const editor = CodeMirror(container, {
+      value: textarea.value,
+      mode: "htmlmixed",
+      lineNumbers: true,
+      tabSize: 2,
+      lineWrapping: true,
+    });
+
+    // Sync CodeMirror content back to hidden field before submitting
+    document.querySelector("form").addEventListener("submit", () => {
+      textarea.value = editor.getValue();
+    });
+  </script>
 </main>
 </body>
 </html>

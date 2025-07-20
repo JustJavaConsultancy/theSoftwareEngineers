@@ -1,8 +1,12 @@
 package tech.justjava.process_manager.process.form;
 
+import org.flowable.bpmn.model.UserTask;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import tech.justjava.process_manager.process.service.ProcessService;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/forms")
@@ -10,8 +14,11 @@ public class FormController {
 
     private final FormService formService;
 
-    public FormController(FormService formService) {
+    private final ProcessService processService;
+
+    public FormController(FormService formService, ProcessService processService) {
         this.formService = formService;
+        this.processService = processService;
     }
 
     @GetMapping
@@ -22,7 +29,9 @@ public class FormController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
+
         model.addAttribute("form", new Form());
+
         return "form/create";
     }
 
