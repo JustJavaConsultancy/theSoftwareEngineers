@@ -119,7 +119,7 @@ public class TaskController {
         System.out.println(" The Submitted Data Here==="+formData);
         String taskId = (String) formData.get("id");
         taskService.completeTask(taskId,formData);
-        return "redirect:/tasks";
+        return "task/successTask";
     }
 
     @GetMapping("/edit/{id}")
