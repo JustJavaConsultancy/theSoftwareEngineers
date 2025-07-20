@@ -80,84 +80,84 @@
   <div th:if="${!#lists.isEmpty(processes)}">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div th:each="process : ${processes}">
-      <!-- Completed Process Card -->
-      <div class="h-full">
-        <div class="processes-card p-4 rounded-xl h-full">
-          <div class="card-content">
-            <div class="flex justify-between items-start mb-3">
-              <div class="flex-grow-1">
-                <h3 class="font-bold text-lg text-white mb-1" th:text="${process.processDefinitionName}">Employee Onboarding</h3>
-                <p th:text="${'Process ID: ' + process.id}" class="text-slate-400 text-sm">Process ID: PI-2023-001</p>
+        <!-- Completed Process Card -->
+        <div class="h-full">
+          <div class="processes-card p-4 rounded-xl h-full">
+            <div class="card-content">
+              <div class="flex justify-between items-start mb-3">
+                <div class="flex-grow-1">
+                  <h3 class="font-bold text-lg text-white mb-1" th:text="${process.processDefinitionName}">Employee Onboarding</h3>
+                  <p th:text="${'Process ID: ' + process.id}" class="text-slate-400 text-sm">Process ID: PI-2023-001</p>
+                </div>
+                <span class="status-pill "
+                      th:classappend="${process.ended ? 'status-completed' : 'status-inprogress'}"
+                      th:text="${process.ended ? 'COMPLETED' : 'ACTIVE'}"
+                >COMPLETED</span>
               </div>
-              <span class="status-pill "
-                    th:classappend="${process.ended ? 'status-completed' : 'status-inprogress'}"
-                    th:text="${process.ended ? 'COMPLETED' : 'ACTIVE'}"
-              >COMPLETED</span>
+
+              <div class="space-y-3 mb-4">
+                <div class="flex items-center">
+                  <i class="fas fa-calendar-alt text-slate-400 mr-3 w-4"></i>
+                  <div>
+                    <p class="text-xs text-slate-400">Started</p>
+                    <p th:text="${process.startTime}" class="text-sm font-medium">2023-01-15 09:30</p>
+                  </div>
+                </div>
+                <div th:if="${process.ended}" class="flex items-center">
+                  <i class="fas fa-check-circle text-green-400 mr-3 w-4"></i>
+                  <div>
+                    <p class="text-xs text-slate-400">Completed</p>
+                    <p th:text="${process.endTime ?: 'Recently'}" class="text-sm font-medium">2023-01-20 16:45</p>
+                  </div>
+                </div>
+                <div th:unless="${process.ended}" class="flex items-center">
+                  <i class="fas fa-clock text-yellow-400 mr-3 w-4"></i>
+                  <div>
+                    <p class="text-xs text-slate-400">Status</p>
+                    <p class="text-sm font-medium">In Progress</p>
+                  </div>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-key text-slate-400 mr-3 w-4"></i>
+                  <div>
+                    <p class="text-xs text-slate-400">Business Key</p>
+                    <p th:text="${process.businessKey}" class="text-sm font-medium">EMP-2023-001</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div class="space-y-3 mb-4">
-              <div class="flex items-center">
-                <i class="fas fa-calendar-alt text-slate-400 mr-3 w-4"></i>
-                <div>
-                  <p class="text-xs text-slate-400">Started</p>
-                  <p th:text="${process.startTime}" class="text-sm font-medium">2023-01-15 09:30</p>
-                </div>
+            <div class="flex justify-between items-center pt-3 border-t border-slate-700">
+              <div th:if="${process.ended}" class="text-slate-400 text-sm">
+                <i class="fas fa-tasks mr-1"></i><span th:text="${process.taskCount ?: '0'}">3</span> tasks
               </div>
-              <div th:if="${process.ended}" class="flex items-center">
-                <i class="fas fa-check-circle text-green-400 mr-3 w-4"></i>
-                <div>
-                  <p class="text-xs text-slate-400">Completed</p>
-                  <p th:text="${process.endTime ?: 'Recently'}" class="text-sm font-medium">2023-01-20 16:45</p>
-                </div>
+              <div th:unless="${process.ended}" class="text-slate-400 text-sm">
+                <i class="fas fa-spinner mr-1"></i> Running
               </div>
-              <div th:unless="${process.ended}" class="flex items-center">
-                <i class="fas fa-clock text-yellow-400 mr-3 w-4"></i>
-                <div>
-                  <p class="text-xs text-slate-400">Status</p>
-                  <p class="text-sm font-medium">In Progress</p>
-                </div>
+              <div class="relative">
+                <a class="process-modal-toggle" style="text-decoration:none" th:data-fragment="@{'/processes/processInstance/' + ${process.id}}"
+                   th:hx-get="@{'/processes/processInstance/' + ${process.id}}"
+                   hx-swap="innerHTML"
+                   hx-trigger="click"
+                   hx-indicator=".loading-indicator"
+                   hx-target="#processesListing">
+                  <button
+                          class=" text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-700">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                </a>
               </div>
-              <div class="flex items-center">
-                <i class="fas fa-key text-slate-400 mr-3 w-4"></i>
-                <div>
-                  <p class="text-xs text-slate-400">Business Key</p>
-                  <p th:text="${process.businessKey}" class="text-sm font-medium">EMP-2023-001</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex justify-between items-center pt-3 border-t border-slate-700">
-            <div th:if="${process.ended}" class="text-slate-400 text-sm">
-              <i class="fas fa-tasks mr-1"></i><span th:text="${process.taskCount ?: '0'}">3</span> tasks
-            </div>
-            <div th:unless="${process.ended}" class="text-slate-400 text-sm">
-              <i class="fas fa-spinner mr-1"></i> Running
-            </div>
-            <div class="relative">
-              <a class="process-modal-toggle" style="text-decoration:none" th:data-fragment="@{'/processes/processInstance/' + ${process.id}}"
-                 th:hx-get="@{'/processes/processInstance/' + ${process.id}}"
-                 hx-swap="innerHTML"
-                 hx-trigger="click"
-                 hx-indicator=".loading-indicator"
-                 hx-target="#processesListing">
-              <button
-                      class=" text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-700">
-                <i class="fas fa-ellipsis-h"></i>
-              </button>
-              </a>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
     <!-- Process Timeline Modal -->
     <div id="processModal" class="process-modal fixed inset-0 modal-backdrop flex items-center justify-center hidden">
       <!-- Modal Container -->
-      <div class="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col">
-        <!-- Modal Header -->
+      <div style="height:90vh" class="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden">
+        <!-- Modal Header (fixed height) -->
         <header class="px-6 py-4 border-b border-gray-600 flex-shrink-0">
           <div class="flex items-center justify-between">
             <h1 class="text-xl font-bold text-white">Process Timeline</h1>
@@ -167,12 +167,9 @@
           </div>
         </header>
 
-        <!-- Scrollable Modal Content -->
-        <div class="px-6 py-6 overflow-y-auto flex-grow" id="processesListing">
-          <!-- Task Information -->
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
+        <!-- Scrollable Content Area -->
+        <div class="overflow-y-auto px-6 py-6 flex-1" id="processesListing">
+          <!-- Content will be inserted here -->
         </div>
       </div>
     </div>
