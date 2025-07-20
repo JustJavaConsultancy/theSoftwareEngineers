@@ -1,12 +1,10 @@
 package tech.justjava.process_manager.process.form;
 
-import org.flowable.bpmn.model.UserTask;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import tech.justjava.process_manager.process.service.ProcessService;
 
-import java.util.List;
 import tech.justjava.process_manager.process.service.ProcessServiceAI;
 
 import java.util.Optional;
@@ -20,11 +18,10 @@ public class FormController {
 
     private final ProcessService processService;
 
-    public FormController(FormService formService, ProcessService processService) {
-    public FormController(FormService formService, ProcessServiceAI processServiceAI) {
+    public FormController(FormService formService, ProcessServiceAI processServiceAI, ProcessService processService) {
         this.formService = formService;
-        this.processService = processService;
         this.processServiceAI = processServiceAI;
+        this.processService = processService;
     }
 
     @GetMapping
