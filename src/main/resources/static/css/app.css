@@ -2,3 +2,126 @@
 @import 'layout.css';
 @import 'components.css';
 @import 'utilities.css';
+
+/* Light Mode Overrides */
+body.light-mode {
+    background-color: #f4f8fb;
+    color: #1E293B;
+}
+
+body.light-mode .sidebar {
+    background-color: #fff;
+    color: #1E293B;
+}
+
+body.light-mode .main-content {
+    background-color: #f4f8fb;
+    color: #1E293B;
+}
+
+body.light-mode .card,
+body.light-mode .form-card,
+body.light-mode .processes-card,
+body.light-mode .process-card,
+body.light-mode .task-card,
+body.light-mode .form-container {
+    background-color: #fff !important;
+    color: #1E293B !important;
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .table-header,
+body.light-mode .table-row,
+body.light-mode .table-container {
+    background-color: #fff !important;
+    color: #1E293B !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+}
+
+body.light-mode .search-input {
+    background-color: #fff !important;
+    color: #1E293B !important;
+    border: 1px solid #e0e0e0 !important;
+}
+
+body.light-mode .search-input::placeholder {
+    color: #666 !important;
+}
+
+body.light-mode .dropdown-menu {
+    background-color: #fff !important;
+    color: #1E293B !important;
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .dropdown-item {
+    color: #1E293B !important;
+}
+
+body.light-mode .dropdown-item:hover {
+    background-color: #f4f8fb !important;
+}
+
+body.light-mode .empty-state,
+body.light-mode .empty-state-title {
+    color: #1E293B !important;
+}
+
+body.light-mode .empty-state-icon {
+    color: #e0e0e0 !important;
+}
+
+body.light-mode .status-in-progress {
+    background-color: #e0e7ff !important;
+    color: #1D4ED8 !important;
+}
+
+body.light-mode .status-opened {
+    background-color: #fee2e2 !important;
+    color: #991B1B !important;
+}
+
+body.light-mode .status-completed {
+    background-color: #bbf7d0 !important;
+    color: #166534 !important;
+}
+
+body.light-mode .view-all-link {
+    color: #1D4ED8 !important;
+}
+
+body.light-mode .view-all-link:hover {
+    color: #0F172A !important;
+}
+
+body.light-mode .modal-backdrop {
+    background-color: rgba(0,0,0,0.2) !important;
+}
+
+/* Light mode: override header and sidebar text colors */
+body.light-mode .text-white,
+body.light-mode .sidebar .text-white,
+body.light-mode .main-content .text-white,
+body.light-mode h1.text-white,
+body.light-mode h2.text-white,
+body.light-mode h3.text-white,
+body.light-mode h4.text-white,
+body.light-mode h5.text-white,
+body.light-mode h6.text-white {
+    color: #1E293B !important;
+}
+
+body.light-mode .text-slate-400,
+body.light-mode .main-content .text-slate-400 {
+    color: #64748B !important;
+}
+
+body.light-mode .text-slate-300 {
+    color: #334155 !important;
+}
+
+body.light-mode .input-field {
+    background-color: #fff !important;
+    color: #1E293B !important;
+    border: 1px solid #e0e0e0 !important;
+}
