@@ -17,6 +17,7 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
             rel="stylesheet"
             crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             
     <!-- Application CSS -->
     <link th:href="@{/css/app.css}" rel="stylesheet">
@@ -54,7 +55,8 @@
                 <span class="material-icons mr-3">note_add</span>
                 <span>Task Forms</span>
             </a>
-            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" href="#">
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/report}"
+               th:classappend="${currentPath == '/report'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">bar_chart</span>
                 <span>Reports</span>
             </a>
