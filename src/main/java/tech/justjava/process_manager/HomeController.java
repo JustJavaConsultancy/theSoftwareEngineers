@@ -4,6 +4,7 @@ import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.task.api.Task;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +17,8 @@ import java.util.List;
 public class HomeController {
     private final RuntimeService runtimeService;
     private final TaskService  taskService;
-    private final String  processKey = "softwareEngineeringProcess";
+    @Value("${app.processKey}")
+    private String  processKey;
     private final HistoryService historyService;
 
     public HomeController(RuntimeService runtimeService, TaskService taskService, HistoryService historyService) {

@@ -12,6 +12,7 @@ import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -39,7 +40,8 @@ import java.util.*;
 @RequestMapping("/processes")
 public class ProcessController {
 
-    private final String  processKey = "softwareEngineeringProcess";
+    @Value("${app.processKey}")
+    private String  processKey;
     @Autowired
     private RepositoryService repositoryService;
 

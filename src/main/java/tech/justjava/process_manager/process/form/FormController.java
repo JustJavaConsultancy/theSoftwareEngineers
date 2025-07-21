@@ -3,7 +3,9 @@ package tech.justjava.process_manager.process.form;
 import org.flowable.bpmn.model.UserTask;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
+import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +20,10 @@ import java.util.Optional;
 @RequestMapping("/forms")
 public class FormController {
 
+    @Value("${app.processKey}")
+    private String  processKey;
     private final FormService formService;
     private final ProcessServiceAI processServiceAI;
-    private final String  processKey = "softwareEngineeringProcess";
     private final RuntimeService runtimeService;
     private final RepositoryService repositoryService;
     private final ProcessService processService;
@@ -42,11 +45,18 @@ public class FormController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
 
-//        ProcessInstance processInstance=runtimeService
-//                .createProcessInstanceQuery()
-//                        .processDefinitionKey(processKey)
-//                .list().get(0);
-        List<UserTask> userTasks=processService.getProcessUserTasks("6bc2a77b-63b3-11f0-b782-0a0027000014");
+        ProcessDefinition processDefinition = repositoryService
+                .createProcessDefinitionQuery()
+                .processDefinitionKey(processKey)
+                .latestVersion()
+                .singleResult();
+        List<UserTask> userTasks=processService.getProcessUserTasks(processDefinition.getId());
+        userTasks.forEach(userTask -> {
+            System.out.println(" the usertask id"+userTask.getId()+
+                    "  the usertask name"+userTask.getName()+
+                    "  the usertask documentation"+userTask.getDocumentation()+
+                    "  the usertask assignee"+userTask.getAssignee());
+        });
         model.addAttribute("form", new Form());
         model.addAttribute("tasks", userTasks);
         return "form/create";

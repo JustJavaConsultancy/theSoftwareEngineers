@@ -63,5 +63,5 @@ server:
 springdoc:
   pathsToMatch: /api/**
 
-
-
+app:
+  processKey: "softwareEngineeringProcess"
