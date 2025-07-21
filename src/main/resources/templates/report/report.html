@@ -1,0 +1,283 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Edit Form Snippet</title>
+
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.min.css">
+    <style>
+        .card {
+            background-color: #1E293B;
+        }
+        .table-header, .table-row {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.6em;
+            font-size: 0.75em;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.375rem;
+        }
+        .badge-completed {
+            color: #34d399;
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+        .badge-in-progress {
+            color: #f59e0b;
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+        .badge-pending {
+            color: #60a5fa;
+            background-color: rgba(96, 165, 250, 0.1);
+        }
+    </style>
+</head>
+<body>
+<main layout:fragment="content" class="flex-1 overflow-x-hidden overflow-y-auto main-content p-6" >
+    <div class="items-center mb-8">
+        <div class="mb-3">
+            <h1 class="text-3xl font-bold text-white">User Tasks &amp; Processes Report</h1>
+            <p class="text-[var(--text-secondary)] mt-1">Analytics and performance overview of user activities.</p>
+        </div>
+        <div style="justify-content:end" class="flex space-x-4">
+            <button class="flex items-center bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                <span class="material-icons mr-2">date_range</span>
+                Last 30 days
+                <span class="material-icons ml-1">expand_more</span>
+            </button>
+            <button class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                <span class="material-icons mr-2">download</span>
+                Export Report
+            </button>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="lg:col-span-2 card p-6 rounded-lg">
+            <h2 class="text-xl font-semibold text-white mb-4">Task Completion Status</h2>
+            <div class="h-80"><canvas id="taskStatusChart"></canvas></div>
+        </div>
+        <div class="card p-6 rounded-lg">
+            <h2 class="text-xl font-semibold text-white mb-4">Process Distribution</h2>
+            <div class="h-80"><canvas id="processDistributionChart"></canvas></div>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="card p-6 rounded-lg flex items-center justify-between">
+            <div>
+                <p class="text-[var(--text-secondary)] text-sm">Total Tasks</p>
+                <p class="text-3xl font-bold text-white">4,321</p>
+            </div>
+            <div class="bg-blue-500 bg-opacity-20 p-3 rounded-full">
+                <span class="material-icons text-blue-400">task_alt</span>
+            </div>
+        </div>
+        <div class="card p-6 rounded-lg flex items-center justify-between">
+            <div>
+                <p class="text-[var(--text-secondary)] text-sm">Completed</p>
+                <p class="text-3xl font-bold text-white">3,890</p>
+            </div>
+            <div class="bg-green-500 bg-opacity-20 p-3 rounded-full">
+                <span class="material-icons text-green-400">check_circle</span>
+            </div>
+        </div>
+        <div class="card p-6 rounded-lg flex items-center justify-between">
+            <div>
+                <p class="text-[var(--text-secondary)] text-sm">In Progress</p>
+                <p class="text-3xl font-bold text-white">350</p>
+            </div>
+            <div class="bg-yellow-500 bg-opacity-20 p-3 rounded-full">
+                <span class="material-icons text-yellow-400">hourglass_top</span>
+            </div>
+        </div>
+        <div class="card p-6 rounded-lg flex items-center justify-between">
+            <div>
+                <p class="text-[var(--text-secondary)] text-sm">Avg. Task Time</p>
+                <p class="text-3xl font-bold text-white">1.2h</p>
+            </div>
+            <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full">
+                <span class="material-icons text-purple-400">timer</span>
+            </div>
+        </div>
+    </div>
+    <div class="card rounded-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-white">Recent Task Activities</h2>
+            <div class="flex items-center space-x-4">
+                <button class="flex items-center text-[var(--text-secondary)] hover:text-white">
+                    <span class="material-icons mr-1">filter_list</span>
+                    Filter
+                </button>
+                <button class="flex items-center text-[var(--text-secondary)] hover:text-white">
+                    <span class="material-icons mr-1">sort</span>
+                    Sort
+                </button>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                <tr class="table-header text-[var(--text-secondary)] uppercase text-sm">
+                    <th class="py-3 px-4">Task Name</th>
+                    <th class="py-3 px-4">Process</th>
+                    <th class="py-3 px-4">Assigned To</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4">Last Updated</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="table-row hover:bg-gray-800">
+                    <td class="py-4 px-4 font-medium">Review new user application</td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">Onboarding</td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">Alex Johnson</td>
+                    <td class="py-4 px-4"><span class="badge badge-completed">Completed</span></td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">2023-10-26 11:45 AM</td>
+                </tr>
+                <tr class="table-row hover:bg-gray-800">
+                    <td class="py-4 px-4 font-medium">Approve expense report #ER-1024</td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">Finance</td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">Samantha Green</td>
+                    <td class="py-4 px-4"><span class="badge badge-in-progress">In Progress</span></td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">2023-10-27 09:12 AM</td>
+                </tr>
+                <tr class="table-row hover:bg-gray-800">
+                    <td class="py-4 px-4 font-medium">Generate monthly performance report</td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">Analytics</td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">System</td>
+                    <td class="py-4 px-4"><span class="badge badge-completed">Completed</span></td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">2023-10-27 08:00 AM</td>
+                </tr>
+                <tr class="table-row hover:bg-gray-800">
+                    <td class="py-4 px-4 font-medium">Prepare Q4 marketing materials</td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">Marketing</td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">Maria Rodriguez</td>
+                    <td class="py-4 px-4"><span class="badge badge-in-progress">In Progress</span></td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">2023-10-26 03:22 PM</td>
+                </tr>
+                <tr class="table-row hover:bg-gray-800">
+                    <td class="py-4 px-4 font-medium">Verify new customer identity</td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">Onboarding</td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">David Chen</td>
+                    <td class="py-4 px-4"><span class="badge badge-pending">Pending</span></td>
+                    <td class="py-4 px-4 text-[var(--text-secondary)]">2023-10-27 10:05 AM</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="flex justify-between items-center mt-4 text-sm text-[var(--text-secondary)]">
+            <span>Showing 1 to 5 of 87 entries</span>
+            <div class="flex items-center space-x-2">
+                <button class="px-3 py-1 rounded-md hover:bg-gray-700">Previous</button>
+                <button class="px-3 py-1 rounded-md bg-[var(--brand-color)] text-white">1</button>
+                <button class="px-3 py-1 rounded-md hover:bg-gray-700">2</button>
+                <button class="px-3 py-1 rounded-md hover:bg-gray-700">3</button>
+                <button class="px-3 py-1 rounded-md hover:bg-gray-700">...</button>
+                <button class="px-3 py-1 rounded-md hover:bg-gray-700">18</button>
+                <button class="px-3 py-1 rounded-md hover:bg-gray-700">Next</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const taskStatusCtx = document.getElementById('taskStatusChart').getContext('2d');
+       const taskStatusChart = new Chart(taskStatusCtx, {
+           type: 'bar',
+           data: {
+               labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'This Week'],
+               datasets: [{
+                   label: 'Completed',
+                   data: [120, 150, 110, 160, 180],
+                   backgroundColor: 'rgba(52, 211, 153, 0.6)',
+                   borderColor: 'rgba(52, 211, 153, 1)',
+                   borderWidth: 1
+               }, {
+                   label: 'In Progress',
+                   data: [30, 25, 40, 35, 45],
+                   backgroundColor: 'rgba(245, 158, 11, 0.6)',
+                   borderColor: 'rgba(245, 158, 11, 1)',
+                   borderWidth: 1
+               }, {
+                   label: 'Pending',
+                   data: [10, 15, 8, 12, 5],
+                   backgroundColor: 'rgba(96, 165, 250, 0.6)',
+                   borderColor: 'rgba(96, 165, 250, 1)',
+                   borderWidth: 1
+               }]
+           },
+           options: {
+               responsive: true,
+               maintainAspectRatio: false,
+               plugins: {
+                   legend: {
+                       position: 'top',
+                       labels: {
+                           color: '#9ca3af'
+                       }
+                   },
+                   tooltip: {
+                       mode: 'index',
+                       intersect: false
+                   }
+               },
+               scales: {
+                   x: {
+                       stacked: true,
+                       ticks: { color: '#9ca3af' },
+                       grid: { color: '#374151' }
+                   },
+                   y: {
+                       stacked: true,
+                       beginAtZero: true,
+                       ticks: { color: '#9ca3af' },
+                       grid: { color: '#374151' }
+                   }
+               }
+           }
+       });
+
+       // Process Distribution Chart
+       const processDistributionCtx = document.getElementById('processDistributionChart').getContext('2d');
+       const processDistributionChart = new Chart(processDistributionCtx, {
+           type: 'doughnut',
+           data: {
+               labels: ['Onboarding', 'Finance', 'Marketing', 'Analytics', 'Support'],
+               datasets: [{
+                   data: [30, 25, 15, 20, 10],
+                   backgroundColor: [
+                       'rgba(59, 130, 246, 0.7)',
+                       'rgba(16, 185, 129, 0.7)',
+                       'rgba(239, 68, 68, 0.7)',
+                       'rgba(245, 158, 11, 0.7)',
+                       'rgba(139, 92, 246, 0.7)'
+                   ],
+                   borderColor: '#1f2937',
+                   borderWidth: 3
+               }]
+           },
+           options: {
+               responsive: true,
+               maintainAspectRatio: false,
+               plugins: {
+                   legend: {
+                       position: 'bottom',
+                       labels: {
+                           color: '#9ca3af',
+                           padding: 15
+                       }
+                   }
+               }
+           }
+       });
+
+       // Handle window resize
+       window.addEventListener('resize', function() {
+           taskStatusChart.resize();
+           processDistributionChart.resize();
+       });
+    </script>
+</main>
+</body>
+</html>
