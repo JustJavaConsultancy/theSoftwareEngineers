@@ -132,4 +132,42 @@ document.addEventListener('DOMContentLoaded', function() {
                                     }
                                   }
                                 })
+
+            // Dark/Light mode toggle logic
+            const modeToggleBtn = document.getElementById('mode-toggle');
+            const body = document.body;
+            const MODE_KEY = 'colorMode';
+            const ICON_MOON = 'nightlight_round';
+            const ICON_SUN = 'wb_sunny';
+
+            function setMode(mode) {
+                if (mode === 'light') {
+                    body.classList.add('light-mode');
+                } else {
+                    body.classList.remove('light-mode');
+                }
+                // Change icon if possible
+                if (modeToggleBtn) {
+                    const icon = modeToggleBtn.querySelector('.material-icons');
+                    if (icon) {
+                        icon.textContent = mode === 'light' ? ICON_SUN : ICON_MOON;
+                    }
+                }
+            }
+
+            // On load, apply saved mode
+            const savedMode = localStorage.getItem(MODE_KEY);
+            if (savedMode === 'light' || savedMode === 'dark') {
+                setMode(savedMode);
+            }
+
+            // Toggle on button click
+            if (modeToggleBtn) {
+                modeToggleBtn.addEventListener('click', function() {
+                    const isLight = body.classList.toggle('light-mode');
+                    const newMode = isLight ? 'light' : 'dark';
+                    localStorage.setItem(MODE_KEY, newMode);
+                    setMode(newMode);
+                });
+            }
         });
