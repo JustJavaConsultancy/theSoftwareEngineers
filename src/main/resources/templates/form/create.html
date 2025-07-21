@@ -72,10 +72,11 @@
         <input type="hidden" th:field="*{id}"/>
         <div style="margin-top:20px">
           <label class="form-label">Task</label>
-          <select name="tasks" class="input-field">  <!-- Name matches request parameter -->
+          <select name="tasks" id="taskSelect" class="input-field">  <!-- Name matches request parameter -->
             <option value="">-- Select a task --</option>
             <option th:each="item : ${tasks}"
                     th:value="${item.id}"
+                    th:data-name="${item.name}"
                     th:text="${item.name}">
             </option>
           </select>
@@ -83,13 +84,13 @@
         <!-- Form Name -->
         <div style="margin-top:20px">
           <label class="form-label">Form Name</label>
-          <input type="text" th:field="*{formName}" required class="input-field"/>
+          <input type="text" id="formName" th:field="*{formName}" required class="input-field"/>
         </div>
 
         <!-- Form Code -->
         <div style="margin-top:20px">
           <label class="form-label">Form Code</label>
-          <input type="text" th:field="*{formCode}" required class="input-field"/>
+          <input type="text" id="formCode" th:field="*{formCode}" required class="input-field"/>
         </div>
 
         <!-- Form Details -->
@@ -136,6 +137,28 @@
     // Sync CodeMirror content back to hidden field before submitting
     document.querySelector("form").addEventListener("submit", () => {
       textarea.value = editor.getValue();
+    });
+
+    // New functionality to auto-fill form name and code when task is selected
+    document.getElementById('taskSelect').addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+
+      if (selectedOption.value) {
+        // Get the task name from data-name attribute
+        const taskName = selectedOption.getAttribute('data-name');
+        // Get the task ID from value attribute
+        const taskId = selectedOption.value;
+
+        // Fill form name with the task name
+        document.getElementById('formName').value = taskName + ' Form';
+
+        // Fill form code with the task ID (you can modify this format as needed)
+        document.getElementById('formCode').value = 'FORM_' + taskId;
+      } else {
+        // Clear fields if no task is selected
+        document.getElementById('formName').value = '';
+        document.getElementById('formCode').value = '';
+      }
     });
   </script>
 </main>
