@@ -62,6 +62,17 @@
         .dropdown-item:hover {
             background-color: #334155;
         }
+        .view-all-link {
+                    color: #BFDBFE;
+                    font-size: 0.875rem;
+                    display: flex;
+                    align-items: center;
+                    transition: color 0.2s;
+                }
+                .view-all-link:hover {
+                    color: #FFFFFF;
+                    text-decoration: underline;
+                }
 /* Search Bar */
 .search-bar {
     background: #fff;
