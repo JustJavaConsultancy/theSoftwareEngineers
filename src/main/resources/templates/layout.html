@@ -60,6 +60,11 @@
                 <span class="material-icons mr-3">bar_chart</span>
                 <span>Reports</span>
             </a>
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/users}"
+               th:classappend="${currentPath == '/users'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">group</span>
+                <span>User Management</span>
+            </a>
         </nav>
     </div>
 </aside>

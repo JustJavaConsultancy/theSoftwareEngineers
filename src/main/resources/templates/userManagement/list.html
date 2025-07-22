@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<div layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
+    <div>
+      <h2 class="text-2xl md:text-3xl font-bold text-white">User Management</h2>
+      <p class="text-slate-400 mt-1">Manage your Keycloak users and their groups</p>
+    </div>
+    <a style="text-decoration:none" href="/users/new">
+      <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg flex items-center w-full md:w-auto justify-center dashboard-start-process-btn">
+        <span class="material-icons mr-2">add</span>
+        Add New User
+      </button>
+    </a>
+  </div>
+  <div class="table-container rounded-xl p-4 md:p-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div class="flex items-center space-x-2">
+        <button class="bg-slate-700 p-2 rounded-lg text-slate-300"><span class="material-icons">add</span></button>
+        <button class="bg-slate-700 p-2 rounded-lg text-slate-300"><span class="material-icons">filter_list</span></button>
+      </div>
+      <div class="search-container relative w-full md:w-auto">
+        <span class="material-icons search-icon">search</span>
+        <input class="search-input text-white rounded-lg pl-10 pr-4 py-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search users" type="text"/>
+      </div>
+    </div>
+<!--    <div th:if="${#lists.isEmpty(user)}" class="empty-state">-->
+<!--      <span class="material-icons empty-state-icon">inbox</span>-->
+<!--      <h3 class="empty-state-title">No Users added</h3>-->
+<!--      <p class="empty-state-description">-->
+<!--        There are currently no users added. Create a new user.-->
+<!--      </p>-->
+<!--      <a href="/users/new" class="btn btn-primary btn-sm">-->
+<!--        Add New User-->
+<!--      </a>-->
+<!--    </div>-->
+    <div class="table-scroll-container">
+      <table class="w-full text-left">
+        <thead class="table-header">
+        <tr>
+          <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">User</th>
+          <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Email</th>
+          <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Groups</th>
+          <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Status</th>
+          <th class="py-3 px-2 md:py-4 md:px-3 text-sm font-semibold text-slate-400">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="table-row">
+          <td class="py-3 px-2 md:py-4 md:px-3">Akinrinde Akinkunmi</td>
+          <td class="py-3 px-2 md:py-4 md:px-3">sam.wilson@example.com</td>
+          <td class="py-3 px-2 md:py-4 md:px-3">
+            <span class="bg-yellow-900/50 text-yellow-300 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Manager</span>
+          </td>
+          <td class="py-3 px-2 md:py-4 md:px-3">
+            <span class="bg-red-500/20 text-red-400 px-2 py-1 rounded-full text-xs font-semibold">Inactive</span>
+          </td>
+          <td class="py-3 px-2 md:py-4 md:px-3">
+            <button class="text-gray-400 hover:text-white mr-2"><span class="material-icons">edit</span></button>
+            <button class="text-gray-400 hover:text-white"><span class="material-icons">delete</span></button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</html>

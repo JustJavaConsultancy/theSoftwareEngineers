@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .table-header {
+            background-color: #2d3748;
+        }
+        .table-row {
+            background-color: #2d3748;
+        }
+        .status-active {
+            background-color: #2f855a;
+        }
+        .status-inactive {
+            background-color: #c53030;
+        }
+        .btn-primary {
+            background-color: #4299e1;
+        }
+        .form-container {
+            background-color: #2d3748;
+        }
+        .group-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .group-table th {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid #4a5568;
+        }
+        .group-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #4a5568;
+        }
+        .group-table tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+<main layout:fragment="content" class="flex-1 overflow-x-hidden overflow-y-auto p-8">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold">Group Management</h2>
+            <p class="text-gray-400">Create, edit and manage user groups</p>
+        </div>
+        <button id="addGroupBtn" class="px-6 py-2 btn-primary hover:bg-blue-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center">
+            <span class="material-icons mr-2">add</span>
+            Add Group
+        </button>
+    </div>
+
+    <!-- Add Group Modal (hidden by default) -->
+    <div id="addGroupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="form-container p-8 rounded-lg shadow-lg w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-semibold">Add New Group</h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-white">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <form id="groupForm">
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-400 mb-2" for="groupName">Group Name</label>
+                    <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           id="groupName" name="groupName" type="text" required/>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-400 mb-2" for="groupDescription">Description</label>
+                    <textarea class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              id="groupDescription" name="groupDescription" rows="3"></textarea>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="cancelGroupBtn" class="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2 btn-primary hover:bg-blue-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center">
+                        <span class="material-icons mr-2">save</span>
+                        Save Group
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Groups Table -->
+    <div class="form-container p-6 rounded-lg shadow-lg">
+        <table class="group-table">
+            <thead>
+            <tr class="table-header">
+                <th>Group Name</th>
+                <th>Description</th>
+                <th>Members</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="table-row hover:bg-gray-700">
+                <td>Admin</td>
+                <td>Administrators with full access</td>
+                <td>12</td>
+                <td>
+                    <button class="text-blue-400 hover:text-blue-300 mr-3 edit-group" data-id="1">
+                        <span class="material-icons">edit</span>
+                    </button>
+                    <button class="text-red-400 hover:text-red-300 delete-group" data-id="1">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </td>
+            </tr>
+            <tr class="table-row hover:bg-gray-700">
+                <td>Developer</td>
+                <td>Development team members</td>
+                <td>24</td>
+                <td>
+                    <button class="text-blue-400 hover:text-blue-300 mr-3 edit-group" data-id="2">
+                        <span class="material-icons">edit</span>
+                    </button>
+                    <button class="text-red-400 hover:text-red-300 delete-group" data-id="2">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </td>
+            </tr>
+            <tr class="table-row hover:bg-gray-700">
+                <td>User</td>
+                <td>Regular application users</td>
+                <td>156</td>
+                <td>
+                    <button class="text-blue-400 hover:text-blue-300 mr-3 edit-group" data-id="3">
+                        <span class="material-icons">edit</span>
+                    </button>
+                    <button class="text-red-400 hover:text-red-300 delete-group" data-id="3">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </td>
+            </tr>
+            <tr class="table-row hover:bg-gray-700">
+                <td>Manager</td>
+                <td>Department managers</td>
+                <td>8</td>
+                <td>
+                    <button class="text-blue-400 hover:text-blue-300 mr-3 edit-group" data-id="4">
+                        <span class="material-icons">edit</span>
+                    </button>
+                    <button class="text-red-400 hover:text-red-300 delete-group" data-id="4">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        // Modal handling
+       const addGroupBtn = document.getElementById('addGroupBtn');
+       const addGroupModal = document.getElementById('addGroupModal');
+       const closeModalBtn = document.getElementById('closeModalBtn');
+       const cancelGroupBtn = document.getElementById('cancelGroupBtn');
+       const groupForm = document.getElementById('groupForm');
+
+       // Show modal when Add Group button is clicked
+       addGroupBtn.addEventListener('click', function() {
+           addGroupModal.classList.remove('hidden');
+           document.getElementById('groupName').focus();
+       });
+
+       // Close modal
+       function closeModal() {
+           addGroupModal.classList.add('hidden');
+           groupForm.reset();
+       }
+
+       closeModalBtn.addEventListener('click', closeModal);
+       cancelGroupBtn.addEventListener('click', closeModal);
+
+       // Close modal when clicking outside
+       addGroupModal.addEventListener('click', function(e) {
+           if (e.target === addGroupModal) {
+               closeModal();
+           }
+       });
+
+
+       // Search functionality
+       const searchInput = document.querySelector('input[placeholder="Search groups..."]');
+       searchInput.addEventListener('input', function() {
+           const searchTerm = this.value.toLowerCase();
+           const rows = document.querySelectorAll('.group-table tbody tr');
+
+           rows.forEach(row => {
+               const groupName = row.cells[0].textContent.toLowerCase();
+               const description = row.cells[1].textContent.toLowerCase();
+
+               if (groupName.includes(searchTerm) || description.includes(searchTerm)) {
+                   row.style.display = '';
+               } else {
+                   row.style.display = 'none';
+               }
+           });
+       });
+    </script>
+</main>
+</body>
+</html>
