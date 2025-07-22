@@ -8,14 +8,14 @@
                 <p class="text-slate-400 mt-1">Overview of your process management system</p>
             </div>
             <a style="text-decoration:none" th:href="@{/processes/newProcess}">
-            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg flex items-center w-full md:w-auto justify-center">
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg flex items-center w-full md:w-auto justify-center dashboard-start-process-btn">
                 <span class="material-icons mr-2">add</span>
                 Start New Process
             </button>
             </a>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-            <div class="card p-4 md:p-6 rounded-xl">
+            <div class="card p-4 md:p-6 rounded-xl dashboard-metric-card">
                 <p class="text-slate-300">Active Processes</p>
                 <div class="flex justify-between items-end">
                     <p th:text="${processInstancesCount}" class="text-3xl md:text-5xl font-bold text-white mt-2">12</p>
@@ -25,7 +25,7 @@
                     </a>
                 </div>
             </div>
-            <div class="card p-4 md:p-6 rounded-xl">
+            <div class="card p-4 md:p-6 rounded-xl dashboard-metric-card">
                 <p class="text-slate-300">Active Tasks</p>
                 <div class="flex justify-between items-end">
                     <p th:text="${activeTasksCount}" class="text-3xl md:text-5xl font-bold text-white mt-2">8</p>
@@ -35,7 +35,7 @@
                     </a>
                 </div>
             </div>
-            <div class="card p-4 md:p-6 rounded-xl">
+            <div class="card p-4 md:p-6 rounded-xl dashboard-metric-card">
                 <p class="text-slate-300">Completed Tasks</p>
                 <div class="flex justify-between items-end">
                     <p th:text="${completedTasksCount}" class="text-3xl md:text-5xl font-bold text-white mt-2">145</p>
