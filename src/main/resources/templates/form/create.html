@@ -2,64 +2,41 @@
 <html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout.html}">
 <head>
   <title>Edit Form Snippet</title>
-
-  <!-- CodeMirror CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.min.css">
+  <script src="https://unpkg.com/htmx.org@1.9.6"></script>
   <style>
-    .CodeMirror {
-      height: 300px;
-      font-family: monospace;
+    /* Your original styles */
+    .CodeMirror { height: 300px; font-family: monospace; }
+    .btn-primary { background-color: #3B82F6; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; }
+    .btn-primary:hover { background-color: #2563EB; }
+    .btn-secondary { background-color: #475569; color: #E2E8F0; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; }
+    .btn-secondary:hover { background-color: #64748B; }
+    .form-container { background-color: #1E293B; border-radius: 0.75rem; padding: 2rem; margin-top: 1.5rem; }
+    .form-label { color: #94A3B8; font-size: 0.875rem; margin-bottom: 0.5rem; display: block; }
+    .input-field { background-color: #334155; border: 1px solid #475569; color: #E2E8F0; border-radius: 0.5rem; padding: 0.75rem 1rem; width: 100%; transition: border-color 0.2s; }
+    .input-field:focus { outline: none; border-color: #3B82F6; }
+
+    /* Added styles */
+    #interfaceEditorContainer { display: none; }
+    .generation-status {
+      display: none;
+      color: #3B82F6;
+      margin-top: 10px;
     }
-
-        .btn-primary {
-            background-color: #3B82F6;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.2s;
-        }
-        .btn-primary:hover {
-            background-color: #2563EB;
-        }
-        .btn-secondary {
-            background-color: #475569;
-            color: #E2E8F0;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.2s;
-        }
-        .btn-secondary:hover {
-            background-color: #64748B;
-        }
-    .form-container {
-            background-color: #1E293B;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            margin-top: 1.5rem;
-        }
-
-    .form-label {
-            color: #94A3B8;
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-    .input-field {
-            background-color: #334155;
-            border: 1px solid #475569;
-            color: #E2E8F0;
-            border-radius: 0.5rem;
-            padding: 0.75rem 1rem;
-            width: 100%;
-            transition: border-color 0.2s;
-        }
-        .input-field:focus {
-            outline: none;
-            border-color: #3B82F6;
-        }
-
+    #submitButtonContainer {
+      display: none;
+      margin-top: 20px;
+      text-align: end;
+    }
+    .animate-spin {
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -68,11 +45,14 @@
   <div class="form-container">
     <div class="space-y-6">
 
-      <form th:action="@{/forms}" method="post" th:object="${form}">
-        <input type="hidden" th:field="*{id}"/>
+      <form id="generateForm"
+            hx-post="/forms/generate-form"
+            hx-target="#interfaceEditorContainer"
+            hx-swap="innerHTML">
+
         <div style="margin-top:20px">
           <label class="form-label">Task</label>
-          <select name="tasks" id="taskSelect" class="input-field">  <!-- Name matches request parameter -->
+          <select name="selectTask" id="taskSelect" class="input-field" required>
             <option value="">-- Select a task --</option>
             <option th:each="item : ${tasks}"
                     th:value="${item.id}"
@@ -81,40 +61,55 @@
             </option>
           </select>
         </div>
-        <!-- Form Name -->
         <div style="margin-top:20px">
           <label class="form-label">Form Name</label>
-          <input type="text" id="formName" th:field="*{formName}" required class="input-field"/>
+          <input type="text" id="formName" name="taskName" required class="input-field"/>
         </div>
 
-        <!-- Form Code -->
         <div style="margin-top:20px">
           <label class="form-label">Form Code</label>
-          <input type="text" id="formCode" th:field="*{formCode}" required class="input-field"/>
+          <input name="taskCode" type="text" id="taskCode" required class="input-field"/>
         </div>
 
-        <!-- Form Details -->
         <div style="margin-top:20px">
           <label class="form-label">Form Details</label>
-          <textarea th:field="*{formDetails}" required class="input-field" rows="6"></textarea>
-        </div>
-        <!-- Submit -->
-        <div class="mt-8 flex justify-end space-x-4">
-          <button type="submit" class="btn-primary dashboard-start-process-btn">Generate Form</button>
+          <textarea id="taskDescription" name="taskDescription" required class="input-field" rows="6"></textarea>
         </div>
 
-        <!-- Form Interface (rich code editor) -->
+        <div class="generation-status" id="generationStatus">
+          <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Generating form code...
+        </div>
+
+        <div class="mt-8 flex justify-end space-x-4">
+          <button id="generationButton" type="submit" class="btn-primary" onclick="startGeneration()">
+            Generate Form
+          </button>
+        </div>
+
         <div style="margin-top:20px">
-          <label class="form-label">Generate Form</label>
-          <textarea id="interfaceEditor" name="formInterface" th:text="${form.formInterface}"
-                    required class="hidden "></textarea>
+          <textarea id="interfaceEditor" name="formInterface" class="hidden"></textarea>
           <div id="interfaceEditorContainer" class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"></div>
+        </div>
+      </form>
+      <form id="saveForm" th:action="@{/forms/save-form}" method="post">
+        <input id="newFormName" name="taskName" type="hidden">
+        <input id="taskID" name="taskID" type="hidden">
+        <input id="taskFormCode" name="taskFormCode" type="hidden">
+        <input id="taskFormDescription" type="hidden" name="taskFormDescription">
+        <div id="submitButtonContainer">
+          <button type="submit" class="btn-primary"
+          >
+            Submit Generated Form
+          </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- CodeMirror Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/lib/codemirror.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/htmlmixed/htmlmixed.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/xml/xml.js"></script>
@@ -122,42 +117,89 @@
   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.15/mode/css/css.js"></script>
 
   <script>
-    // Initialize CodeMirror and sync with hidden textarea
+    // Initialize CodeMirror
     const textarea = document.getElementById("interfaceEditor");
     const container = document.getElementById("interfaceEditorContainer");
-
     const editor = CodeMirror(container, {
-      value: textarea.value,
+      value: "",
       mode: "htmlmixed",
       lineNumbers: true,
       tabSize: 2,
       lineWrapping: true,
+      readOnly: true
     });
 
-    // Sync CodeMirror content back to hidden field before submitting
-    document.querySelector("form").addEventListener("submit", () => {
-      textarea.value = editor.getValue();
+    let isGenerating = false;
+    let accumulatedContent = '';
+
+    function startGeneration() {
+      isGenerating = true;
+      accumulatedContent = '';
+      container.style.display = 'block';
+      editor.setValue('');
+      document.getElementById('generationStatus').style.display = 'flex';
+      document.getElementById('submitButtonContainer').style.display = 'none';
+    }
+
+    // Handle streaming response
+    container.addEventListener('htmx:beforeSwap', function(evt) {
+      const response = evt.detail.serverResponse;
+
+      if (response.includes('GENERATION_COMPLETE')) {
+        // Generation complete
+        isGenerating = false;
+        const cleanResponse = response.replace('<!-- GENERATION_COMPLETE -->', '');
+        accumulatedContent += cleanResponse;
+        editor.setValue(accumulatedContent);
+
+        document.getElementById('generationStatus').style.display = 'none';
+        document.getElementById('submitButtonContainer').style.display = 'block';
+        document.getElementById('generationButton').style.display = 'none';
+        document.getElementById('taskFormCode').value = document.getElementById('interfaceEditor');
+        document.getElementById('taskFormDescription').value = document.getElementById('taskDescription');
+        document.getElementById('submitButtonContainer').scrollIntoView({
+          behavior: 'smooth'
+        });
+      } else if (isGenerating) {
+        // Append new content
+        accumulatedContent += response;
+        editor.setValue(accumulatedContent);
+        editor.scrollIntoView({line: editor.lineCount()});
+      }
+
+      evt.detail.shouldSwap = false;
     });
 
-    // New functionality to auto-fill form name and code when task is selected
+    function submitFinalForm() {
+      const generatedCode = editor.getValue();
+      console.log('Submitting form code:', generatedCode);
+
+      // Here you would actually submit the form
+      alert('Form submitted successfully!');
+      // fetch('/submit-form', {
+      //   method: 'POST',
+      //   body: JSON.stringify({ formCode: generatedCode }),
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   }
+      // }).then(...);
+    }
+
+    // Original task selection handler
     document.getElementById('taskSelect').addEventListener('change', function() {
       const selectedOption = this.options[this.selectedIndex];
-
       if (selectedOption.value) {
-        // Get the task name from data-name attribute
         const taskName = selectedOption.getAttribute('data-name');
-        // Get the task ID from value attribute
         const taskId = selectedOption.value;
-
-        // Fill form name with the task name
         document.getElementById('formName').value = taskName + ' Form';
-
-        // Fill form code with the task ID (you can modify this format as needed)
-        document.getElementById('formCode').value = 'FORM_' + taskId;
+        document.getElementById('newFormName').value = taskName;
+        document.getElementById('taskID').value = taskId;
+        document.getElementById('taskCode').value = 'FORM_' + taskId;
       } else {
-        // Clear fields if no task is selected
+        document.getElementById('newFormName').value = '';
         document.getElementById('formName').value = '';
-        document.getElementById('formCode').value = '';
+        document.getElementById('taskID').value = '';
+        document.getElementById('taskCode').value = '';
       }
     });
   </script>
