@@ -154,7 +154,10 @@ public class ProcessController {
         org.flowable.bpmn.model.Process process = bpmnModel.getMainProcess();
         //System.out.println(" process name===="+process.getName());
         //System.out.println(" process documentation ===="+process.getDocumentation());
+        System.out.println(" process name===="+process.getName());
+        System.out.println(" process id===="+process.getId());
         String userPrompt= process.getDocumentation();
+        System.out.println(" process documentation ===="+userPrompt);
         String formThymeleaf=null;
         Optional<Form> form=formService.findByFormCode(processKey);
         if(form.isPresent()){
@@ -200,7 +203,8 @@ public class ProcessController {
     }
     @GetMapping("/startProcess")
     public String startProcess() {
-       return "process/startProcess";
+
+        return "process/startProcess";
     }
     @GetMapping("/processInstance/{processInstanceId}")
     public String processInstanceDetail(@PathVariable(name = "processInstanceId")
