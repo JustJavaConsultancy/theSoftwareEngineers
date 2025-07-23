@@ -113,8 +113,17 @@ public class FormController {
             Model model) {
 
         // Process and save the form
-        System.out.println("Saved form with code: " + taskName);
-
+        System.out.println("Saved form with code: " + taskFormDescription);
+        String formCode = processServiceAI
+                .generateTaskThymeleafForm(taskFormDescription)
+                .replace("```","")
+                .replace("html","");
+        Form form = new Form();
+        form.setFormDetails(taskFormDescription);
+        form.setFormName(taskName);
+        form.setFormCode(taskID);
+        form.setFormInterface(formCode);
+        formService.save(form);
         // Add success message
         model.addAttribute("message", "Form saved successfully!");
         return "redirect:/forms"; // Your success page

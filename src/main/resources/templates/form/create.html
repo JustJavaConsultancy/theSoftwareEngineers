@@ -47,7 +47,7 @@
 
       <form id="generateForm"
             hx-post="/forms/generate-form"
-            hx-target="#interfaceEditorContainer"
+            hx-target="#interfaceEditorContainer,#taskFormCode"
             hx-swap="innerHTML">
 
         <div style="margin-top:20px">
@@ -89,16 +89,16 @@
             Generate Form
           </button>
         </div>
-
+      </form>
         <div style="margin-top:20px">
           <textarea id="interfaceEditor" name="formInterface" class="hidden"></textarea>
           <div id="interfaceEditorContainer" class="bg-slate-800 border-slate-600 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"></div>
         </div>
-      </form>
+
       <form id="saveForm" th:action="@{/forms/save-form}" method="post">
         <input id="newFormName" name="taskName" type="hidden">
         <input id="taskID" name="taskID" type="hidden">
-        <input id="taskFormCode" name="taskFormCode" type="hidden">
+        <input id="taskFormCode" type="hidden">
         <input id="taskFormDescription" type="hidden" name="taskFormDescription">
         <div id="submitButtonContainer">
           <button type="submit" class="btn-primary"
@@ -155,8 +155,7 @@
         document.getElementById('generationStatus').style.display = 'none';
         document.getElementById('submitButtonContainer').style.display = 'block';
         document.getElementById('generationButton').style.display = 'none';
-        document.getElementById('taskFormCode').value = document.getElementById('interfaceEditor');
-        document.getElementById('taskFormDescription').value = document.getElementById('taskDescription');
+        document.getElementById('taskFormDescription').value = document.getElementById('taskDescription').value;
         document.getElementById('submitButtonContainer').scrollIntoView({
           behavior: 'smooth'
         });

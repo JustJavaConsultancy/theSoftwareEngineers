@@ -202,7 +202,7 @@ processInstances.forEach(processInstance -> {
                 runtimeService.startProcessInstanceById(formData.get("id").toString(),formData);
 
         System.out.println("  The Process Instance Variables ==="+processInstance.getProcessVariables());
-        return "redirect:/processes";
+        return "process/success";
     }
     @GetMapping("/startProcess")
     public String startProcess() {
