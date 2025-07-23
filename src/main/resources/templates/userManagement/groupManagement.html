@@ -64,7 +64,7 @@
                     <span class="material-icons">close</span>
                 </button>
             </div>
-            <form id="groupForm">
+            <form id="groupForm" hx-post="/users/createGroup">
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-400 mb-2" for="groupName">Group Name</label>
                     <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -100,10 +100,10 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="table-row hover:bg-gray-700">
-                <td>Admin</td>
-                <td>Administrators with full access</td>
-                <td>12</td>
+            <tr class="table-row hover:bg-gray-700" th:each="group : ${userGroups}">
+                <td th:text="${group.getGroupName()}">Admin</td>
+                <td th:text="${group.getDescription()}">Administrators with full access</td>
+                <td th:text="${group.getMembers()}">12</td>
                 <td>
                     <button class="text-blue-400 hover:text-blue-300 mr-3 edit-group" data-id="1">
                         <span class="material-icons">edit</span>
@@ -113,7 +113,7 @@
                     </button>
                 </td>
             </tr>
-            <tr class="table-row hover:bg-gray-700">
+           <!-- <tr class="table-row hover:bg-gray-700">
                 <td>Developer</td>
                 <td>Development team members</td>
                 <td>24</td>
@@ -151,7 +151,7 @@
                         <span class="material-icons">delete</span>
                     </button>
                 </td>
-            </tr>
+            </tr>-->
             </tbody>
         </table>
     </div>

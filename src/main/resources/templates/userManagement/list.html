@@ -47,14 +47,14 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="table-row">
-          <td class="py-3 px-2 md:py-4 md:px-3">Akinrinde Akinkunmi</td>
-          <td class="py-3 px-2 md:py-4 md:px-3">sam.wilson@example.com</td>
+        <tr class="table-row" th:each="user : ${users}">
+          <td class="py-3 px-2 md:py-4 md:px-3" th:text="${user.getName()}">Akinrinde Akinkunmi</td>
+          <td class="py-3 px-2 md:py-4 md:px-3" th:text="${user.getEmail()}">sam.wilson@example.com</td>
           <td class="py-3 px-2 md:py-4 md:px-3">
-            <span class="bg-yellow-900/50 text-yellow-300 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">Manager</span>
+            <span class="bg-yellow-900/50 text-yellow-300 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full" th:text="${user.getGroup()}">Manager</span>
           </td>
           <td class="py-3 px-2 md:py-4 md:px-3">
-            <span class="bg-red-500/20 text-red-400 px-2 py-1 rounded-full text-xs font-semibold">Inactive</span>
+            <span class="bg-red-500/20 text-red-400 px-2 py-1 rounded-full text-xs font-semibold" th:text="${user.getStatus()}">Inactive</span>
           </td>
           <td class="py-3 px-2 md:py-4 md:px-3">
             <button class="text-gray-400 hover:text-white mr-2"><span class="material-icons">edit</span></button>

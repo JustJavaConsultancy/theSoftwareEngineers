@@ -25,7 +25,7 @@
   </div>
   <div class="form-container p-8 rounded-lg shadow-lg">
     <h3 class="text-2xl font-semibold mb-6">Add New User</h3>
-    <form>
+    <form hx-post="/users/createUser" >
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label class="block text-sm font-medium text-gray-400 mb-2" for="firstName">First Name</label>
@@ -54,11 +54,10 @@
           <label class="block text-sm font-medium text-gray-400 mb-2" for="groups">Groups</label>
           <div class="relative">
             <select class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="groups" name="groups">
-              <option value="">Select a group</option>
-              <option>Admin</option>
-              <option>Developer</option>
-              <option>User</option>
-              <option>Manager</option>
+              <option th:each="user : ${userGroups}"
+                      th:value="${user.getGroupName()}"
+                      th:text="${user.getGroupName()}">
+              </option>
             </select>
           </div>
           <div class="mt-2">

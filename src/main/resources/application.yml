@@ -62,6 +62,9 @@ server:
   port: 9000
 springdoc:
   pathsToMatch: /api/**
-
+keycloak:
+  base-url: ${KEYCLOAK_BASE_URI:https://ngcloak.onrender.com}
+  client-id: ${KEYCLOAK_CLIENT_ID:processManager}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:ttXmZIEHmwmO4E2NeSUCllD3NIEVpZUW}
 app:
   processKey: "softwareEngineeringProcess"
