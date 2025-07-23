@@ -2,10 +2,10 @@ package tech.justjava.process_manager.userManagement;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,14 +45,36 @@ public class UserManagementController {
     }
 
     @PostMapping("/createUser")
-    public ResponseEntity<Void> createUser(@RequestParam Map<String, String> params){
+    public String createUser(@RequestParam Map<String, String> params){
         keycloakService.createUserInGroup(params);
-        return ResponseEntity.ok().build();
+        return "redirect:/users";
     }
 
     @PostMapping("/createGroup")
-    public ResponseEntity<Void> createGroup(@RequestParam Map<String, String> params){
+    public String createGroup(@RequestParam Map<String, String> params){
         keycloakService.createGroup(params.get("groupName"), params.get("groupDescription"));
-        return ResponseEntity.ok().build();
+        return "redirect:/groups";
+    }
+
+    @PostMapping("/editGroup")
+    public String editGroup(@RequestParam Map<String, String> params){
+        keycloakService.updateGroup(params);
+        return "redirect:/groups";
+    }
+    @PostMapping("/editUser")
+    public String editUser(@RequestParam Map<String, String> params){
+        keycloakService.updateUser(params.get("id"), params);
+        return "redirect:/users";
+    }
+    @GetMapping("/deleteUser/{userId}")
+    public String deleteUser(@PathVariable String userId){
+        keycloakService.deleteUser(userId);
+        return "redirect:/users";
+    }
+
+    @GetMapping("/deleteGroup/{groupId}")
+    public String deleteGroup(@PathVariable String groupId){
+        keycloakService.deleteGroup(groupId);
+        return "redirect:/groups";
     }
 }

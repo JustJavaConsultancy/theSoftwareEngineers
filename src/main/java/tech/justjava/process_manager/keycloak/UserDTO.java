@@ -7,13 +7,17 @@ import lombok.Data;
 @Builder
 public class UserDTO {
 
+    private String id;
     private String firstName;
     private String lastName;
     private String email;
-    private String status;
+    private Boolean status;
     private String group;
 
     public String getName() {
         return firstName+" "+lastName;
+    }
+    public String getStatus() {
+        return status?"Enabled":"Disabled";
     }
 }
