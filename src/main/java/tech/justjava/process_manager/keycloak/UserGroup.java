@@ -9,13 +9,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@RequiredArgsConstructor
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +26,7 @@ public class UserGroup {
     @Column(unique=true)
     private String groupName;
     private String description;
+    @Builder.Default
     private Integer members = 0;
 
     public String getGroupName() {
