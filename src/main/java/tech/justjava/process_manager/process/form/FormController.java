@@ -83,8 +83,8 @@ public class FormController {
 
         String formCode = processServiceAI
                 .generateTaskThymeleafForm(taskDescription)
-                        .replace("```","")
-                        .replace("html","");
+                .replace("```","")
+                .replace("html","");
 
         return outputStream -> {
             try {
@@ -113,7 +113,7 @@ public class FormController {
             Model model) {
 
         // Process and save the form
-        System.out.println("Saved form with code: " + taskFormDescription);
+        System.out.println("Saved form with code: " + taskName);
 
         // Add success message
         model.addAttribute("message", "Form saved successfully!");
@@ -134,10 +134,9 @@ public class FormController {
         savedForm.ifPresent(form1 -> {
             if(!form.getFormDetails().equalsIgnoreCase(form1.getFormDetails())){
                 String formInterface=processServiceAI
-                        .generateTaskThymeleafForm(form.getFormDetails()
+                        .generateTaskThymeleafForm(form.getFormDetails())
                                 .replace("```","")
-                                .replace("html","")
-                        );
+                                .replace("html","");
                 form.setFormInterface(formInterface);
             }
         });

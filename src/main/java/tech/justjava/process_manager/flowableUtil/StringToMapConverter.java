@@ -24,6 +24,9 @@ public class StringToMapConverter implements JavaDelegate {
         Map<String, Object> payload = new HashMap<>();
         String variableName= (String) execution.getVariable(variableToConvertToMap.getExpressionText());
 
+        //variableName = variableName.replace("```json","").replace("```","");
+
+        System.out.println(" The String to be converted here======"+variableName);
 
         try {
             Map<String,Object> map = objectMapper.readValue(variableName,Map.class);

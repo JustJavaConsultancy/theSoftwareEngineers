@@ -64,4 +64,4 @@ springdoc:
   pathsToMatch: /api/**
 
 app:
-  processKey: "softwareEngineeringProcess"
+  processKey: "caseManager"

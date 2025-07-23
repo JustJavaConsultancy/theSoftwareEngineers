@@ -11,11 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class PrepareInitialVariableDelegate implements JavaDelegate {
+public class MapToStringConverter implements JavaDelegate {
     private final ObjectMapper objectMapper;
     private FixedValue  variableToConvertToString;
-
-    public PrepareInitialVariableDelegate(ObjectMapper objectMapper) {
+/**/
+    public MapToStringConverter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 

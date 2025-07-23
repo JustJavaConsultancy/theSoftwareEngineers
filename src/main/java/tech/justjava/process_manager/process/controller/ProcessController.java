@@ -80,9 +80,12 @@ public class ProcessController {
         //System.out.println(" I'm in the Process List....");
         List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery()
                 .processDefinitionKey(processKey)
+                .includeProcessVariables()
                 .active()
                 .list();
-
+processInstances.forEach(processInstance -> {
+    System.out.println(" The Process variable here==="+processInstance.getProcessVariables());
+});
         model.addAttribute("processes", processInstances);
 
         return "process/processInstance";

@@ -172,7 +172,7 @@ println "Body Selenium Steps: $steps"]]></script>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
     </userTask>
-    <serviceTask id="ServiceTask_31" name="Prepare Process Variables" flowable:delegateExpression="${prepareInitialVariableDelegate}">
+    <serviceTask id="ServiceTask_31" name="Prepare Process Variables" flowable:delegateExpression="${mapToStringConverter}">
       <extensionElements>
         <flowable:field name="variableToConvertToString">
           <flowable:string><![CDATA[userPrompt]]></flowable:string>
