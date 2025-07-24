@@ -58,7 +58,12 @@
           </td>
           <td class="py-3 px-2 md:py-4 md:px-3">
             <button class="text-gray-400 hover:text-white mr-2"><span class="material-icons">edit</span></button>
-            <button class="text-gray-400 hover:text-white"><span class="material-icons">delete</span></button>
+            <button
+                    th:attr="hx-get='/users/deleteUser/' + ${user.getId()}"
+                    hx-confirm="Are you sure you want to delete this user?"
+                    hx-target="closest tr"
+                    hx-swap="outerHTML"
+                    class="text-gray-400 hover:text-white"><span class="material-icons">delete</span></button>
           </td>
         </tr>
         </tbody>
