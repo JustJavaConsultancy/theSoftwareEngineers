@@ -3,6 +3,7 @@ package tech.justjava.process_manager.keycloak;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +43,7 @@ public interface KeycloakFeignClient {
 
     @PostMapping("/admin/realms/ProcessManagement/users")
     ResponseEntity<Void> createUser(@RequestHeader(value = "Authorization")
-                                    String authorizationHeader, Map user);
+                                    String authorizationHeader, Map<String,Object> user);
 
     @PutMapping("/admin/realms/ProcessManagement/users/{userId}/groups/{groupId}")
     ResponseEntity<Void> addUserToGroup(@RequestHeader(value = "Authorization") String authorizationHeader,
@@ -57,9 +58,34 @@ public interface KeycloakFeignClient {
             @PathVariable("id") String userId
     );
 
+    @PutMapping("/admin/realms/ProcessManagement/groups/{groupId}")
+    ResponseEntity<Void> updateGroup(
+            @RequestHeader(value = "Authorization") String authorizationHeader,
+            @PathVariable String groupId,
+            @RequestBody Map<String, Object> groupBody);
+
+    @PutMapping("/admin/realms/ProcessManagement/users/{userId}")
+    ResponseEntity<Void> updateUser(
+            @RequestHeader(value = "Authorization") String authorizationHeader,
+            @PathVariable String userId,
+            @RequestBody Map<String, Object> body);
+
     @PostMapping("/admin/realms/ProcessManagement/groups")
     void createGroup(
             @RequestHeader(value = "Authorization") String authorizationHeader,
             Map<String,?> paramMap
             );
+
+    @DeleteMapping("/admin/realms/ProcessManagement/users/{userId}")
+    void deleteUser(
+            @RequestHeader(value = "Authorization") String authorizationHeader,
+            @PathVariable String userId
+    );
+
+    @DeleteMapping("/admin/realms/ProcessManagement/groups/{groupId}")
+    ResponseEntity<Void> deleteGroup(
+            @RequestHeader(value = "Authorization") String authorizationHeader,
+            @PathVariable String groupId
+    );
+
 }

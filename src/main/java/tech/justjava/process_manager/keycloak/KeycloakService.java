@@ -7,8 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,14 +31,34 @@ public class KeycloakService {
     String clientSecret;
 
     private static final String grantType = "client_credentials";
+    private String token;
+    private Instant tokenExpiry;
+
+    private void setToken(Map<String, Object> token){
+        this.token = "Bearer "+ token.get("access_token");
+        this.tokenExpiry = Instant.now().plusSeconds((Integer) token.get("expires_in"));
+    }
+    private String getToken(){
+        if (this.token != null && this.tokenExpiry != null){
+            if(this.tokenExpiry.isAfter(Instant.now()) ){
+                return this.token;
+            }
+        }
+        return null;
+    }
 
     public String getAccessToken(){
+        if (getToken() != null){
+            return getToken();
+        }
         Map<String,String> parmMaps= new HashMap<>();
         parmMaps.put("client_id",clientId);
         parmMaps.put("client_secret",clientSecret);
         parmMaps.put("grant_type",grantType);
         Map<String, Object> token = keycloakClient.getAccessToken(parmMaps);
-        return "Bearer "+ token.get("access_token");
+        setToken(token);
+//        System.out.println("Access token: " + token);
+        return getToken();
     }
 
     public List<UserDTO> getRealmUsers(){
@@ -46,10 +67,11 @@ public class KeycloakService {
         List<UserDTO> userDTOs = new ArrayList<>();
         for (Map<String, Object> user : users) {
             UserDTO userDTO = UserDTO.builder()
+                    .id((String) user.get("id"))
                     .firstName((String) user.get("firstName"))
                     .lastName((String) user.get("lastName"))
                     .email((String) user.get("email"))
-                    .status("Active")
+                    .status((Boolean) user.get("enabled"))
                     .group(null)
                     .build();
             userDTOs.add(userDTO);
@@ -143,10 +165,11 @@ public class KeycloakService {
         List<Map<String, Object>> users = keycloakClient.getAllUserInGroup(getAccessToken(), group.getGroupId());
         for (Map<String, Object> user : users) {
             UserDTO userDTO = UserDTO.builder()
+                    .id((String) user.get("id"))
                     .firstName((String) user.get("firstName"))
                     .lastName((String) user.get("lastName"))
                     .email((String) user.get("email"))
-                    .status("Active")
+                    .status((Boolean) user.get("enabled"))
                     .group(group.getGroupName())
                     .build();
             userDTOs.add(userDTO);
@@ -160,7 +183,7 @@ public class KeycloakService {
         user.put("firstName", params.get("firstName"));
         user.put("lastName", params.get("lastName"));
         user.put("email", params.get("email"));
-        user.put("enabled", true);
+        user.put("enabled", params.get("status"));
 
         Map<String, Object> credential = new HashMap<>();
         credential.put("type", "password");
@@ -180,7 +203,12 @@ public class KeycloakService {
                 return;
             }
         }
-        addUserToGroup(params.get("email"),params.get("groups"));
+        String userId = getUserId(params.get("email"));
+        if (userId == null) {
+            System.out.println("User not found after creation.");
+            return;
+        }
+        addUserToGroup(userId ,params.get("groups"));
     }
 
     public String getUserId(String email){
@@ -195,12 +223,8 @@ public class KeycloakService {
         return userId;
     }
 
-    public void addUserToGroup(String email, String groupName){
-        String userId = getUserId(email);
-        if (userId == null) {
-            System.out.println("User not found after creation.");
-            return;
-        }
+    public void addUserToGroup(String userId, String groupName){
+
         UserGroup group = userGroupRepository.findByGroupNameIgnoreCase(groupName);
         String groupId = group.getGroupId();
         Map<String, Object> groupRef = new HashMap<>();
@@ -220,5 +244,46 @@ public class KeycloakService {
         keycloakClient.createGroup(getAccessToken(), body);
         userGroupRepository.save(group);
         updateGroups();
+    }
+
+    public void updateGroup(Map<String,String> params) {
+        String groupId = params.get("id");
+        UserGroup userGroup = userGroupRepository.findByGroupId(groupId);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("id", userGroup.getGroupId());
+        body.put("name", params.get("name"));
+        body.put("attributes", Map.of("description", List.of(params.get("description"))));
+        keycloakClient.updateGroup(getAccessToken(), userGroup.getGroupId(), body);
+        userGroupRepository.save(userGroup);
+    }
+
+    public void updateUser(String userId, Map<String, String> params) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("firstName", params.get("firstName"));
+        body.put("lastName", params.get("lastName"));
+        body.put("email", params.get("email"));
+        body.put("username", params.get("username"));
+        body.put("enabled", true);
+
+        keycloakClient.updateUser(getAccessToken(), userId, body);
+
+        addUserToGroup(userId ,params.get("groups"));
+        System.out.println("Successfully updated user: " + userId);
+    }
+    public void deleteUser(String userId) {
+        keycloakClient.deleteUser(getAccessToken(), userId);
+        System.out.println("Successfully deleted user: " + userId);
+    }
+
+    @Transactional
+    public void deleteGroup(String groupId) {
+        ResponseEntity<Void> response = keycloakClient.deleteGroup(getAccessToken(), groupId);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Group deleted successfully.");
+            userGroupRepository.deleteByGroupId(groupId);
+        } else {
+            System.out.println("Failed to delete group: " + response.getStatusCode());
+        }
     }
 }
