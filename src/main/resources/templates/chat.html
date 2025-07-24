@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Chat</title>
+    <style>
+        .chat-collapsed .chat-sidebar { display: none !important; }
+        .chat-collapsed .chat-main { width: 100% !important; }
+        @media (max-width: 768px) {
+            .chat-sidebar { display: none; }
+            .chat-sidebar.active { display: block; position: absolute; z-index: 50; width: 80vw; left: 0; top: 0; height: 100%; background: #1e293b; }
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content" class="flex flex-col md:flex-row h-full relative" id="chat-root">
+    <!-- Sidebar Collapse Button (mobile/desktop) -->
+    <button id="sidebar-toggle" class="absolute top-4 left-4 z-50 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 md:hidden" title="Toggle Sidebar">
+        <span class="material-icons">menu</span>
+    </button>
+    <!-- Conversations Sidebar -->
+    <div th:replace="chat/sidebar.html"></div>
+    <!-- Chat Window -->
+    <main class="chat-main flex-1 flex flex-col h-full bg-slate-50 dark:bg-slate-900 transition-all duration-200">
+        <div th:replace="chat/header.html"></div>
+        <div th:replace="chat/messages.html"></div>
+        <div th:replace="chat/input.html"></div>
+    </main>
+    <div th:replace="chat/new-chat-modal.html"></div>
+    <script src="/js/chat.js"></script>
+</section>
+</body>
+</html> 

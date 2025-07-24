@@ -170,3 +170,98 @@ body.light-mode .dashboard-start-process-btn .text-white,
 body.light-mode .dashboard-start-process-btn.text-white {
     color: #fff !important;
 }
+
+/* Fix for metric cards and start process button in light mode */
+body.light-mode .dashboard-metric-card .text-white,
+body.light-mode .dashboard-metric-card.text-white,
+body.light-mode .dashboard-start-process-btn .text-white,
+body.light-mode .dashboard-start-process-btn.text-white {
+    color: #fff !important;
+}
+
+/* Force chat modal and input to be dark in dark mode */
+html.dark #new-chat-modal > div {
+  background: #1e293b !important;
+  color: #fff !important;
+}
+html.dark #new-chat-modal input {
+  background: #334155 !important;
+  color: #fff !important;
+  border-color: #334155 !important;
+}
+html.dark #chat-form {
+  background: #1e293b !important;
+}
+html.dark #chat-input {
+  background: #334155 !important;
+  color: #fff !important;
+  border-color: #334155 !important;
+}
+
+/* Force chat input to be theme-aware */
+html.dark #chat-form {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+html.dark #chat-input {
+    background: #1e293b !important;
+    color: #ffffff !important;
+    border-color: #475569 !important;
+}
+
+body.light-mode #chat-form {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+}
+
+body.light-mode #chat-input {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* Force new chat modal to be theme-aware */
+html.dark #new-chat-modal > div {
+    background: #1e293b !important;
+    border-color: #475569 !important;
+    color: #ffffff !important;
+}
+
+html.dark #new-chat-modal h3,
+html.dark #new-chat-modal label {
+    color: #ffffff !important;
+}
+
+html.dark #new-chat-modal input {
+    background: #334155 !important;
+    color: #ffffff !important;
+    border-color: #475569 !important;
+}
+
+html.dark #cancel-new-chat {
+    background: #475569 !important;
+    color: #ffffff !important;
+}
+
+body.light-mode #new-chat-modal > div {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+body.light-mode #new-chat-modal h3,
+body.light-mode #new-chat-modal label {
+    color: #0f172a !important;
+}
+
+body.light-mode #new-chat-modal input {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+}
+
+body.light-mode #cancel-new-chat {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+}
