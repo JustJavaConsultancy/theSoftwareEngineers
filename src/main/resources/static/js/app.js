@@ -81,250 +81,304 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         // Chatbox
                          // Chat functionality
-                                const supportBtn = document.getElementById('support-chat-btn');
-                                const chatBox = document.getElementById('chat-box');
-                                const closeChatBtn = document.getElementById('close-chat-btn');
-                                const chatInput = document.getElementById('chat-input');
-                                const sendBtn = document.getElementById('send-message-btn');
-                                const chatMessages = document.getElementById('chat-messages');
-                                const chatHeader = document.getElementById('chat-header');
+                         const supportBtn = document.getElementById('support-chat-btn');
+                                 const chatBox = document.getElementById('chat-box');
+                                 const closeChatBtn = document.getElementById('close-chat-btn');
+                                 const chatInput = document.getElementById('chat-input');
+                                 const sendBtn = document.getElementById('send-message-btn');
+                                 const chatMessages = document.getElementById('chat-messages');
+                                 const chatHeader = document.getElementById('chat-header');
 
-                                // Drag functionality variables
-                                let isDragging = false;
-                                let currentX;
-                                let currentY;
-                                let initialX;
-                                let initialY;
-                                let xOffset = 0;
-                                let yOffset = 0;
+                                 // State management
+                                 let chatState = {
+                                     isDragging: false,
+                                     hasMoved: false,
+                                     dragStartTime: 0,
+                                     currentX: 0,
+                                     currentY: 0,
+                                     initialX: 0,
+                                     initialY: 0,
+                                     xOffset: 0,
+                                     yOffset: 0
+                                 };
 
-                                // Predefined responses for demo purposes
-                                const botResponses = [
-                                    "Thank you for reaching out! How can I help you with TaskMaster today?",
-                                    "I'd be happy to assist you with that. Can you provide more details?",
-                                    "That's a great question! Let me help you find the right solution.",
-                                    "I understand your concern. Our support team will look into this for you.",
-                                    "Is there anything specific about the process workflow you'd like to know?",
-                                    "I'm here to help! Feel free to ask any questions about TaskMaster features."
-                                ];
+                                 // Predefined responses for demo purposes
+                                 const botResponses = [
+                                     "Thank you for reaching out! How can I help you with TaskMaster today?",
+                                     "I'd be happy to assist you with that. Can you provide more details?",
+                                     "That's a great question! Let me help you find the right solution.",
+                                     "I understand your concern. Our support team will look into this for you.",
+                                     "Is there anything specific about the process workflow you'd like to know?",
+                                     "I'm here to help! Feel free to ask any questions about TaskMaster features."
+                                 ];
 
-                                let messageCount = 0;
+                                 let messageCount = 0;
 
-                                // Show chat box
-                                supportBtn.addEventListener('click', function() {
-                                    chatBox.classList.remove('hidden');
-                                    chatBox.classList.add('flex');
-                                    supportBtn.style.display = 'none';
-                                    chatInput.focus();
+                                 // Show chat box
+                                 function showChatBox() {
+                                     chatBox.classList.remove('hidden');
+                                     chatBox.classList.add('flex');
+                                     supportBtn.style.display = 'none';
 
-                                    // Reset position to center
-                                    chatBox.style.left = '50%';
-                                    chatBox.style.top = '20%';
-                                    chatBox.style.transform = 'translate(-50%, -50%)';
-                                    xOffset = 0;
-                                    yOffset = 0;
+                                     // Reset position to center
+                                     chatBox.style.left = '50%';
+                                     chatBox.style.top = '50%';
+                                     chatBox.style.transform = 'translate(-50%, -50%)';
+                                     chatState.xOffset = 0;
+                                     chatState.yOffset = 0;
 
-                                    // Add entrance animation
-                                    chatBox.style.opacity = '0';
-                                    chatBox.style.transform = 'translate(-50%, -50%) scale(0.8)';
-                                    setTimeout(() => {
-                                        chatBox.style.opacity = '1';
-                                        chatBox.style.transform = 'translate(-50%, -50%) scale(1)';
-                                        chatBox.style.transition = 'all 0.3s ease-out';
-                                    }, 10);
-                                });
+                                     // Add entrance animation
+                                     chatBox.style.opacity = '0';
+                                     chatBox.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                                     setTimeout(() => {
+                                         chatBox.style.opacity = '1';
+                                         chatBox.style.transform = 'translate(-50%, -50%) scale(1)';
+                                         chatBox.style.transition = 'all 0.3s ease-out';
+                                         setTimeout(() => {
+                                             chatBox.style.transition = '';
+                                             chatInput.focus();
+                                         }, 300);
+                                     }, 10);
+                                 }
 
-                                // Hide chat box
-                                function closeChatBox() {
-                                    chatBox.style.opacity = '0';
-                                    chatBox.style.transform = 'translate(-50%, -50%) scale(0.8)';
-                                    setTimeout(() => {
-                                        chatBox.classList.add('hidden');
-                                        chatBox.classList.remove('flex');
-                                        supportBtn.style.display = 'flex';
-                                        chatBox.style.transform = '';
-                                        chatBox.style.opacity = '';
-                                        chatBox.style.transition = '';
-                                    }, 300);
-                                }
+                                 // Hide chat box
+                                 function closeChatBox() {
+                                     chatBox.style.opacity = '0';
+                                     chatBox.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                                     setTimeout(() => {
+                                         chatBox.classList.add('hidden');
+                                         chatBox.classList.remove('flex');
+                                         supportBtn.style.display = 'flex';
+                                         chatBox.style.transform = '';
+                                         chatBox.style.opacity = '';
+                                         chatBox.style.transition = '';
+                                     }, 300);
+                                 }
 
-                                // Drag functionality
-                                function dragStart(e) {
-                                    if (e.type === "touchstart") {
-                                        initialX = e.touches[0].clientX - xOffset;
-                                        initialY = e.touches[0].clientY - yOffset;
-                                    } else {
-                                        initialX = e.clientX - xOffset;
-                                        initialY = e.clientY - yOffset;
-                                    }
+                                 // Drag functionality
+                                 function handleDragStart(e) {
+                                     // Only start drag if clicking on header (not close button)
+                                     if (!chatHeader.contains(e.target) || closeChatBtn.contains(e.target)) {
+                                         return;
+                                     }
 
-                                    if (e.target === chatHeader || chatHeader.contains(e.target)) {
-                                        isDragging = true;
-                                        chatBox.style.transition = 'none';
-                                    }
-                                }
+                                     e.preventDefault();
 
-                                function dragEnd(e) {
-                                    initialX = currentX;
-                                    initialY = currentY;
-                                    isDragging = false;
-                                    chatBox.style.transition = '';
-                                }
+                                     const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
+                                     const clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
 
-                                function drag(e) {
-                                    if (isDragging) {
-                                        e.preventDefault();
+                                     chatState.isDragging = true;
+                                     chatState.hasMoved = false;
+                                     chatState.dragStartTime = Date.now();
+                                     chatState.initialX = clientX - chatState.xOffset;
+                                     chatState.initialY = clientY - chatState.yOffset;
 
-                                        if (e.type === "touchmove") {
-                                            currentX = e.touches[0].clientX - initialX;
-                                            currentY = e.touches[0].clientY - initialY;
-                                        } else {
-                                            currentX = e.clientX - initialX;
-                                            currentY = e.clientY - initialY;
-                                        }
+                                     chatBox.style.transition = 'none';
+                                     chatBox.style.cursor = 'grabbing';
 
-                                        xOffset = currentX;
-                                        yOffset = currentY;
+                                     // Prevent text selection during drag
+                                     document.body.style.userSelect = 'none';
+                                 }
 
-                                        // Calculate the new position
-                                        const rect = chatBox.getBoundingClientRect();
-                                        const newLeft = (window.innerWidth / 2) + currentX;
-                                        const newTop = (window.innerHeight / 2) + currentY;
+                                 function handleDragMove(e) {
+                                     if (!chatState.isDragging) return;
 
-                                        // Boundary checking
-                                        const minLeft = rect.width / 2;
-                                        const maxLeft = window.innerWidth - (rect.width / 2);
-                                        const minTop = rect.height / 2;
-                                        const maxTop = window.innerHeight - (rect.height / 2);
+                                     e.preventDefault();
 
-                                        const boundedLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
-                                        const boundedTop = Math.max(minTop, Math.min(maxTop, newTop));
+                                     const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+                                     const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
 
-                                        chatBox.style.left = boundedLeft + 'px';
-                                        chatBox.style.top = boundedTop + 'px';
-                                        chatBox.style.transform = 'translate(-50%, -50%)';
-                                    }
-                                }
+                                     chatState.currentX = clientX - chatState.initialX;
+                                     chatState.currentY = clientY - chatState.initialY;
+                                     chatState.xOffset = chatState.currentX;
+                                     chatState.yOffset = chatState.currentY;
 
-                                // Add drag event listeners
-                                chatHeader.addEventListener('mousedown', dragStart);
-                                document.addEventListener('mousemove', drag);
-                                document.addEventListener('mouseup', dragEnd);
+                                     // Mark as moved if significant movement
+                                     if (Math.abs(chatState.currentX) > 5 || Math.abs(chatState.currentY) > 5) {
+                                         chatState.hasMoved = true;
+                                     }
 
-                                // Touch events for mobile
-                                chatHeader.addEventListener('touchstart', dragStart);
-                                document.addEventListener('touchmove', drag);
-                                document.addEventListener('touchend', dragEnd);
+                                     // Calculate new position
+                                     const rect = chatBox.getBoundingClientRect();
+                                     const newLeft = (window.innerWidth / 2) + chatState.currentX;
+                                     const newTop = (window.innerHeight / 2) + chatState.currentY;
 
-                                closeChatBtn.addEventListener('click', closeChatBox);
+                                     // Boundary checking
+                                     const minLeft = rect.width / 2;
+                                     const maxLeft = window.innerWidth - (rect.width / 2);
+                                     const minTop = rect.height / 2;
+                                     const maxTop = window.innerHeight - (rect.height / 2);
 
-                                // Close chat box when clicking outside (for mobile)
-                                document.addEventListener('click', function(e) {
-                                    if (window.innerWidth <= 640 && !chatBox.contains(e.target) && !supportBtn.contains(e.target) && !chatBox.classList.contains('hidden')) {
-                                        closeChatBox();
-                                    }
-                                });
+                                     const boundedLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
+                                     const boundedTop = Math.max(minTop, Math.min(maxTop, newTop));
 
-                                // Get current time
-                                function getCurrentTime() {
-                                    const now = new Date();
-                                    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                                }
+                                     chatBox.style.left = boundedLeft + 'px';
+                                     chatBox.style.top = boundedTop + 'px';
+                                     chatBox.style.transform = 'translate(-50%, -50%)';
+                                 }
 
-                                // Send message function
-                                function sendMessage() {
-                                    const message = chatInput.value.trim();
-                                    if (message) {
-                                        // Disable send button temporarily
-                                        sendBtn.disabled = true;
+                                 function handleDragEnd(e) {
+                                     if (!chatState.isDragging) return;
 
-                                        // Add user message
-                                        const userMessageDiv = document.createElement('div');
-                                        userMessageDiv.className = 'flex items-start space-x-2 justify-end';
-                                        userMessageDiv.innerHTML = `
-                                            <div class="bg-blue-600 text-white p-3 rounded-lg rounded-tr-none max-w-xs">
-                                                <p class="text-sm">${message}</p>
-                                                <span class="text-xs text-blue-200 mt-1 block">${getCurrentTime()}</span>
-                                            </div>
-                                            <div class="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                                <span class="material-icons text-white text-sm">person</span>
-                                            </div>
-                                        `;
-                                        chatMessages.appendChild(userMessageDiv);
+                                     chatState.isDragging = false;
+                                     chatBox.style.cursor = '';
+                                     document.body.style.userSelect = '';
 
-                                        // Clear input
-                                        chatInput.value = '';
+                                     // Small delay to prevent immediate click outside trigger
+                                     setTimeout(() => {
+                                         chatState.hasMoved = false;
+                                     }, 50);
+                                 }
 
-                                        // Scroll to bottom
-                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                 // Click outside to close
+                                 function handleDocumentClick(e) {
+                                     // Don't close if:
+                                     // - Chat is hidden
+                                     // - Click is inside chatbox
+                                     // - Click is on support button
+                                     // - Currently dragging or just finished dragging
+                                     // - Click is on close button (handled separately)
+                                     if (chatBox.classList.contains('hidden') ||
+                                         chatBox.contains(e.target) ||
+                                         supportBtn.contains(e.target) ||
+                                         chatState.isDragging ||
+                                         chatState.hasMoved) {
+                                         return;
+                                     }
 
-                                        // Show typing indicator
-                                        const typingDiv = document.createElement('div');
-                                        typingDiv.className = 'flex items-start space-x-2';
-                                        typingDiv.id = 'typing-indicator';
-                                        typingDiv.innerHTML = `
-                                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                                <span class="material-icons text-white text-sm">support_agent</span>
-                                            </div>
-                                            <div class="bg-slate-700 text-white p-3 rounded-lg rounded-tl-none">
-                                                <div class="flex space-x-1">
-                                                    <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-                                                    <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                                                    <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                                                </div>
-                                            </div>
-                                        `;
-                                        chatMessages.appendChild(typingDiv);
-                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                     closeChatBox();
+                                 }
 
-                                        // Simulate bot response after a delay
-                                        setTimeout(function() {
-                                            // Remove typing indicator
-                                            const typingIndicator = document.getElementById('typing-indicator');
-                                            if (typingIndicator) {
-                                                typingIndicator.remove();
-                                            }
+                                 // Event listeners
+                                 supportBtn.addEventListener('click', showChatBox);
+                                 closeChatBtn.addEventListener('click', closeChatBox);
 
-                                            // Add bot response
-                                            const botMessageDiv = document.createElement('div');
-                                            botMessageDiv.className = 'flex items-start space-x-2';
-                                            const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
-                                            botMessageDiv.innerHTML = `
-                                                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                                    <span class="material-icons text-white text-sm">support_agent</span>
-                                                </div>
-                                                <div class="bg-slate-700 text-white p-3 rounded-lg rounded-tl-none max-w-xs">
-                                                    <p class="text-sm">${randomResponse}</p>
-                                                    <span class="text-xs text-slate-400 mt-1 block">${getCurrentTime()}</span>
-                                                </div>
-                                            `;
-                                            chatMessages.appendChild(botMessageDiv);
-                                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                                 // Drag events
+                                 chatHeader.addEventListener('mousedown', handleDragStart);
+                                 document.addEventListener('mousemove', handleDragMove);
+                                 document.addEventListener('mouseup', handleDragEnd);
 
-                                            // Re-enable send button
-                                            sendBtn.disabled = false;
-                                            messageCount++;
-                                        }, 1500 + Math.random() * 1000); // Random delay between 1.5-2.5 seconds
-                                    }
-                                }
+                                 // Touch events for mobile
+                                 chatHeader.addEventListener('touchstart', handleDragStart, { passive: false });
+                                 document.addEventListener('touchmove', handleDragMove, { passive: false });
+                                 document.addEventListener('touchend', handleDragEnd);
 
-                                // Send message on button click
-                                sendBtn.addEventListener('click', sendMessage);
+                                 // Click outside to close - use capture phase to handle before other events
+                                 document.addEventListener('click', handleDocumentClick, true);
 
-                                // Send message on Enter key press
-                                chatInput.addEventListener('keypress', function(e) {
-                                    if (e.key === 'Enter' && !sendBtn.disabled) {
-                                        sendMessage();
-                                    }
-                                });
+                                 // Prevent chatbox content clicks from bubbling
+                                 chatBox.addEventListener('click', function(e) {
+                                     e.stopPropagation();
+                                 });
 
-                                // Auto-resize chat input
-                                chatInput.addEventListener('input', function() {
-                                    sendBtn.disabled = this.value.trim() === '';
-                                });
+                                 // Get current time
+                                 function getCurrentTime() {
+                                     const now = new Date();
+                                     return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                 }
 
-                                // Initial state
-                                sendBtn.disabled = true;
+                                 // Send message function
+                                 function sendMessage() {
+                                     const message = chatInput.value.trim();
+                                     if (message) {
+                                         // Disable send button temporarily
+                                         sendBtn.disabled = true;
+
+                                         // Add user message
+                                         const userMessageDiv = document.createElement('div');
+                                         userMessageDiv.className = 'flex items-start space-x-2 justify-end';
+                                         userMessageDiv.innerHTML = `
+                                             <div class="bg-blue-600 text-white p-3 rounded-lg rounded-tr-none max-w-xs">
+                                                 <p class="text-sm">${message}</p>
+                                                 <span class="text-xs text-blue-200 mt-1 block">${getCurrentTime()}</span>
+                                             </div>
+                                             <div class="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                                 <span class="material-icons text-white text-sm">person</span>
+                                             </div>
+                                         `;
+                                         chatMessages.appendChild(userMessageDiv);
+
+                                         // Clear input
+                                         chatInput.value = '';
+
+                                         // Scroll to bottom
+                                         chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                                         // Show typing indicator
+                                         const typingDiv = document.createElement('div');
+                                         typingDiv.className = 'flex items-start space-x-2';
+                                         typingDiv.id = 'typing-indicator';
+                                         typingDiv.innerHTML = `
+                                             <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                                 <span class="material-icons text-white text-sm">support_agent</span>
+                                             </div>
+                                             <div class="bg-slate-700 text-white p-3 rounded-lg rounded-tl-none">
+                                                 <div class="flex space-x-1">
+                                                     <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                                                     <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                                                     <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                                 </div>
+                                             </div>
+                                         `;
+                                         chatMessages.appendChild(typingDiv);
+                                         chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                                         // Simulate bot response after a delay
+                                         setTimeout(function() {
+                                             // Remove typing indicator
+                                             const typingIndicator = document.getElementById('typing-indicator');
+                                             if (typingIndicator) {
+                                                 typingIndicator.remove();
+                                             }
+
+                                             // Add bot response
+                                             const botMessageDiv = document.createElement('div');
+                                             botMessageDiv.className = 'flex items-start space-x-2';
+                                             const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+                                             botMessageDiv.innerHTML = `
+                                                 <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                                     <span class="material-icons text-white text-sm">support_agent</span>
+                                                 </div>
+                                                 <div class="bg-slate-700 text-white p-3 rounded-lg rounded-tl-none max-w-xs">
+                                                     <p class="text-sm">${randomResponse}</p>
+                                                     <span class="text-xs text-slate-400 mt-1 block">${getCurrentTime()}</span>
+                                                 </div>
+                                             `;
+                                             chatMessages.appendChild(botMessageDiv);
+                                             chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                                             // Re-enable send button
+                                             sendBtn.disabled = false;
+                                             messageCount++;
+                                         }, 1500 + Math.random() * 1000);
+                                     }
+                                 }
+
+                                 // Send message on button click
+                                 sendBtn.addEventListener('click', sendMessage);
+
+                                 // Send message on Enter key press
+                                 chatInput.addEventListener('keypress', function(e) {
+                                     if (e.key === 'Enter' && !sendBtn.disabled) {
+                                         sendMessage();
+                                     }
+                                 });
+
+                                 // Auto-resize chat input
+                                 chatInput.addEventListener('input', function() {
+                                     sendBtn.disabled = this.value.trim() === '';
+                                 });
+
+                                 // Escape key to close
+                                 document.addEventListener('keydown', function(e) {
+                                     if (e.key === 'Escape' && !chatBox.classList.contains('hidden')) {
+                                         closeChatBox();
+                                     }
+                                 });
+
+                                 // Initial state
+                                 sendBtn.disabled = true;
+
 
            // Simple modal functionality
            function openProcessModal() {
