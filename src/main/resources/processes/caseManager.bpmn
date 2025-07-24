@@ -1,20 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:design="http://flowable.org/design" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://flowable.org/test" design:palette="flowable-work-process-palette">
   <process id="caseManager" name="caseManager" isExecutable="true" flowable:candidateStarterGroups="flowableUser">
-    <documentation>               Create a form to collect the following information:
-                                
-                1. brief:
-                   - Type: textarea
-                   - Label: Brief
-                   - Placeholder: Enter your brief
-                   - Required
-                                               
+    <documentation>Form Submission URL: @{http://localhost:9000/processes/start}
 
-                Include HTMX attributes to submit the form asynchronously to `/submitForm`, and replace the form container with the response.</documentation>
+Submit button caption : Start
+name:
+type: text
+label: Client Name
+placeholder: Client Name
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+email:
+type: text
+label: Email
+placeholder: Email
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+phoneNumber:
+type: text
+label: Phone Number
+placeholder: Phone Number
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+address:
+type: text
+label: Address
+placeholder: Address
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+brief:
+type: textarea
+label: Brief
+placeholder: Enter your brief
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
     <extensionElements>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
       <design:creationdate><![CDATA[2025-05-12T09:55:09.088Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-07-22T15:11:48.184Z]]></design:modificationdate>
+      <design:modificationdate><![CDATA[2025-07-23T22:42:27.389Z]]></design:modificationdate>
     </extensionElements>
     <userTask id="FormTask_10" name="HOC Assign to Lawyer" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
       <extensionElements>
@@ -73,8 +105,9 @@
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
     </userTask>
-    <userTask id="ServiceTask_6" name="Summarize all the document to single document">
+    <userTask id="ServiceTask_6" name="Summarize all the document to single document" flowable:formFieldValidation="false">
       <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
         <design:stencilid><![CDATA[FormTask]]></design:stencilid>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>

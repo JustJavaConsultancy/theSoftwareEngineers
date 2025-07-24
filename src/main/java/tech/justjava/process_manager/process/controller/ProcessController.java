@@ -196,7 +196,8 @@ processInstances.forEach(processInstance -> {
     }
     @PostMapping("/start")
     public String handleFormSubmit(@RequestParam Map<String,Object> formData) {
-        //System.out.println(" The Form Data==="+formData);
+        System.out.println(" The Form Data==="+formData);
+
 
         ProcessInstance processInstance=
                 runtimeService.startProcessInstanceById(formData.get("id").toString(),formData);
