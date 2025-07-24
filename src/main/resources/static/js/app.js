@@ -324,33 +324,42 @@ document.addEventListener('DOMContentLoaded', function() {
                                          chatMessages.scrollTop = chatMessages.scrollHeight;
 
                                          // Simulate bot response after a delay
-                                         setTimeout(function() {
-                                             // Remove typing indicator
-                                             const typingIndicator = document.getElementById('typing-indicator');
-                                             if (typingIndicator) {
-                                                 typingIndicator.remove();
-                                             }
+                                         fetch('/api/chat/send', {
+                                           method: 'POST',
+                                           headers: {
+                                             'Content-Type': 'application/x-www-form-urlencoded'
+                                           },
+                                           body: new URLSearchParams({
+                                             message: message
+                                           })
+                                         })
+                                         .then(response => response.json())
+                                         .then(data => {
+                                           const typingIndicator = document.getElementById('typing-indicator');
+                                           if (typingIndicator) typingIndicator.remove();
 
-                                             // Add bot response
-                                             const botMessageDiv = document.createElement('div');
-                                             botMessageDiv.className = 'flex items-start space-x-2';
-                                             const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
-                                             botMessageDiv.innerHTML = `
-                                                 <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                                     <span class="material-icons text-white text-sm">support_agent</span>
-                                                 </div>
-                                                 <div class="bg-slate-700 text-white p-3 rounded-lg rounded-tl-none max-w-xs">
-                                                     <p class="text-sm">${randomResponse}</p>
-                                                     <span class="text-xs text-slate-400 mt-1 block">${getCurrentTime()}</span>
-                                                 </div>
-                                             `;
-                                             chatMessages.appendChild(botMessageDiv);
-                                             chatMessages.scrollTop = chatMessages.scrollHeight;
+                                           const botMessageDiv = document.createElement('div');
+                                           botMessageDiv.className = 'flex items-start space-x-2';
+                                           botMessageDiv.innerHTML = `
+                                             <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                               <span class="material-icons text-white text-sm">support_agent</span>
+                                             </div>
+                                             <div class="bg-slate-700 text-white p-3 rounded-lg rounded-tl-none max-w-xs">
+                                               <p class="text-sm">${data.response}</p>
+                                               <span class="text-xs text-slate-400 mt-1 block">${getCurrentTime()}</span>
+                                             </div>
+                                           `;
+                                           chatMessages.appendChild(botMessageDiv);
+                                           chatMessages.scrollTop = chatMessages.scrollHeight;
 
-                                             // Re-enable send button
-                                             sendBtn.disabled = false;
-                                             messageCount++;
-                                         }, 1500 + Math.random() * 1000);
+                                           sendBtn.disabled = false;
+                                           messageCount++;
+                                         })
+                                         .catch(error => {
+                                           console.error('Error:', error);
+                                           alert('There was a problem sending your message.');
+                                         });
+
                                      }
                                  }
 
