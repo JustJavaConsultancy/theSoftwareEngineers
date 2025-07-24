@@ -126,6 +126,51 @@ body.light-mode .input-field {
     border: 1px solid #e0e0e0 !important;
 }
 
+body.light-mode .sidebar .bg-blue-600 {
+    background-color: #6366F1 !important;
+    color: #fff !important;
+}
+body.light-mode .sidebar .bg-blue-600 .material-icons,
+body.light-mode .sidebar .bg-blue-600 span {
+    color: #fff !important;
+}
+body.light-mode .brand-title,
+body.light-mode .sidebar .brand-title {
+    color: #6366F1 !important;
+}
+
+/* Dashboard metric cards in light mode */
+body.light-mode .dashboard-metric-card {
+    background-color: #6366F1 !important;
+    color: #fff !important;
+}
+body.light-mode .dashboard-metric-card,
+body.light-mode .dashboard-metric-card *,
+body.light-mode .dashboard-metric-card p,
+body.light-mode .dashboard-metric-card span,
+body.light-mode .dashboard-metric-card a,
+body.light-mode .dashboard-metric-card .material-icons {
+    color: #fff !important;
+}
+
+/* Light mode: Start New Process button on dashboard */
+body.light-mode .dashboard-start-process-btn {
+    background-color: #6366F1 !important;
+    color: #fff !important;
+    border: none !important;
+}
+body.light-mode .dashboard-start-process-btn .material-icons {
+    color: #fff !important;
+}
+
+/* Fix for metric cards and start process button in light mode */
+body.light-mode .dashboard-metric-card .text-white,
+body.light-mode .dashboard-metric-card.text-white,
+body.light-mode .dashboard-start-process-btn .text-white,
+body.light-mode .dashboard-start-process-btn.text-white {
+    color: #fff !important;
+}
+
 /* Fix for metric cards and start process button in light mode */
 body.light-mode .dashboard-metric-card .text-white,
 body.light-mode .dashboard-metric-card.text-white,

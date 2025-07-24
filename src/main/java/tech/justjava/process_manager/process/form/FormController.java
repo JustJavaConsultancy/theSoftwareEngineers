@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import tech.justjava.process_manager.process.service.ProcessService;
 
 import tech.justjava.process_manager.process.service.ProcessServiceAI;
@@ -67,7 +68,65 @@ public class FormController {
         formService.save(form);
         return "redirect:/forms";
     }
+    @PostMapping("/generate-form")
+    public StreamingResponseBody generateForm(
+            @RequestParam String selectTask,
+            @RequestParam String taskName,
+            @RequestParam String taskCode,
+            @RequestParam String taskDescription) {
 
+        System.out.println("Form Data Received:");
+        System.out.println("Task ID: " + selectTask);
+        System.out.println("Form Name: " + taskName);
+        System.out.println("Form Code: " + taskCode);
+        System.out.println("Description: " + taskDescription);
+
+        String formCode = processServiceAI
+                .generateTaskThymeleafForm(taskDescription)
+                        .replace("```","")
+                        .replace("html","");
+
+        return outputStream -> {
+            try {
+                // Stream code character by character
+                char[] chars = formCode.toCharArray();
+                for (char c : chars) {
+                    outputStream.write(new byte[]{(byte) c});
+                    outputStream.flush();
+                    Thread.sleep(5); // Typing speed
+                }
+
+                // Add completion marker
+                outputStream.write("\n<!-- GENERATION_COMPLETE -->".getBytes());
+                outputStream.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+    }
+    @PostMapping("/save-form")
+    public String saveForm(
+            @RequestParam String taskName,
+            @RequestParam String taskID,
+            @RequestParam String taskFormDescription,
+            Model model) {
+
+        // Process and save the form
+        System.out.println("Saved form with code: " + taskFormDescription);
+        String formCode = processServiceAI
+                .generateTaskThymeleafForm(taskFormDescription)
+                .replace("```","")
+                .replace("html","");
+        Form form = new Form();
+        form.setFormDetails(taskFormDescription);
+        form.setFormName(taskName);
+        form.setFormCode(taskID);
+        form.setFormInterface(formCode);
+        formService.save(form);
+        // Add success message
+        model.addAttribute("message", "Form saved successfully!");
+        return "redirect:/forms"; // Your success page
+    }
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         formService.findById(id).ifPresent(form ->
@@ -82,10 +141,12 @@ public class FormController {
         Optional<Form> savedForm=formService.findById(id);
         savedForm.ifPresent(form1 -> {
             if(!form.getFormDetails().equalsIgnoreCase(form1.getFormDetails())){
-                form.setFormInterface(processServiceAI
-                        .generateTaskThymeleafForm(form.getFormDetails())
-                        .replace("```","")
-                        .replace("html",""));
+                String formInterface=processServiceAI
+                        .generateTaskThymeleafForm(form.getFormDetails()
+                                .replace("```","")
+                                .replace("html","")
+                        );
+                form.setFormInterface(formInterface);
             }
         });
         formService.save(form);
@@ -96,5 +157,9 @@ public class FormController {
     public String deleteForm(@PathVariable Long id) {
         formService.deleteById(id);
         return "redirect:/forms";
+    }
+    @GetMapping("/caseManagement")
+    public String manageCase(){
+        return "form/caseManagement";
     }
 }

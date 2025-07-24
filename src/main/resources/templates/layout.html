@@ -17,6 +17,7 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
             rel="stylesheet"
             crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             
     <!-- Application CSS -->
     <link th:href="@{/css/app.css}" rel="stylesheet">
@@ -29,7 +30,7 @@
     <div>
         <div class="flex items-center mb-10 space-x-2">
             <img src="/images/justjavaLogo.svg" class="w-8 h-8">
-            <h1 class="text-2xl font-bold text-white mt-1">JustJava</h1>
+            <h1 class="text-2xl font-bold text-white mt-1 brand-title">JustJava</h1>
         </div>
         <nav class="space-y-4">
             <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
@@ -54,15 +55,22 @@
                 <span class="material-icons mr-3">note_add</span>
                 <span>Task Forms</span>
             </a>
-            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" href="#">
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/report}"
+               th:classappend="${currentPath == '/report'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">bar_chart</span>
                 <span>Reports</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/users}"
+               th:classappend="${currentPath == '/users'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">group</span>
+                <span>User Management</span>
             </a>
             <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/chat}"
                th:classappend="${currentPath == '/chat'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">chat</span>
                 <span>Chat</span>
             </a>
+
         </nav>
     </div>
 </aside>

@@ -1,0 +1,82 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <style>
+    .form-container {
+    background-color: #2d3748;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-top: 3rem;
+}
+
+  </style>
+</head>
+<body>
+<main layout:fragment="content" class="flex-1 overflow-x-hidden overflow-y-auto p-8">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h2 class="text-3xl font-bold">User Management</h2>
+      <p class="text-gray-400">Manage your keycloak users and their groups</p>
+    </div>
+  </div>
+  <div class="form-container p-8 rounded-lg shadow-lg">
+    <h3 class="text-2xl font-semibold mb-6">Add New User</h3>
+    <form hx-post="/users/createUser" >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-400 mb-2" for="firstName">First Name</label>
+          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="firstName" name="firstName" type="text"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-400 mb-2" for="lastName">Last Name</label>
+          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="lastName" name="lastName" type="text"/>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-400 mb-2" for="email">Email</label>
+          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="email" name="email" type="email"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-400 mb-2" for="username">Username</label>
+          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="username" name="username" type="text"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-400 mb-2" for="status">Status</label>
+          <select class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="status" name="status">
+            <option value="true">Enable</option>
+            <option value="false">Disable</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-400 mb-2" for="groups">Groups</label>
+          <div class="relative">
+            <select class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="groups" name="groups">
+              <option th:each="user : ${userGroups}"
+                      th:value="${user.getGroupName()}"
+                      th:text="${user.getGroupName()}">
+              </option>
+            </select>
+          </div>
+          <div class="mt-2">
+            <a href="/users/groups" class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400">
+              <span class="material-icons mr-2">settings</span>
+              Manage Groups
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 flex justify-end space-x-4">
+        <button class="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="button">Cancel</button>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg flex items-center w-full md:w-auto justify-center" type="submit">
+          <span class="material-icons mr-2">add</span>
+          Add User
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+</body>
+</html>
