@@ -158,4 +158,8 @@ public class FormController {
         formService.deleteById(id);
         return "redirect:/forms";
     }
+    @GetMapping("/caseManagement")
+    public String manageCase(){
+        return "form/caseManagement";
+    }
 }
