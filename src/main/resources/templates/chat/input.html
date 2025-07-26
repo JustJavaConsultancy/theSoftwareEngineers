@@ -1,6 +1,71 @@
-<form id="chat-form" class="p-4 border-t flex items-center">
-    <input id="chat-input" type="text" class="flex-1 rounded-full px-4 py-2 border focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type a message..." autocomplete="off" />
-    <button type="submit" class="ml-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <span class="material-icons">send</span>
-    </button>
+<form id="chat-form" class="p-4 border-t flex flex-col items-stretch space-y-2">
+    <!-- Recipients dropdown (positioned above input) -->
+    <div class="relative">
+        <div id="recipients-dropdown" class="absolute bottom-full mb-2 right-0 w-64 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg shadow-lg z-10 hidden">
+            <div class="p-3">
+                <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-2">Send to multiple recipients</h4>
+                <div class="space-y-2 max-h-48 overflow-y-auto">
+                    <!-- Individual users -->
+                    <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Users</div>
+                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
+                        <input type="checkbox" class="recipient-checkbox" data-type="user" data-id="1" data-name="Chinedu">
+                        <span class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">C</span>
+                        <span class="text-sm text-slate-900 dark:text-white">Chinedu</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
+                        <input type="checkbox" class="recipient-checkbox" data-type="user" data-id="2" data-name="Amaka">
+                        <span class="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-bold">A</span>
+                        <span class="text-sm text-slate-900 dark:text-white">Amaka</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
+                        <input type="checkbox" class="recipient-checkbox" data-type="user" data-id="3" data-name="Tunde">
+                        <span class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold">T</span>
+                        <span class="text-sm text-slate-900 dark:text-white">Tunde</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
+                        <input type="checkbox" class="recipient-checkbox" data-type="user" data-id="4" data-name="Ngozi">
+                        <span class="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-bold">N</span>
+                        <span class="text-sm text-slate-900 dark:text-white">Ngozi</span>
+                    </label>
+                    
+                    <!-- Groups -->
+                    <div class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-3 pt-2 border-t border-slate-200 dark:border-slate-600">Groups</div>
+                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
+                        <input type="checkbox" class="recipient-checkbox" data-type="group" data-id="5" data-name="Lagos Office">
+                        <span class="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold">L</span>
+                        <span class="text-sm text-slate-900 dark:text-white">Lagos Office</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
+                        <input type="checkbox" class="recipient-checkbox" data-type="group" data-id="6" data-name="Dev Team">
+                        <span class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-xs font-bold">D</span>
+                        <span class="text-sm text-slate-900 dark:text-white">Dev Team</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recipients display area (hidden by default) -->
+    <div id="recipients-display" class="hidden bg-slate-100 dark:bg-slate-700 rounded-lg p-2 text-sm">
+        <span class="text-slate-600 dark:text-slate-300">To: </span>
+        <div id="selected-recipients" class="inline-flex flex-wrap gap-1"></div>
+        <button type="button" id="clear-recipients" class="ml-2 text-red-500 hover:text-red-700 text-xs">Clear</button>
+    </div>
+    
+    <!-- Message input area -->
+    <div class="flex items-center space-x-2">
+        <div class="relative flex-1">
+            <input id="user-chat-input" type="text" class="w-full rounded-full px-4 py-2 pr-12 border focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type a message..." autocomplete="off" />
+            <!-- Multi-recipient dropdown button inside input -->
+            <div class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                <button type="button" id="recipients-dropdown-btn" class="text-slate-400 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 focus:outline-none transition-colors p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700" title="Add recipients">
+                    <span class="material-icons text-sm">group_add</span>
+                </button>
+            </div>
+        </div>
+        
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <span class="material-icons">send</span>
+        </button>
+    </div>
 </form> 
