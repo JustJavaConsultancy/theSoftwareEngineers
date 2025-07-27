@@ -250,7 +250,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                  }
 
                                  // Event listeners
-                                 supportBtn.addEventListener('click', showChatBox);
+                                 supportBtn.addEventListener('click', function () {
+                                   // Only open if not just dragged
+                                   if (!chatState.hasMoved) {
+                                     showChatBox();
+                                   }
+                                 });
+
+
                                  closeChatBtn.addEventListener('click', closeChatBox);
 
                                  // Drag events
@@ -387,6 +394,82 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                  // Initial state
                                  sendBtn.disabled = true;
+
+                                 (function makeSupportButtonDraggableAndSnap() {
+                                   const button = document.getElementById('support-chat-btn');
+                                   let isDragging = false;
+                                   let startX = 0;
+                                   let startY = 0;
+                                   let offsetX = 0;
+                                   let offsetY = 0;
+                                   const SNAP_MARGIN = 20;
+
+                                   function onMouseDown(e) {
+                                     isDragging = true;
+                                     chatState.hasMoved = false; // ✅ Reset drag flag here
+                                     const rect = button.getBoundingClientRect();
+                                     startX = e.clientX;
+                                     startY = e.clientY;
+                                     offsetX = startX - rect.left;
+                                     offsetY = startY - rect.top;
+
+                                     button.style.transition = 'none';
+                                     document.body.style.userSelect = 'none';
+                                   }
+
+                                   function onMouseMove(e) {
+                                     if (!isDragging) return;
+
+                                     const newLeft = e.clientX - offsetX;
+                                     const newTop = e.clientY - offsetY;
+
+                                     button.style.left = newLeft + 'px';
+                                     button.style.top = newTop + 'px';
+                                     button.style.right = 'auto';
+
+                                     chatState.hasMoved = true; // ✅ Mark that dragging occurred
+                                   }
+
+                                   function onMouseUp(e) {
+                                     if (!isDragging) return;
+                                     isDragging = false;
+                                     document.body.style.userSelect = '';
+                                     button.style.transition = 'all 0.2s ease';
+
+                                     const rect = button.getBoundingClientRect();
+                                     const snapToLeft = rect.left < window.innerWidth / 2;
+
+                                     const snappedY = Math.max(0, Math.min(window.innerHeight - rect.height, rect.top));
+                                     button.style.top = snappedY + 'px';
+                                     button.style.left = snapToLeft ? SNAP_MARGIN + 'px' : 'auto';
+                                     button.style.right = snapToLeft ? 'auto' : SNAP_MARGIN + 'px';
+                                   }
+
+                                   // Mouse events
+                                   button.addEventListener('mousedown', onMouseDown);
+                                   document.addEventListener('mousemove', onMouseMove);
+                                   document.addEventListener('mouseup', onMouseUp);
+
+                                   // Touch events
+                                   button.addEventListener('touchstart', function (e) {
+                                     if (e.touches.length !== 1) return;
+                                     onMouseDown({
+                                       clientX: e.touches[0].clientX,
+                                       clientY: e.touches[0].clientY,
+                                     });
+                                   }, { passive: false });
+
+                                   document.addEventListener('touchmove', function (e) {
+                                     if (!isDragging || e.touches.length !== 1) return;
+                                     onMouseMove({
+                                       clientX: e.touches[0].clientX,
+                                       clientY: e.touches[0].clientY,
+                                     });
+                                   }, { passive: false });
+
+                                   document.addEventListener('touchend', onMouseUp);
+                                 })();
+
 
 
            // Simple modal functionality
