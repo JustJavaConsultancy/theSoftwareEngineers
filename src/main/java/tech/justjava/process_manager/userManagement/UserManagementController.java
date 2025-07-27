@@ -2,6 +2,9 @@ package tech.justjava.process_manager.userManagement;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,52 +32,80 @@ public class UserManagementController {
 
       return "userManagement/list";
     }
+    @GetMapping("/editUser/{id}")
+    public String editUser(@PathVariable String id, Model model) {
+        List<UserGroup> userGroup = keycloakService.getUserGroups();
+        UserDTO user = keycloakService.getSingleUser(id);
+        System.out.println(user);
+        model.addAttribute("user", user); // Contains group info
+        model.addAttribute("userGroups", userGroup); // All available groups
+        return "/userManagement/editUser";
+    }
 
     @GetMapping("/new")
     public String addUser(Model model) {
         List<UserGroup> userGroup = keycloakService.getUserGroups();
         model.addAttribute("userGroups", userGroup);
-
+        model.addAttribute("status","added");
         return "userManagement/create";
     }
     @GetMapping("/groups")
     public String manageGroups(Model model){
         List<UserGroup> userGroup = keycloakService.getUserGroups();
+        System.out.println(userGroup);
         model.addAttribute("userGroups", userGroup);
         return "userManagement/groupManagement";
     }
+    @GetMapping("/editGroup/{id}")
+    public String editGroup(@PathVariable String id, Model model) {
+        UserGroup singleUser = keycloakService.getSingleGroup(id);
+        System.out.println(singleUser);
+        model.addAttribute("group",singleUser);
+        return "userManagement/editGroup :: content";
+    }
+
 
     @PostMapping("/createUser")
-    public String createUser(@RequestParam Map<String, String> params){
+    public String createUser(@RequestParam Map<String, String> params ,Model model){
         keycloakService.createUserInGroup(params);
-        return "redirect:/users";
+        model.addAttribute("status","added");
+        return "userManagement/userStatus";
     }
 
     @PostMapping("/createGroup")
-    public String createGroup(@RequestParam Map<String, String> params){
+    public ResponseEntity<Void> createGroup(@RequestParam Map<String, String> params){
         keycloakService.createGroup(params.get("groupName"), params.get("groupDescription"));
-        return "redirect:/groups";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("HX-Redirect", "/users/groups");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
     }
 
     @PostMapping("/editGroup")
-    public String editGroup(@RequestParam Map<String, String> params){
+    public ResponseEntity<Void> editGroup(@RequestParam Map<String, String> params){
         keycloakService.updateGroup(params);
-        return "redirect:/groups";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("HX-Redirect", "/users/groups");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
     }
     @PostMapping("/editUser")
-    public String editUser(@RequestParam Map<String, String> params){
+    public String editUser(@RequestParam Map<String, String> params, Model model){
         keycloakService.updateUser(params.get("id"), params);
-        return "redirect:/users";
+        model.addAttribute("status","edited");
+        return "userManagement/userStatus";
     }
     @GetMapping("/deleteUser/{userId}")
-    public String deleteUser(@PathVariable String userId){
+    public ResponseEntity<Void> deleteUser(@PathVariable String userId){
         keycloakService.deleteUser(userId);
-        return "redirect:/users";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("HX-Redirect", "/users");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
     }
 
     @GetMapping("/deleteGroup/{groupId}")
-    public String deleteGroup(@PathVariable String groupId){
+    public ResponseEntity<Void> deleteGroup(@PathVariable String groupId){
         keycloakService.deleteGroup(groupId);
-        return "redirect:/groups";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("HX-Redirect", "/users/groups");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
     }
 }

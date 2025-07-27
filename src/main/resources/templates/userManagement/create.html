@@ -2,8 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
   <style>
     .form-container {
     background-color: #2d3748;
@@ -29,23 +29,23 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label class="block text-sm font-medium text-gray-400 mb-2" for="firstName">First Name</label>
-          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="firstName" name="firstName" type="text"/>
+          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="firstName" name="firstName" type="text" required/>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-400 mb-2" for="lastName">Last Name</label>
-          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="lastName" name="lastName" type="text"/>
+          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="lastName" name="lastName" type="text" required/>
         </div>
         <div class="md:col-span-2">
           <label class="block text-sm font-medium text-gray-400 mb-2" for="email">Email</label>
-          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="email" name="email" type="email"/>
+          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="email" name="email" type="email" required/>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-400 mb-2" for="username">Username</label>
-          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="username" name="username" type="text"/>
+          <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="username" name="username" type="text" required/>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-400 mb-2" for="status">Status</label>
-          <select class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="status" name="status">
+          <select class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="status" name="status" required>
             <option value="true">Enable</option>
             <option value="false">Disable</option>
           </select>
@@ -53,7 +53,7 @@
         <div class="md:col-span-2">
           <label class="block text-sm font-medium text-gray-400 mb-2" for="groups">Groups</label>
           <div class="relative">
-            <select class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="groups" name="groups">
+            <select class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="groups" name="groups" required>
               <option th:each="user : ${userGroups}"
                       th:value="${user.getGroupName()}"
                       th:text="${user.getGroupName()}">

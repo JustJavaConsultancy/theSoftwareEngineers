@@ -1,0 +1,23 @@
+<div th:fragment="content" xmlns:th="http://www.thymeleaf.org">
+<form id="editGroupForm" hx-put="/users/updateGroup">
+  <div class="mb-6">
+    <label class="block text-sm font-medium text-gray-400 mb-2" for="editGroupName">Group Name</label>
+    <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+           id="editGroupName" name="groupName" type="text" required/>
+  </div>
+  <div class="mb-6">
+    <label class="block text-sm font-medium text-gray-400 mb-2" for="editGroupDescription">Description</label>
+    <textarea class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              id="editGroupDescription" name="groupDescription" rows="3"></textarea>
+  </div>
+  <div class="flex justify-end space-x-4">
+    <button type="button" id="editCancelGroupBtn" class="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400">
+      Cancel
+    </button>
+    <button type="submit" class="px-6 py-2 btn-primary hover:bg-blue-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center">
+      <span class="material-icons mr-2">save</span>
+      Update Group
+    </button>
+  </div>
+</form>
+</div>

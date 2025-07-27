@@ -159,7 +159,23 @@ public class FormController {
         return "redirect:/forms";
     }
     @GetMapping("/caseManagement")
-    public String manageCase(){
+    public String manageCase(Model model) {
+        // Hardcoded list of lawyer document names
+        List<String> lawyerDocuments = List.of(
+                "Letter of Demand",
+                "Statement of Claim",
+                "Affidavit of Evidence",
+                "Preliminary Objections"
+        );
+        model.addAttribute("lawyerDocuments", lawyerDocuments);
         return "form/caseManagement";
+    }
+
+    @PostMapping("/generate-lawyer-doc")
+    public String generateLawyerDoc(@RequestParam String docName, Model model) {
+        // Just return the same template for all documents
+        model.addAttribute("docName", docName);
+        model.addAttribute("generatedContent", "Generated content for " + docName);
+        return "form/generated-lawyer-doc";
     }
 }
