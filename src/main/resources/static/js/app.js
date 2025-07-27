@@ -79,7 +79,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
 
 
-                        // Chatbox
+                        // Chatbox - only initialize if not on chat page
+                        if (!window.location.pathname.includes('/chat')) {
                          // Chat functionality
                          const supportBtn = document.getElementById('support-chat-btn');
                                  const chatBox = document.getElementById('chat-box');
@@ -447,19 +448,30 @@ document.addEventListener('DOMContentLoaded', function() {
             // Dark/Light mode toggle logic
             const modeToggleBtn = document.getElementById('mode-toggle');
             const body = document.body;
+            const html = document.documentElement;
             const MODE_KEY = 'colorMode';
             const ICON_MOON = 'nightlight_round';
             const ICON_SUN = 'wb_sunny';
 
+            console.log('Dark mode toggle initialization:', {
+                modeToggleBtn: modeToggleBtn,
+                body: body,
+                html: html
+            });
+
             function setMode(mode) {
+                console.log('Setting mode to:', mode);
                 if (mode === 'light') {
                     body.classList.add('light-mode');
+                    html.classList.remove('dark');
                 } else {
                     body.classList.remove('light-mode');
+                    html.classList.add('dark');
                 }
                 // Change icon if possible
                 if (modeToggleBtn) {
                     const icon = modeToggleBtn.querySelector('.material-icons');
+                    console.log('Icon element found:', icon);
                     if (icon) {
                         icon.textContent = mode === 'light' ? ICON_SUN : ICON_MOON;
                     }
@@ -468,17 +480,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // On load, apply saved mode
             const savedMode = localStorage.getItem(MODE_KEY);
+            console.log('Saved mode from localStorage:', savedMode);
             if (savedMode === 'light' || savedMode === 'dark') {
                 setMode(savedMode);
+            } else {
+                // Default to dark mode if no saved preference
+                setMode('dark');
             }
 
             // Toggle on button click
             if (modeToggleBtn) {
+                console.log('Adding click listener to mode toggle button');
                 modeToggleBtn.addEventListener('click', function() {
-                    const isLight = body.classList.toggle('light-mode');
-                    const newMode = isLight ? 'light' : 'dark';
+                    console.log('Mode toggle button clicked!');
+                    const isCurrentlyLight = body.classList.contains('light-mode');
+                    const newMode = isCurrentlyLight ? 'dark' : 'light';
+                    console.log('Toggling from', isCurrentlyLight ? 'light' : 'dark', 'to', newMode);
                     localStorage.setItem(MODE_KEY, newMode);
                     setMode(newMode);
                 });
+            } else {
+                console.error('Mode toggle button not found! Element with id "mode-toggle" does not exist.');
             }
         });

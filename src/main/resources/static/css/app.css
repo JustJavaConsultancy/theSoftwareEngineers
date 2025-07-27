@@ -204,7 +204,7 @@ html.dark #chat-form {
     border-color: #334155 !important;
 }
 
-html.dark #chat-input {
+html.dark #user-chat-input {
     background: #1e293b !important;
     color: #ffffff !important;
     border-color: #475569 !important;
@@ -215,7 +215,7 @@ body.light-mode #chat-form {
     border-color: #e2e8f0 !important;
 }
 
-body.light-mode #chat-input {
+body.light-mode #user-chat-input {
     background: #f1f5f9 !important;
     color: #0f172a !important;
     border-color: #cbd5e1 !important;
