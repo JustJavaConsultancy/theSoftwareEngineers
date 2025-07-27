@@ -1,6 +1,8 @@
 package tech.justjava.process_manager.userManagement;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -50,17 +52,19 @@ public class UserManagementController {
         return "userManagement/create";
     }
     @GetMapping("/groups")
-    public String manageGroups(Model model){
-        List<UserGroup> userGroup = keycloakService.getUserGroups();
-        System.out.println(userGroup);
-        model.addAttribute("userGroups", userGroup);
+    public String manageGroups(Model model) {
+        List<UserGroup> userGroups = keycloakService.getUserGroups();
+        model.addAttribute("userGroups", userGroups);
         return "userManagement/groupManagement";
     }
     @GetMapping("/editGroup/{id}")
     public String editGroup(@PathVariable String id, Model model) {
+
+        System.out.println(" The ID sent ==="+id);
         UserGroup singleUser = keycloakService.getSingleGroup(id);
-        System.out.println(singleUser);
-        model.addAttribute("group",singleUser);
+
+        System.out.println(" The singleUser===="+singleUser);
+        model.addAttribute("singleGroup",singleUser);
         return "userManagement/editGroup :: content";
     }
 
