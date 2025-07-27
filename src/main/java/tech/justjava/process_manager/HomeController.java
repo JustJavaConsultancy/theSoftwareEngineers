@@ -79,16 +79,12 @@ public class HomeController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // Prepare the payload for the AI backend
-            Map<String, Object> aiPayload = new HashMap<>();
-            aiPayload.put("userPrompt", message);
+
 
             // Send it using Feign client
-            ResponseEntity<String> aiResponse = supportFeignClient.postAiMessage(aiPayload);
-
+            String aiResponse = supportFeignClient.postAiMessage(message);
             response.put("status", "success");
-            response.put("response", aiResponse.getBody());
-
+            response.put("response", aiResponse);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace(); // log for debugging

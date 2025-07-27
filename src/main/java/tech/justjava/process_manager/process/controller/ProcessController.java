@@ -80,9 +80,12 @@ public class ProcessController {
         //System.out.println(" I'm in the Process List....");
         List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery()
                 .processDefinitionKey(processKey)
+                .includeProcessVariables()
                 .active()
                 .list();
-
+processInstances.forEach(processInstance -> {
+    System.out.println(" The Process variable here==="+processInstance.getProcessVariables());
+});
         model.addAttribute("processes", processInstances);
 
         return "process/processInstance";
@@ -154,7 +157,10 @@ public class ProcessController {
         org.flowable.bpmn.model.Process process = bpmnModel.getMainProcess();
         //System.out.println(" process name===="+process.getName());
         //System.out.println(" process documentation ===="+process.getDocumentation());
+        System.out.println(" process name===="+process.getName());
+        System.out.println(" process id===="+process.getId());
         String userPrompt= process.getDocumentation();
+        System.out.println(" process documentation ===="+userPrompt);
         String formThymeleaf=null;
         Optional<Form> form=formService.findByFormCode(processKey);
         if(form.isPresent()){
@@ -190,7 +196,8 @@ public class ProcessController {
     }
     @PostMapping("/start")
     public String handleFormSubmit(@RequestParam Map<String,Object> formData) {
-        //System.out.println(" The Form Data==="+formData);
+        System.out.println(" The Form Data==="+formData);
+
 
         ProcessInstance processInstance=
                 runtimeService.startProcessInstanceById(formData.get("id").toString(),formData);
@@ -200,7 +207,8 @@ public class ProcessController {
     }
     @GetMapping("/startProcess")
     public String startProcess() {
-       return "process/startProcess";
+
+        return "process/startProcess";
     }
     @GetMapping("/processInstance/{processInstanceId}")
     public String processInstanceDetail(@PathVariable(name = "processInstanceId")

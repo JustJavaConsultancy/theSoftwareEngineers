@@ -82,8 +82,10 @@ public class TaskController {
         //System.out.println(" Process Variable =="+task.getProcessVariables());
         String formThymeleaf=null;
         Optional<Form> form=formService.findByFormCode(task.getTaskDefinitionKey());
+        System.out.println(" The form code==="+task.getTaskDefinitionKey()+"");
         if(form.isPresent()){
             formThymeleaf=form.get().getFormInterface();
+            System.out.println(" formThymeleaf  "+formThymeleaf);
         }else{
             Form newForm=new Form();
             newForm.setFormCode(task.getTaskDefinitionKey());

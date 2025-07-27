@@ -1,9 +1,9 @@
-<!DOCTYPE html >
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+      layout:decorate="~{layout}" xmlns:hx-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Create New Form</title>
     <style>
         .form-section {
             background-color: #1f2937;
@@ -470,7 +470,7 @@
     </style>
 </head>
 <body>
-<main  layout:fragment="content"class="main-content flex-1 p-6 lg:p-8 overflow-y-auto">
+<main layout:fragment="content" class="main-content flex-1 p-6 lg:p-8 overflow-y-auto">
     <header class="flex justify-between items-center mb-8">
         <div>
             <h1 class="text-3xl font-bold text-white">Create New Form</h1>
@@ -546,7 +546,6 @@
                             </label>
                         </div>
                     </div>
-
                     <div class="document-container">
                         <button type="button" class="document-remove-btn material-icons">close</button>
                         <label class="form-label" for="witnessStatementsName">Document Name</label>
@@ -573,103 +572,42 @@
             <!-- Lawyer Documents Tab -->
             <div id="lawyer-documents" class="tab-content p-6" style="display: none;">
                 <div class="space-y-4">
-                    <div class="document-card">
+                    <div th:each="doc, iter : ${lawyerDocuments}" class="document-card">
                         <div class="document-card-header">
                             <span class="material-icons document-icon">description</span>
-                            <div class="document-title">Letter of Demand</div>
+                            <div th:text="${doc}" class="document-title">Document Title</div>
                             <span class="document-status">Not Generated</span>
                         </div>
-                        <div class="document-description">
-                            Formal letter addressed to the employer outlining the client's demands and legal basis for the claim.
-                        </div>
-                        <div class="document-content" style="display: none;"></div>
-                        <div class="document-actions">
-                            <button type="button" class="document-generate-btn">
-                                <span class="material-icons document-generate-icon">auto_awesome</span>
-                                Generate Document
-                            </button>
-                            <button type="button" class="document-edit-btn" style="display: none;">
-                                <span class="material-icons document-generate-icon">edit</span>
-                                Edit Document
-                            </button>
-                            <button type="button" class="document-download-btn" style="display: none;">
-                                <span class="material-icons document-download-icon">download</span>
-                                Download
-                            </button>
-                        </div>
-                    </div>
 
-                    <div class="document-card">
-                        <div class="document-card-header">
-                            <span class="material-icons document-icon">description</span>
-                            <div class="document-title">Statement of Claim</div>
-                            <span class="document-status">Not Generated</span>
-                        </div>
+                        <!-- Make the ID unique per iteration -->
                         <div class="document-description">
-                            Detailed document outlining the facts of the case and legal basis for the claim to be filed in court.
+                            Legal document description
                         </div>
-                        <div class="document-content" style="display: none;"></div>
-                        <div class="document-actions">
-                            <button type="button" class="document-generate-btn">
-                                <span class="material-icons document-generate-icon">auto_awesome</span>
-                                Generate Document
-                            </button>
-                            <button type="button" class="document-edit-btn" style="display: none;">
-                                <span class="material-icons document-generate-icon">edit</span>
-                                Edit Document
-                            </button>
-                            <button type="button" class="document-download-btn" style="display: none;">
-                                <span class="material-icons document-download-icon">download</span>
-                                Download
-                            </button>
-                        </div>
-                    </div>
+                        <div  th:attr="id='rendered-' + ${iter.index}"></div>
 
-                    <div class="document-card">
-                        <div class="document-card-header">
-                            <span class="material-icons document-icon">description</span>
-                            <div class="document-title">Affidavit of Evidence</div>
-                            <span class="document-status">Not Generated</span>
+                        <div class="document-content"
+                             th:attr="data-content-id=${iter.index}"
+                             style="display: none;">
                         </div>
-                        <div class="document-description">
-                            Sworn statement containing the evidence in support of the client's claim.
-                        </div>
-                        <div class="document-content" style="display: none;"></div>
-                        <div class="document-actions">
-                            <button type="button" class="document-generate-btn">
-                                <span class="material-icons document-generate-icon">auto_awesome</span>
-                                Generate Document
-                            </button>
-                            <button type="button" class="document-edit-btn" style="display: none;">
-                                <span class="material-icons document-generate-icon">edit</span>
-                                Edit Document
-                            </button>
-                            <button type="button" class="document-download-btn" style="display: none;">
-                                <span class="material-icons document-download-icon">download</span>
-                                Download
-                            </button>
-                        </div>
-                    </div>
 
-                    <div class="document-card">
-                        <div class="document-card-header">
-                            <span class="material-icons document-icon">description</span>
-                            <div class="document-title">Preliminary Objections</div>
-                            <span class="document-status">Not Generated</span>
-                        </div>
-                        <div class="document-description">
-                            Legal objections to any procedural or substantive issues raised by the opposing party.
-                        </div>
-                        <div class="document-content" style="display: none;"></div>
                         <div class="document-actions">
-                            <button type="button" class="document-generate-btn">
+                            <input type="hidden" th:name="docName" th:value="${doc}" th:id="'doc-' + ${iter.index}" />
+                            <button
+                                    hx-post="/forms/generate-lawyer-doc"
+                                    th:attr="hx-include='#doc-' + ${iter.index}"
+                                    th:attrappend="hx-target='#rendered-' + ${iter.index}"
+                                    hx-swap="innerHTML"
+                                    hx-disabled-elt="this"
+                                    class="document-generate-btn">
                                 <span class="material-icons document-generate-icon">auto_awesome</span>
                                 Generate Document
                             </button>
+
                             <button type="button" class="document-edit-btn" style="display: none;">
                                 <span class="material-icons document-generate-icon">edit</span>
                                 Edit Document
                             </button>
+
                             <button type="button" class="document-download-btn" style="display: none;">
                                 <span class="material-icons document-download-icon">download</span>
                                 Download
@@ -681,6 +619,7 @@
 
             <!-- Court Documents Tab -->
             <div id="court-documents" class="tab-content p-6" style="display: none;">
+                <form>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="form-label" for="courtTitle">Title</label>
@@ -716,6 +655,7 @@ WHEREFORE, the Claimant prays this Honorable Court for judgment in the above ter
 [ADDRESS]
 [DATE]</textarea>
                 </div>
+                </form>
             </div>
         </div>
 
@@ -859,159 +799,6 @@ WHEREFORE, the Claimant prays this Honorable Court for judgment in the above ter
             });
         });
 
-        // Generate lawyer document with editing capability
-        document.querySelectorAll('.document-generate-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const card = this.closest('.document-card');
-                const title = card.querySelector('.document-title').textContent;
-                const status = card.querySelector('.document-status');
-                const content = card.querySelector('.document-content');
-                const generateBtn = card.querySelector('.document-generate-btn');
-                const editBtn = card.querySelector('.document-edit-btn');
-                const downloadBtn = card.querySelector('.document-download-btn');
-
-                // Sample document content based on type
-                let sampleContent = '';
-                if (title.includes('Letter of Demand')) {
-                    sampleContent = `[Your Law Firm's Letterhead]
-    [DATE]
-
-    [Employer's Name]
-    [Employer's Address]
-
-    RE: DEMAND LETTER FOR COMPENSATION FOR ASSAULT AND HARASSMENT
-
-    Dear Sir/Madam,
-
-    We act as Solicitors to [Client's Name] ("our Client") and write in respect of the incident that occurred on [Date] at your premises located at [Location].
-
-    FACTS:
-    1. Our Client was employed by your company as [Position] from [Start Date] to present.
-    2. On [Date], our Client was physically assaulted by [Manager's Name], your employee, in the presence of colleagues.
-    3. The assault caused our Client [describe injuries] and significant emotional distress.
-
-    LEGAL BASIS:
-    This conduct constitutes assault under Nigerian law and violates our Client's fundamental rights.
-
-    DEMANDS:
-    1. Immediate payment of N[Amount] as compensation
-    2. Written apology
-    3. Disciplinary action against [Manager's Name]
-
-    We demand your response within 14 days, failing which we shall proceed to court without further notice.
-
-    Yours faithfully,
-    [Your Name]
-    [Your Law Firm]`;
-                } else if (title.includes('Statement of Claim')) {
-                    sampleContent = `IN THE HIGH COURT OF [STATE]
-    IN THE [JUDICIAL DIVISION]
-    HOLDEN AT [CITY]
-
-    SUIT NO: [CASE NUMBER]
-
-    BETWEEN:
-    [CLIENT NAME] - CLAIMANT
-    AND
-    [EMPLOYER NAME] - DEFENDANT
-
-    STATEMENT OF CLAIM
-
-    1. The Claimant is a [designation] employed by the Defendant at [company name], located at [address].
-    2. On [date], the Defendant's employee [Manager's Name] physically assaulted the Claimant by slapping him/her in the presence of colleagues.
-    3. The assault caused the Claimant [describe injuries] and emotional distress.
-    4. The Claimant reported the incident but no adequate action was taken by the Defendant.
-
-    WHEREOF the Claimant claims against the Defendant as follows:
-    a. The sum of N[Amount] as general damages for assault
-    b. The sum of N[Amount] as compensation for emotional distress
-    c. Cost of this action
-    d. Any other relief the Court may deem fit.
-
-    DATED at [City] this [day] of [month], [year].
-
-    [LAWYER'S NAME]
-    [LAWYER'S FIRM]
-    [ADDRESS]`;
-                } else if (title.includes('Affidavit of Evidence')) {
-                    sampleContent = `IN THE HIGH COURT OF [STATE]
-    IN THE [JUDICIAL DIVISION]
-    HOLDEN AT [CITY]
-
-    SUIT NO: [CASE NUMBER]
-
-    BETWEEN:
-    [CLIENT NAME] - CLAIMANT
-    AND
-    [EMPLOYER NAME] - DEFENDANT
-
-    AFFIDAVIT OF EVIDENCE IN SUPPORT OF ORIGINATING PROCESS
-
-    I, [CLIENT NAME], [occupation], of [address], do hereby make oath and state as follows:
-
-    1. I am the Claimant in this suit and as such conversant with the facts deposed herein.
-    2. I was employed by the Defendant as [position] from [start date] to present.
-    3. On [date], I was assaulted by [Manager's Name] who slapped me in the presence of colleagues.
-    4. The incident was witnessed by [Witness Names].
-    5. I reported the incident to [HR Person] but no action was taken.
-    6. I suffered [describe injuries] and emotional distress as a result.
-
-    SWORN to at the High Court Registry,
-    [City] this [day] of [month], [year]
-
-    BEFORE ME:
-
-    [COMMISSIONER FOR OATHS]`;
-                } else if (title.includes('Preliminary Objections')) {
-                    sampleContent = `IN THE HIGH COURT OF [STATE]
-    IN THE [JUDICIAL DIVISION]
-    HOLDEN AT [CITY]
-
-    SUIT NO: [CASE NUMBER]
-
-    BETWEEN:
-    [CLIENT NAME] - CLAIMANT
-    AND
-    [EMPLOYER NAME] - DEFENDANT
-
-    NOTICE OF PRELIMINARY OBJECTION
-
-    TAKE NOTICE that the Defendant shall at the hearing of this suit raise preliminary objection to the Claimant's suit on the following grounds:
-
-    1. This Honorable Court lacks jurisdiction to hear this matter as the Claimant failed to exhaust internal grievance procedures.
-    2. The Claimant's statement of claim discloses no reasonable cause of action against the Defendant.
-    3. The suit is statute-barred under the Limitation Law of [State].
-
-    AND TAKE NOTICE that the Defendant shall rely on all relevant statutes and case law in support of this objection.
-
-    DATED at [City] this [day] of [month], [year].
-
-    [LAWYER'S NAME]
-    [LAWYER'S FIRM]
-    [ADDRESS]`;
-                }
-
-                // Simulate document generation
-                generateBtn.disabled = true;
-                generateBtn.innerHTML = '<span class="material-icons document-generate-icon">hourglass_empty</span> Generating...';
-
-                setTimeout(() => {
-                    // Update status and show content
-                    status.textContent = 'Generated';
-                    status.classList.add('generated');
-                    content.textContent = sampleContent;
-                    content.style.display = 'block';
-
-                    // Show edit and download buttons
-                    editBtn.style.display = 'inline-flex';
-                    downloadBtn.style.display = 'inline-flex';
-
-                    // Hide generate button
-                    generateBtn.style.display = 'none';
-                }, 1500);
-            });
-        });
-
         // Editor modal functionality
         const editorModal = document.getElementById('editor-modal');
         const editorClose = document.getElementById('editor-close');
@@ -1068,9 +855,25 @@ WHEREFORE, the Claimant prays this Honorable Court for judgment in the above ter
                 editorModal.style.display = 'none';
             }
         });
+
+        // HTMX event handler for document generation
+        document.body.addEventListener('htmx:afterRequest', function(evt) {
+            if (evt.detail.successful && evt.detail.requestConfig.path === '/forms/generate-lawyer-doc') {
+                const button = evt.detail.elt;
+                const card = button.closest('.document-card');
+                const status = card.querySelector('.document-status');
+                const editBtn = card.querySelector('.document-edit-btn');
+                const downloadBtn = card.querySelector('.document-download-btn');
+                const contentDiv = card.querySelector('.document-content');
+
+                status.textContent = 'Generated';
+                status.classList.add('generated');
+                editBtn.style.display = 'inline-flex';
+                downloadBtn.style.display = 'inline-flex';
+                contentDiv.style.display = 'block';
+            }
+        });
     </script>
-
 </main>
-
 </body>
 </html>

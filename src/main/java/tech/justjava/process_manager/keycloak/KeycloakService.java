@@ -122,9 +122,26 @@ public class KeycloakService {
         }
         return userDTOs;
     }
+    public UserDTO getSingleUser(String userId) {
+        List<UserGroup> userGroups = userGroupRepository.findAll();
+
+        for (UserGroup group : userGroups) {
+            List<UserDTO> usersInGroup = getAllUserInGroup(group);
+            for (UserDTO user : usersInGroup) {
+                if (user.getId().equals(userId)) {
+                    return user; // Return the user if found
+                }
+            }
+        }
+
+        return null; // Return null if user not found
+    }
 
     public List<UserGroup> getUserGroups(){
         return userGroupRepository.findAll();
+    }
+    public UserGroup getSingleGroup(String groupId){
+        return userGroupRepository.findByGroupId(groupId);
     }
 
     @Async
@@ -218,7 +235,7 @@ public class KeycloakService {
             System.out.println("User not found after creation.");
             return null;
         }
-        Map<String, Object> userInfo = response.getBody().getFirst();
+        Map<String, Object> userInfo = response.getBody().get(0);
         String userId = (String) userInfo.get("id");
         return userId;
     }

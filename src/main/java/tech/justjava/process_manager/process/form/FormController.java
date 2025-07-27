@@ -83,8 +83,8 @@ public class FormController {
 
         String formCode = processServiceAI
                 .generateTaskThymeleafForm(taskDescription)
-                        .replace("```","")
-                        .replace("html","");
+                .replace("```","")
+                .replace("html","");
 
         return outputStream -> {
             try {
@@ -108,6 +108,7 @@ public class FormController {
     public String saveForm(
             @RequestParam String taskName,
             @RequestParam String taskID,
+            @RequestParam String taskFormCode,
             @RequestParam String taskFormDescription,
             Model model) {
 
@@ -142,10 +143,9 @@ public class FormController {
         savedForm.ifPresent(form1 -> {
             if(!form.getFormDetails().equalsIgnoreCase(form1.getFormDetails())){
                 String formInterface=processServiceAI
-                        .generateTaskThymeleafForm(form.getFormDetails()
+                        .generateTaskThymeleafForm(form.getFormDetails())
                                 .replace("```","")
-                                .replace("html","")
-                        );
+                                .replace("html","");
                 form.setFormInterface(formInterface);
             }
         });
@@ -159,7 +159,23 @@ public class FormController {
         return "redirect:/forms";
     }
     @GetMapping("/caseManagement")
-    public String manageCase(){
+    public String manageCase(Model model) {
+        // Hardcoded list of lawyer document names
+        List<String> lawyerDocuments = List.of(
+                "Letter of Demand",
+                "Statement of Claim",
+                "Affidavit of Evidence",
+                "Preliminary Objections"
+        );
+        model.addAttribute("lawyerDocuments", lawyerDocuments);
         return "form/caseManagement";
+    }
+
+    @PostMapping("/generate-lawyer-doc")
+    public String generateLawyerDoc(@RequestParam String docName, Model model) {
+        // Just return the same template for all documents
+        model.addAttribute("docName", docName);
+        model.addAttribute("generatedContent", "Generated content for " + docName);
+        return "form/generated-lawyer-doc";
     }
 }
