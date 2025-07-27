@@ -89,6 +89,19 @@
             <artifactId>flowable-spring-boot-starter</artifactId>
             <version>7.1.0</version>
         </dependency>
+
+        <!-- Nashorn JavaScript Engine (JDK 8-14) -->
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <version>15.4</version>
+        </dependency>
+        <!-- For JDK 15+ (GraalJS Polyglot) -->
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js</artifactId>
+            <version>23.0.1</version>
+        </dependency>
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-http</artifactId>

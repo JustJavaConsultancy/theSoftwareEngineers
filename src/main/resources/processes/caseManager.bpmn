@@ -46,7 +46,7 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
     <extensionElements>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
       <design:creationdate><![CDATA[2025-05-12T09:55:09.088Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-07-23T22:42:27.389Z]]></design:modificationdate>
+      <design:modificationdate><![CDATA[2025-07-24T18:40:50.949Z]]></design:modificationdate>
     </extensionElements>
     <userTask id="FormTask_10" name="HOC Assign to Lawyer" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
       <extensionElements>
@@ -130,6 +130,29 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
     </serviceTask>
+    <scriptTask id="ScriptTask_18" name="Script task" scriptFormat="javascript" flowable:autoStoreVariables="false">
+      <extensionElements>
+        <design:stencilid><![CDATA[ScriptTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+      <script><![CDATA[// Create Java HashMap
+var HashMap = Java.type("java.util.HashMap");
+var data = new HashMap();
+
+// Safely get variables with defaults
+var name = execution.getVariable("name");
+data.put("name", name ? name : "Unknown");
+
+var complaint = execution.getVariable("complaint");
+data.put("complaint", complaint ? complaint : "Not provided");
+
+// Add timestamp using Java time API
+var Instant = Java.type("java.time.Instant");
+data.put("timestamp", Instant.now().toString());
+
+// Set as process variable
+execution.setVariable("incidentData", data);]]></script>
+    </scriptTask>
     <startEvent id="startnoneevent1" flowable:initiator="initiator" flowable:formFieldValidation="false">
       <extensionElements>
         <flowable:work-form-field-validation><![CDATA[false]]></flowable:work-form-field-validation>
@@ -161,12 +184,17 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
     </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_14" sourceRef="ServiceTask_13" targetRef="ServiceTask_5">
+    <sequenceFlow id="SequenceFlow_17" sourceRef="ServiceTask_13" targetRef="ScriptTask_18">
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_15" sourceRef="ServiceTask_14" targetRef="FormTask_6">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_19" sourceRef="ScriptTask_18" targetRef="ServiceTask_5">
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
@@ -180,36 +208,45 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
   <bpmndi:BPMNDiagram id="BPMNDiagram_caseManager">
     <bpmndi:BPMNPlane bpmnElement="caseManager" id="BPMNPlane_caseManager">
       <bpmndi:BPMNShape bpmnElement="FormTask_10" id="BPMNShape_FormTask_10">
-        <omgdc:Bounds height="80.0" width="100.0" x="1130.8400000000001" y="135.0"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="1303.8400000000001" y="135.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="ServiceTask_5" id="BPMNShape_ServiceTask_5">
-        <omgdc:Bounds height="80.0" width="100.0" x="411.0" y="135.0"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="584.0" y="135.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="FormTask_6" id="BPMNShape_FormTask_6">
-        <omgdc:Bounds height="80.0" width="100.0" x="830.8399999999999" y="135.0"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="1003.8399999999999" y="135.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="ServiceTask_6" id="BPMNShape_ServiceTask_6">
-        <omgdc:Bounds height="80.0" width="100.0" x="980.8399999999999" y="135.0"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="1153.84" y="135.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="ServiceTask_13" id="BPMNShape_ServiceTask_13">
         <omgdc:Bounds height="80.0" width="100.0" x="245.0" y="135.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="ServiceTask_14" id="BPMNShape_ServiceTask_14">
-        <omgdc:Bounds height="80.0" width="100.0" x="600.0" y="135.0"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="773.0" y="135.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ScriptTask_18" id="BPMNShape_ScriptTask_18">
+        <omgdc:Bounds height="80.0" width="100.0" x="402.0" y="135.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="startnoneevent1" id="BPMNShape_startnoneevent1">
         <omgdc:Bounds height="30.0" width="30.0" x="135.0" y="160.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="EndNoneEvent_12" id="BPMNShape_EndNoneEvent_12">
-        <omgdc:Bounds height="28.0" width="28.0" x="1280.8400000000001" y="161.0"></omgdc:Bounds>
+        <omgdc:Bounds height="28.0" width="28.0" x="1453.8400000000001" y="161.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_15" id="BPMNEdge_SequenceFlow_15" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="700.0" y="175.0"></omgdi:waypoint>
-        <omgdi:waypoint x="830.8399999999999" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="873.0" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1003.8399999999999" y="175.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_17" id="BPMNEdge_SequenceFlow_17" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="345.0" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="373.5" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="373.5" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="402.0" y="175.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_11" id="BPMNEdge_SequenceFlow_11" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="1080.84" y="175.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1130.8400000000001" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1253.84" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1303.8400000000001" y="175.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_12" id="BPMNEdge_SequenceFlow_12" flowable:sourceDockerX="15.0" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="165.0" y="175.0"></omgdi:waypoint>
@@ -218,22 +255,22 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
         <omgdi:waypoint x="245.0" y="175.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_13" id="BPMNEdge_SequenceFlow_13" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
-        <omgdi:waypoint x="1230.8400000000001" y="175.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1280.8400000000001" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1403.8400000000001" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1453.8400000000001" y="175.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_8" id="BPMNEdge_SequenceFlow_8" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="511.0" y="175.0"></omgdi:waypoint>
-        <omgdi:waypoint x="555.5" y="175.0"></omgdi:waypoint>
-        <omgdi:waypoint x="555.5" y="175.0"></omgdi:waypoint>
-        <omgdi:waypoint x="600.0" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="684.0" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="728.5" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="728.5" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="773.0" y="175.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_9" id="BPMNEdge_SequenceFlow_9" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="930.8399999999999" y="175.0"></omgdi:waypoint>
-        <omgdi:waypoint x="980.8399999999999" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1103.84" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1153.84" y="175.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_14" id="BPMNEdge_SequenceFlow_14" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="345.0" y="175.0"></omgdi:waypoint>
-        <omgdi:waypoint x="411.0" y="175.0"></omgdi:waypoint>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_19" id="BPMNEdge_SequenceFlow_19" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="502.0" y="175.0"></omgdi:waypoint>
+        <omgdi:waypoint x="584.0" y="175.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

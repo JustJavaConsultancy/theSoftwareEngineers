@@ -218,7 +218,7 @@ public class KeycloakService {
             System.out.println("User not found after creation.");
             return null;
         }
-        Map<String, Object> userInfo = response.getBody().getFirst();
+        Map<String, Object> userInfo = response.getBody().get(0);
         String userId = (String) userInfo.get("id");
         return userId;
     }
