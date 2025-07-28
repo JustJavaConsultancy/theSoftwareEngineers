@@ -1,13 +1,13 @@
 <div th:fragment="content" xmlns:th="http://www.thymeleaf.org">
-<form id="editGroupForm" hx-put="/users/updateGroup">
+<form id="editGroupForm" hx-put="/users/editGroup">
   <div class="mb-6">
     <label class="block text-sm font-medium text-gray-400 mb-2" for="editGroupName">Group Name</label>
-    <input class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <input th:value="${singleGroup!=null?singleGroup.groupName:''}" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
            id="editGroupName" name="groupName" type="text" required/>
   </div>
   <div class="mb-6">
     <label class="block text-sm font-medium text-gray-400 mb-2" for="editGroupDescription">Description</label>
-    <textarea class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <textarea th:text="${singleGroup!=null?singleGroup.getDescription:''}" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               id="editGroupDescription" name="groupDescription" rows="3"></textarea>
   </div>
   <div class="flex justify-end space-x-4">

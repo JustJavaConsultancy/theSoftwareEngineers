@@ -139,7 +139,7 @@
                 <td th:text="${group.getMembers()}">12</td>
                 <td>
                     <button class="text-blue-400 hover:text-blue-300 mr-3 edit-group"
-                            th:hx-get="@{'/users/editGroup/' + ${group.getId()}}"
+                            th:hx-get="@{'/users/editGroup/' + ${group.groupId}}"
                             hx-swap="innerHTML"
                             hx-target="#editSingleGroup"
                             hx-indicator=".loading-indicator"

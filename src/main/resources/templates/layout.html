@@ -47,9 +47,9 @@
             <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/processes}"
                th:classappend="${currentPath == '/processes'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">sync_alt</span>
-                <span>Process Instances</span>
+                <span>Cases</span>
             </a>
-            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/forms}"
+            <a th:if="${session.isAdmin}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/forms}"
                th:classappend="${currentPath == '/forms'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">note_add</span>
                 <span>Task Forms</span>
@@ -59,7 +59,7 @@
                 <span class="material-icons mr-3">bar_chart</span>
                 <span>Reports</span>
             </a>
-            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/users}"
+            <a th:if="${session.isAdmin}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/users}"
                th:classappend="${currentPath == '/users'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">group</span>
                 <span>User Management</span>
