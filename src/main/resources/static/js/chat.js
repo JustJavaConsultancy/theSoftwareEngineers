@@ -13,7 +13,7 @@ let modalSelectedUsers = []; // For the new chat modal
 async function fetchUsers() {
   try {
     console.log('Fetching users from /api/chat/users...');
-    const response = await fetch('/api/chat/users');
+    const response = await fetch('/api/users');
     console.log('Users API response status:', response.status);
     
     if (response.ok) {
@@ -50,7 +50,7 @@ async function fetchUsers() {
 async function fetchConversations() {
   try {
     console.log('Fetching conversations from /api/chat/conversations...');
-    const response = await fetch('/api/chat/conversations');
+    const response = await fetch('/api/conversations');
     console.log('Conversations API response status:', response.status);
     
     if (response.ok) {
@@ -353,6 +353,8 @@ function renderChat() {
   const avatar = document.getElementById('chat-avatar');
   const status = document.getElementById('chat-status');
   const messagesDiv = document.getElementById('chat-messages');
+  const videoCallBtn = document.getElementById('video-call-btn');
+  
   if (!title || !avatar || !status || !messagesDiv) return;
   
   if (!currentConversation) {
@@ -360,6 +362,12 @@ function renderChat() {
     title.textContent = 'No conversation selected';
     avatar.innerHTML = '<span class="material-icons">chat</span>';
     status.textContent = '';
+    
+    // Hide video call button when no conversation selected
+    if (videoCallBtn) {
+      videoCallBtn.style.display = 'none';
+    }
+    
     messagesDiv.innerHTML = `
       <div class="flex-1 flex items-center justify-center">
         <div class="text-center text-slate-400 dark:text-slate-500">
@@ -384,9 +392,16 @@ function renderChat() {
     return;
   }
   
+  // Show conversation details
   title.textContent = currentConversation.name;
   avatar.textContent = currentConversation.avatar;
   status.textContent = currentConversation.online ? 'Online' : 'Offline';
+  
+  // Show video call button when conversation is selected
+  if (videoCallBtn) {
+    videoCallBtn.style.display = 'block';
+  }
+  
   messagesDiv.innerHTML = '';
   
   if (currentConversation.messages && currentConversation.messages.length > 0) {
