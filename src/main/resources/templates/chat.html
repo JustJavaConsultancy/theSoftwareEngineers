@@ -28,15 +28,21 @@
         <span class="material-icons">menu</span>
     </button>
     <!-- Conversations Sidebar -->
-    <div th:replace="chat/sidebar.html"></div>
-    <!-- Chat Window -->
+    <div th:replace="~{chat/sidebar.html}"></div>
+    <!-- ChatMessage Window -->
     <main class="chat-main flex-1 flex flex-col h-full bg-slate-50 dark:bg-slate-900 transition-all duration-200">
-        <div th:replace="chat/header.html"></div>
-        <div th:replace="chat/messages.html"></div>
-        <div th:replace="chat/input.html"></div>
+        <div th:replace="~{chat/header.html}"></div>
+        <div th:replace="~{chat/messages.html}"></div>
+        <div th:replace="~{chat/input.html}"></div>
     </main>
+    <div th:replace="~{chat/new-chat-modal.html}"></div>
+    <script src="/js/chat.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
     <div th:replace="chat/new-chat-modal.html"></div>
-    
+
     <!-- Video Call Modal -->
     <div id="video-call-modal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 hidden">
         <div class="bg-white dark:bg-slate-800 rounded-lg w-full max-w-6xl h-full max-h-[90vh] shadow-lg border border-slate-200 dark:border-slate-700 flex flex-col">
@@ -53,12 +59,12 @@
                     <span class="material-icons">call_end</span>
                 </button>
             </div>
-            
+
             <!-- Video Container -->
             <div class="flex-1 p-4">
                 <div id="video-call-container" class="video-container bg-slate-100 dark:bg-slate-700 rounded-lg"></div>
             </div>
-            
+
             <!-- Call Status -->
             <div id="video-call-status" class="hidden p-4 text-center border-t border-slate-200 dark:border-slate-700">
                 <div class="text-slate-600 dark:text-slate-400">
@@ -68,7 +74,7 @@
             </div>
         </div>
     </div>
-    
+
     <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
     <script src="/js/chat.js"></script>
     <script src="/js/videocall.js"></script>

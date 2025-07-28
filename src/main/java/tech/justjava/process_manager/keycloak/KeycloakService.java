@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.justjava.process_manager.chat.entity.User;
+import tech.justjava.process_manager.chat.repository.UserRepository;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ public class KeycloakService {
 
     private final KeycloakFeignClient keycloakClient;
     private final UserGroupRepository userGroupRepository;
+    private final UserRepository userRepository;
 
     @Value("${keycloak.client-id}")
     String clientId;
@@ -66,12 +69,12 @@ public class KeycloakService {
         users = keycloakClient.getUsers(getAccessToken());
         List<UserDTO> userDTOs = new ArrayList<>();
         for (Map<String, Object> user : users) {
-            UserDTO userDTO = UserDTO.builder()
-                    .id((String) user.get("id"))
+                UserDTO userDTO = UserDTO.builder()
+                    .userId((String) user.get("id"))
                     .firstName((String) user.get("firstName"))
                     .lastName((String) user.get("lastName"))
                     .email((String) user.get("email"))
-                    .status((Boolean) user.get("enabled"))
+                    .status((Boolean) user.get("enabled")?"Enabled":"Disabled")
                     .group(null)
                     .build();
             userDTOs.add(userDTO);
@@ -128,13 +131,13 @@ public class KeycloakService {
         for (UserGroup group : userGroups) {
             List<UserDTO> usersInGroup = getAllUserInGroup(group);
             for (UserDTO user : usersInGroup) {
-                if (user.getId().equals(userId)) {
-                    return user; // Return the user if found
+                if (user.getUserId().equals(userId)) {
+                    return user;
                 }
             }
         }
 
-        return null; // Return null if user not found
+        return null;
     }
 
     public List<UserGroup> getUserGroups(){
@@ -182,16 +185,51 @@ public class KeycloakService {
         List<Map<String, Object>> users = keycloakClient.getAllUserInGroup(getAccessToken(), group.getGroupId());
         for (Map<String, Object> user : users) {
             UserDTO userDTO = UserDTO.builder()
-                    .id((String) user.get("id"))
+                    .userId((String) user.get("id"))
                     .firstName((String) user.get("firstName"))
                     .lastName((String) user.get("lastName"))
                     .email((String) user.get("email"))
-                    .status((Boolean) user.get("enabled"))
+                    .status((Boolean) user.get("enabled")?"Enabled":"Disabled")
                     .group(group.getGroupName())
                     .build();
             userDTOs.add(userDTO);
         }
         return userDTOs;
+    }
+
+    @Transactional
+    public List<User> syncClientUsers(){
+        List<UserGroup> userGroup = userGroupRepository.findAll();
+        List<User> users = new ArrayList<>();
+        for (UserGroup group : userGroup) {
+            List<Map<String, Object>> clientUsers = keycloakClient.getAllUserInGroup(getAccessToken(), group.getGroupId());
+            for (Map<String, Object> user : clientUsers) {
+                User newUser = mapClientUserToUser(group, user);
+                users.add(newUser);
+            }
+        }
+        userRepository.saveAll(users);
+
+        return users;
+    }
+
+    private User mapClientUserToUser(UserGroup group, Map<String, Object> clientUser) {
+        if (userRepository.existsByUserId((String)clientUser.get("id"))){
+            User user = userRepository.findByUserId((String) clientUser.get("id"));
+            return mapUser(group, clientUser, user);
+        }
+        User user = new User();
+        return mapUser(group, clientUser, user);
+    }
+
+    private User mapUser(UserGroup group, Map<String, Object> clientUser, User user) {
+        user.setUserId((String) clientUser.get("id"));
+        user.setFirstName((String) clientUser.get("firstName"));
+        user.setLastName((String) clientUser.get("lastName"));
+        user.setEmail((String) clientUser.get("email"));
+        user.setStatus((Boolean) clientUser.get("enabled"));
+        user.setUserGroup(group);
+        return user;
     }
 
     public void createUserInGroup(Map<String, String> params){
@@ -291,6 +329,7 @@ public class KeycloakService {
     public void deleteUser(String userId) {
         keycloakClient.deleteUser(getAccessToken(), userId);
         System.out.println("Successfully deleted user: " + userId);
+        //TODO Reduce user count from UserGroup
     }
 
     @Transactional
