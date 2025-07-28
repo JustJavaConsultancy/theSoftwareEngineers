@@ -1,231 +1,160 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}" xmlns:hx-on="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Form</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-</head>
-<body>
-<main layout:fragment="content" style="flex: 1; padding: 1.5rem; overflow-y: auto;">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-        <div>
-            <h1 style="font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; color: white;">Create New Form</h1>
-            <p style="color: var(--text-secondary);">Fill in the details below to create a new process.</p>
-        </div>
-    </header>
-    <form>
-        <div class="case-card">
-            <h2 class="case-card-title">Case Details</h2>
-            <div class="case-grid">
-                <div class="case-form-group">
-                    <label class="case-form-label" for="suggestedCourt">Suggested Court</label>
-                    <input class="case-form-control" id="suggestedCourt" name="suggestedCourt" type="text" value="State High Court or Federal High Court, depending on the specific details and location of the employer."/>
-                </div>
-                <div class="case-form-group">
-                    <label class="case-form-label">Merit</label>
-                    <label style="display: flex; align-items: center; cursor: pointer; color: var(--text-primary);">
-                        <input checked style="appearance: none; width: 1.25rem; height: 1.25rem; border: 2px solid var(--bg-darkest); border-radius: 0.25rem; margin-right: 0.5rem; position: relative; cursor: pointer; transition: var(--transition);" name="merit" type="checkbox"/>
-                        <span>The case has merit</span>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <div class="case-card">
-            <h2 class="case-card-title">Reason for Merit</h2>
-            <ul style="list-style-type: none; padding-left: 0;">
-                <li class="case-list-item">
-                    <span class="material-icons" style="color: var(--primary-light); margin-right: 0.75rem; font-size: 1.25rem; line-height: 1;">check_circle</span>
-                    <span style="flex-grow: 1;">The client has a valid legal claim for assault and possibly for workplace harassment, which are recognized under Nigerian law.</span>
-                </li>
-                <li class="case-list-item">
-                    <span class="material-icons" style="color: var(--primary-light); margin-right: 0.75rem; font-size: 1.25rem; line-height: 1;">check_circle</span>
-                    <span style="flex-grow: 1;">The statute of limitations for personal injury claims in Nigeria is six years, meaning the claim is timely.</span>
-                </li>
-                <li class="case-list-item">
-                    <span class="material-icons" style="color: var(--primary-light); margin-right: 0.75rem; font-size: 1.25rem; line-height: 1;">check_circle</span>
-                    <span style="flex-grow: 1;">The High Court has jurisdiction as the incident occurred in the workplace, and it relates to employment matters.</span>
-                </li>
-                <li class="case-list-item">
-                    <span class="material-icons" style="color: var(--primary-light); margin-right: 0.75rem; font-size: 1.25rem; line-height: 1;">check_circle</span>
-                    <span style="flex-grow: 1;">The presence of colleagues who witnessed the incident provides sufficient evidence to support the claim.</span>
-                </li>
-                <li class="case-list-item">
-                    <span class="material-icons" style="color: var(--primary-light); margin-right: 0.75rem; font-size: 1.25rem; line-height: 1;">check_circle</span>
-                    <span style="flex-grow: 1;">While internal grievance procedures may apply, the immediate nature of physical assault justifies the claim being brought to court.</span>
-                </li>
-            </ul>
-        </div>
-
-        <div class="case-card" style="padding: 0;">
-            <div class="case-tabs">
-                <div class="case-tab-item active" data-tab="client-documents">Client Documents</div>
-                <div class="case-tab-item" data-tab="lawyer-documents">Lawyer Documents</div>
-                <div class="case-tab-item" data-tab="court-documents">Court Documents</div>
-            </div>
-
-            <!-- Client Documents Tab -->
-            <div id="client-documents" class="case-tab-content active">
-                <div id="client-documents-container">
-                    <div class="case-document-card">
-                        <button type="button" class="material-icons document-close">close</button>
-                        <label class="case-form-label" for="medicalReportName">Document Name</label>
-                        <input class="case-form-control" id="medicalReportName" type="text" value="Medical report documenting any injuries sustained"/>
-                        <div class="case-file-upload">
-                            <input type="file" id="medicalReport" accept=".pdf,.doc,.docx,.jpg,.png">
-                            <label for="medicalReport" class="case-file-upload-label">
-                                <div style="display: flex; align-items: center;">
-                                    <span class="material-icons" style="color: var(--primary-light); margin-right: 0.75rem; font-size: 1.25rem;">upload</span>
-                                    <span style="color: var(--text-primary); font-size: 0.875rem; font-weight: 500;">Upload Medical Report</span>
-                                </div>
-                                <span class="case-file-upload-browse">Browse</span>
-                            </label>
-                        </div>
+ <form id="formContainer" th:action="@{http://localhost:9000/tasks/complete}" th:object="${formData}" method="post" hx-post="http://localhost:9000/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML">
+            <!-- Case Details Card -->
+            <div class="case-card">
+                <h2 class="case-card-title">Case Details</h2>
+                <div class="case-grid">
+                    <div class="case-form-group">
+                        <label class="case-form-label" for="suggestedCourt">Suggested Court</label>
+                        <input th:value="${aiResponse.suggestedCourt}" class="case-form-control" id="suggestedCourt" name="suggestedCourt" type="text" value="State High Court or Federal High Court, depending on the specific details and location of the employer."/>
                     </div>
-                    <div class="case-document-card">
+                    <div class="case-form-group">
+                        <label class="case-form-label">Merit</label>
+                        <label style="display: flex; align-items: center; cursor: pointer; color: var(--text-primary);">
+                            <input th:checked="${aiResponse.merit}" style="width: 1.25rem; height: 1.25rem; border: 2px solid var(--bg-darkest); border-radius: 0.25rem; margin-right: 0.5rem; position: relative; cursor: pointer; transition: var(--transition);" name="merit" type="checkbox"/>
+                            <span>The case has merit</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reason for Merit Card -->
+            <div class="case-card">
+                <h2 class="case-card-title">Reason for Merit</h2>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li class="case-list-item" th:each="reaso : ${aiResponse.reason}">
+                        <span class="material-icons" style="color: var(--primary-light); margin-right: 0.75rem; font-size: 1.25rem; line-height: 1;">check_circle</span>
+                        <span style="flex-grow: 1;" th:text="${#strings.substring(reaso, 2)}"></span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Documents Card -->
+            <div class="case-card" style="padding: 0;">
+                <div class="case-tabs">
+                    <div class="case-tab-item active" data-tab="client-documents">Client Documents</div>
+                    <div class="case-tab-item" data-tab="lawyer-documents">Lawyer Documents</div>
+                    <div class="case-tab-item" data-tab="court-documents">Court Documents</div>
+                </div>
+
+                <!-- Client Documents Tab -->
+                <div id="client-documents" class="case-tab-content active">
+                    <div th:each="doc: ${aiResponse.clientDocuments}" class="case-document-card">
                         <button type="button" class="material-icons document-close">close</button>
                         <label class="case-form-label" for="witnessStatementsName">Document Name</label>
-                        <input class="case-form-control" id="witnessStatementsName" type="text" value="Witness statements from colleagues who were present"/>
+                        <input th:value="${doc}" class="case-form-control" id="witnessStatementsName" type="text" value="Witness statements from colleagues who were present"/>
                         <div class="case-file-upload">
                             <input type="file" id="witnessStatements" accept=".pdf,.doc,.docx,.jpg,.png">
                             <label for="witnessStatements" class="case-file-upload-label">
                                 <div style="display: flex; align-items: center;">
                                     <span class="material-icons" style="color: var(--primary-light); margin-right: 0.75rem; font-size: 1.25rem;">upload</span>
-                                    <span style="color: var(--text-primary); font-size: 0.875rem; font-weight: 500;">Upload Witness Statements</span>
+                                    <span style="color: var(--text-primary); font-size: 0.875rem; font-weight: 500;" th:text="${'Upload ' + doc}">Upload Witness Statements</span>
                                 </div>
                                 <span class="case-file-upload-browse">Browse</span>
                             </label>
                         </div>
                     </div>
+                    <div id="client-documents-container"></div>
+                    <button type="button" id="add-client-document" class="case-btn case-btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
+                        <span class="material-icons case-btn-icon">add</span>
+                        Add Another Document
+                    </button>
                 </div>
 
-                <button type="button" id="add-client-document" class="case-btn case-btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
-                    <span class="material-icons case-btn-icon">add</span>
-                    Add Another Document
+                <!-- Lawyer Documents Tab -->
+                <div id="lawyer-documents" class="case-tab-content">
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div th:each="doc, iter : ${aiResponse.lawyerDocuments}" class="case-document-card">
+                            <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                                <span class="material-icons" style="color: var(--primary-light); font-size: 1.5rem; margin-right: 1rem;">description</span>
+                                <div th:text="${doc}" style="font-size: 1.125rem; font-weight: 500; color: var(--text-primary); flex-grow: 1;">Document Title</div>
+                                <span class="case-status-badge" th:id="'status-' + ${iter.index}">Not Generated</span>
+                            </div>
+                            <!-- Textarea for generated content -->
+                            <textarea class="case-generated-content"
+                                      th:attr="id='content-' + ${iter.index}"
+                                      name="generatedContent"
+                                      readonly
+                                      style="display: none;"></textarea>
+
+                            <div class="case-action-buttons">
+                                <input type="hidden" th:name="docName" th:value="${doc}" th:id="'doc-' + ${iter.index}" />
+                                <button
+                                        hx-post="/forms/generate-lawyer-doc"
+                                        th:attr="hx-include='#doc-' + ${iter.index}"
+                                        hx-swap="none"
+                                        hx-disabled-elt="this"
+                                        class="case-btn case-btn-primary generate-btn"
+                                        th:id="'generate-btn-' + ${iter.index}">
+                                    <span class="material-icons case-btn-icon">auto_awesome</span>
+                                    Generate Document
+                                </button>
+
+                                <button type="button" class="case-btn case-btn-secondary edit-btn"
+                                        th:id="'edit-btn-' + ${iter.index}"
+                                        style="display: none;">
+                                    <span class="material-icons case-btn-icon">edit</span>
+                                    Edit Document
+                                </button>
+
+                                <button type="button" class="case-btn case-btn-success download-btn"
+                                        th:id="'download-btn-' + ${iter.index}"
+                                        style="display: none;">
+                                    <span class="material-icons case-btn-icon">download</span>
+                                    Download as PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Court Documents Tab -->
+                <div id="court-documents" class="case-tab-content">
+                    <form>
+                        <div class="case-grid">
+                            <div class="case-form-group">
+                                <label class="case-form-label" for="courtTitle">Title</label>
+                                <input th:value="${aiResponse.courtDocuments.title}" class="case-form-control" id="courtTitle" name="courtTitle" type="text" value="IN THE HIGH COURT OF [STATE]"/>
+                            </div>
+                            <div class="case-form-group">
+                                <label class="case-form-label" for="caseNumber">Case Number</label>
+                                <input  class="case-form-control" id="caseNumber" name="caseNumber" type="text" value="[CASE NUMBER]"/>
+                            </div>
+                        </div>
+                        <div class="case-form-group">
+                            <label class="case-form-label" for="parties">Parties</label>
+                            <textarea class="case-form-control" id="parties" name="parties" rows="3" th:inline="text">
+[[${aiResponse.courtDocuments.heading}]]
+[[${aiResponse.courtDocuments.claimant}]] (Claimant)
+AND
+[[${aiResponse.courtDocuments.defendant}]] (Defendant)
+</textarea>
+                        </div>
+                        <div class="case-form-group">
+                            <label class="case-form-label" for="body">Body (Statement of Claim)</label>
+                            <textarea class="case-form-control" id="body" name="body" rows="8" th:inline="text">
+STATEMENT OF CLAIM
+<th:block th:each="item : ${aiResponse.courtDocuments.content}">
+[[${item}]]
+</th:block>
+[[${aiResponse.courtDocuments.conclusion}]]
+</textarea>
+                        </div>
+                        <div class="case-form-group">
+                            <label class="case-form-label" for="signature">Signature</label>
+                            <textarea class="case-form-control" id="signature" name="signature" rows="4" th:inline="text">
+<th:block th:each="item : ${aiResponse.courtDocuments.counsel}">
+[[${item}]]
+</th:block>
+[[${aiResponse.courtDocuments.signature}]]</textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                <button class="case-btn case-btn-primary" type="submit" style="padding: 0.75rem 1.5rem; font-weight: 600;">
+                    Complete Task
                 </button>
             </div>
-
-            <!-- Lawyer Documents Tab -->
-            <div id="lawyer-documents" class="case-tab-content">
-                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                    <div th:each="doc, iter : ${lawyerDocuments}" class="case-document-card">
-                        <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                            <span class="material-icons" style="color: var(--primary-light); font-size: 1.5rem; margin-right: 1rem;">description</span>
-                            <div th:text="${doc}" style="font-size: 1.125rem; font-weight: 500; color: var(--text-primary); flex-grow: 1;">Document Title</div>
-                            <span class="case-status-badge" th:id="'status-' + ${iter.index}">Not Generated</span>
-                        </div>
-
-                        <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 1rem;">
-                            Legal document description
-                        </div>
-
-                        <!-- Textarea for generated content -->
-                        <textarea class="case-generated-content"
-                                  th:attr="id='content-' + ${iter.index}"
-                                  name="generatedContent"
-                                  readonly
-                                  style="display: none;"></textarea>
-
-                        <div class="case-action-buttons">
-                            <input type="hidden" th:name="docName" th:value="${doc}" th:id="'doc-' + ${iter.index}" />
-                            <button
-                                    hx-post="/forms/generate-lawyer-doc"
-                                    th:attr="hx-include='#doc-' + ${iter.index}"
-                                    hx-swap="none"
-                                    hx-disabled-elt="this"
-                                    class="case-btn case-btn-primary generate-btn"
-                                    th:id="'generate-btn-' + ${iter.index}">
-                                <span class="material-icons case-btn-icon">auto_awesome</span>
-                                Generate Document
-                            </button>
-
-                            <button type="button" class="case-btn case-btn-secondary edit-btn"
-                                    th:id="'edit-btn-' + ${iter.index}"
-                                    style="display: none;">
-                                <span class="material-icons case-btn-icon">edit</span>
-                                Edit Document
-                            </button>
-
-                            <button type="button" class="case-btn case-btn-success download-btn"
-                                    th:id="'download-btn-' + ${iter.index}"
-                                    style="display: none;">
-                                <span class="material-icons case-btn-icon">download</span>
-                                Download as PDF
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Court Documents Tab -->
-            <div id="court-documents" class="case-tab-content">
-                <form>
-                    <div class="case-grid">
-                        <div class="case-form-group">
-                            <label class="case-form-label" for="courtTitle">Title</label>
-                            <input class="case-form-control" id="courtTitle" name="courtTitle" type="text" value="IN THE HIGH COURT OF [STATE]"/>
-                        </div>
-                        <div class="case-form-group">
-                            <label class="case-form-label" for="caseNumber">Case Number</label>
-                            <input class="case-form-control" id="caseNumber" name="caseNumber" type="text" value="[CASE NUMBER]"/>
-                        </div>
-                    </div>
-                    <div class="case-form-group">
-                        <label class="case-form-label" for="parties">Parties</label>
-                        <textarea class="case-form-control" id="parties" name="parties" rows="3">BETWEEN
-[CLIENT NAME] (Claimant)
-AND
-[EMPLOYER NAME] (Defendant)</textarea>
-                    </div>
-                    <div class="case-form-group">
-                        <label class="case-form-label" for="body">Body (Statement of Claim)</label>
-                        <textarea class="case-form-control" id="body" name="body" rows="8">STATEMENT OF CLAIM
-1. The Claimant is a [designation] employed at [company name], located at [address].
-2. On [date], the Defendant, the Claimant's line manager, slapped the Claimant in the presence of other colleagues.
-3. The Claimant seeks the following reliefs:
-   a. Damages for assault;
-   b. Compensation for emotional distress;
-   c. Any other relief deemed fit by the court.
-WHEREFORE, the Claimant prays this Honorable Court for judgment in the above terms.</textarea>
-                    </div>
-                    <div class="case-form-group">
-                        <label class="case-form-label" for="signature">Signature</label>
-                        <textarea class="case-form-control" id="signature" name="signature" rows="4">[LAWYER'S NAME]
-[LAWYER'S FIRM]
-[ADDRESS]
-[DATE]</textarea>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
-            <button class="case-btn case-btn-primary" type="submit" style="padding: 0.75rem 1.5rem; font-weight: 600;">
-                Create Process
-            </button>
-        </div>
-    </form>
-
-    <!-- Document Name Modal -->
-    <div id="document-name-modal" class="case-modal">
-        <div class="case-modal-content">
-            <button class="material-icons case-modal-close" id="close-modal">close</button>
-            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--text-primary);">Name Your Document</h3>
-            <div class="case-form-group">
-                <label class="case-form-label" for="new-document-name">Document Name</label>
-                <input class="case-form-control" id="new-document-name" type="text" placeholder="Enter document name"/>
-            </div>
-            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem; gap: 0.75rem;">
-                <button class="case-btn case-btn-secondary" id="cancel-add-document">Cancel</button>
-                <button class="case-btn case-btn-primary" id="confirm-add-document">Add Document</button>
-            </div>
-        </div>
-    </div>
-
-   <script src="/js/caseManagement.js"></script>
-</main>
-</body>
-</html>
+        </form>

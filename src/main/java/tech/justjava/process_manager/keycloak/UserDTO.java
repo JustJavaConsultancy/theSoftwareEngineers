@@ -1,23 +1,28 @@
 package tech.justjava.process_manager.keycloak;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class UserDTO {
 
-    private String id;
+    private String userId;
     private String firstName;
     private String lastName;
     private String email;
-    private Boolean status;
+    private String status;
     private String group;
+
+    private Boolean online;
+    private String avatar;
 
     public String getName() {
         return firstName+" "+lastName;
     }
-    public String getStatus() {
-        return status?"Enabled":"Disabled";
-    }
+
 }
