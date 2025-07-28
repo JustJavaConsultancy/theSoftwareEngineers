@@ -87,7 +87,7 @@
               <div class="flex justify-between items-start mb-3">
                 <div class="flex-grow-1">
                   <h3 class="font-bold text-lg text-white mb-1" th:text="${process.processDefinitionName}">Employee Onboarding</h3>
-                  <p th:text="${'Process ID: ' + process.id}" class="text-slate-400 text-sm">Process ID: PI-2023-001</p>
+                  <p th:text="${'Client Name: ' + process.processVariables.clientName}" class="text-slate-400 text-sm">Process ID: PI-2023-001</p>
                 </div>
                 <span class="status-pill "
                       th:classappend="${process.ended ? 'status-completed' : 'status-inprogress'}"
