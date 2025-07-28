@@ -21,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import tech.justjava.process_manager.account.AuthenticationManager;
 import tech.justjava.process_manager.file.model.FileData;
 import tech.justjava.process_manager.file.service.FileDataService;
 import tech.justjava.process_manager.process.form.Form;
@@ -48,6 +49,8 @@ public class ProcessController {
     @Autowired
     TemplateRenderer templateRenderer;
 
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     private final RuntimeService  runtimeService;
     private final HistoryService historyService;
@@ -77,7 +80,8 @@ public class ProcessController {
 
     @GetMapping
     public String list(final Model model) {
-        //System.out.println(" I'm in the Process List....");
+
+        System.out.println(" The Sub in the Process==...."+authenticationManager.get("sub"));
         List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery()
                 .processDefinitionKey(processKey)
                 .includeProcessVariables()
@@ -198,9 +202,10 @@ processInstances.forEach(processInstance -> {
     public String handleFormSubmit(@RequestParam Map<String,Object> formData) {
         System.out.println(" The Form Data==="+formData);
 
+        String hashCode= String.valueOf((String.valueOf(authenticationManager.get("preferred_username"))+String.valueOf(System.currentTimeMillis())).hashCode());
 
         ProcessInstance processInstance=
-                runtimeService.startProcessInstanceById(formData.get("id").toString(),formData);
+                runtimeService.startProcessInstanceById(formData.get("id").toString(),hashCode,formData);
 
         System.out.println("  The Process Instance Variables ==="+processInstance.getProcessVariables());
         return "process/success";

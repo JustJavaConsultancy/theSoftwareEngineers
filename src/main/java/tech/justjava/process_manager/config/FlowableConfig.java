@@ -7,6 +7,7 @@ import org.flowable.engine.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import tech.justjava.process_manager.account.AuthenticationManager;
 import tech.justjava.process_manager.process.listener.JustJavaFlowableListener;
 
 @Configuration
@@ -18,12 +19,14 @@ public class FlowableConfig {
 
     @Autowired
     RuntimeService runtimeService;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     @PostConstruct
     public void registerEventListener() {
         if (processEngineConfiguration.getEventDispatcher() == null) {
             processEngineConfiguration.setEventDispatcher(new FlowableEventDispatcherImpl());
         }
-        processEngineConfiguration.getEventDispatcher().addEventListener(new JustJavaFlowableListener(messagingTemplate, runtimeService));
+        processEngineConfiguration.getEventDispatcher().addEventListener(new JustJavaFlowableListener(messagingTemplate, authenticationManager, runtimeService));
     }
 }

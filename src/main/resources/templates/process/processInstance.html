@@ -86,7 +86,7 @@
             <div class="card-content">
               <div class="flex justify-between items-start mb-3">
                 <div class="flex-grow-1">
-                  <h3 class="font-bold text-lg text-white mb-1" th:text="${process.processDefinitionName}">Employee Onboarding</h3>
+                  <h3 class="font-bold text-lg text-white mb-1" th:text="${@stringUtils.camelToWords(process.processDefinitionName)}">Employee Onboarding</h3>
                   <p th:text="${'Client Name: ' + process.processVariables.clientName}" class="text-slate-400 text-sm">Process ID: PI-2023-001</p>
                 </div>
                 <span class="status-pill "
@@ -120,7 +120,7 @@
                 <div class="flex items-center">
                   <i class="fas fa-key text-slate-400 mr-3 w-4"></i>
                   <div>
-                    <p class="text-xs text-slate-400">Business Key</p>
+                    <p class="text-xs text-slate-400">Case Key</p>
                     <p th:text="${process.businessKey}" class="text-sm font-medium">EMP-2023-001</p>
                   </div>
                 </div>

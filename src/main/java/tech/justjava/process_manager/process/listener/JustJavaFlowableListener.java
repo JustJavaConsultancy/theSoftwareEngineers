@@ -9,15 +9,18 @@ import org.flowable.engine.RuntimeService;
 import org.flowable.task.api.Task;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+import tech.justjava.process_manager.account.AuthenticationManager;
 
 @Component
 public class JustJavaFlowableListener implements FlowableEventListener {
 
 
     private final SimpMessagingTemplate messagingTemplate;
+    private final AuthenticationManager authenticationManager;
     private final RuntimeService runtimeService;
-    public JustJavaFlowableListener(SimpMessagingTemplate messagingTemplate, RuntimeService runtimeService) {
+    public JustJavaFlowableListener(SimpMessagingTemplate messagingTemplate, AuthenticationManager authenticationManager, RuntimeService runtimeService) {
         this.messagingTemplate = messagingTemplate;
+        this.authenticationManager = authenticationManager;
         this.runtimeService = runtimeService;
     }
 
@@ -36,10 +39,15 @@ public class JustJavaFlowableListener implements FlowableEventListener {
                 if (event.getType() == FlowableEngineEventType.TASK_CREATED) {
 
                     runtimeService.setVariable(task.getProcessInstanceId(), "currentTask", task.getName());
-                    System.out.println(" The full Process Variable Here==="+task.getProcessVariables());
+                    String setAssignee= (String) runtimeService.getVariable(task.getProcessInstanceId(),"initiator");
+                    System.out.println(" The set assignee==="+setAssignee);
+
                     task.getProcessVariables().put("currentTask",task.getName());
 
                     String assignee=task.getAssignee();
+                    if(assignee!=null && assignee.equalsIgnoreCase(setAssignee)){
+                        task.setAssignee(String.valueOf(authenticationManager.get("name")));
+                    }
 
                     System.out.println(" The Task Name=="+task.getName() + " and assign to " +
                             assignee);
