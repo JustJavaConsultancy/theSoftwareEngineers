@@ -74,6 +74,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // === GALLERY PAGE FUNCTIONALITY ===
+  if (window.location.pathname.includes('/gallery')) {
+    initializeGalleryFunctionality();
+  }
+
+  // === ADD FILE PAGE FUNCTIONALITY ===
+  if (window.location.pathname.includes('/addFile')) {
+    initializeFileUploadFunctionality();
+  }
+
+  // === SUPPORT CHAT FUNCTIONALITY ===
   if (!window.location.pathname.includes('/chat')) {
     const supportBtn = document.getElementById('support-chat-btn');
     const chatBox = document.getElementById('chat-box');
@@ -474,3 +485,531 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+
+// === GALLERY FUNCTIONALITY ===
+function initializeGalleryFunctionality() {
+  let currentTab = 'all';
+  let allFiles = [];
+  let isSearching = false;
+  let currentPage = 1;
+  let itemsPerPage = 5;
+  let filteredFiles = [];
+
+  // Initialize elements
+  const tabs = document.querySelectorAll('.file-tab');
+  const searchInput = document.getElementById('file-search');
+  const tableBody = document.getElementById('files-table-body');
+  const paginationContainer = document.getElementById('pagination-container');
+  const paginationPrev = document.getElementById('pagination-prev');
+  const paginationNext = document.getElementById('pagination-next');
+  const paginationNumbers = document.getElementById('pagination-numbers');
+  const paginationStart = document.getElementById('pagination-start');
+  const paginationEnd = document.getElementById('pagination-end');
+  const paginationTotal = document.getElementById('pagination-total');
+
+  // Set initial active tab
+  const allTab = document.querySelector('.file-tab[data-tab="all"]');
+  if (allTab) {
+    allTab.classList.add('bg-blue-600', 'text-white');
+    allTab.classList.remove('text-gray-400');
+  }
+
+  // Load initial files from server-rendered content
+  loadInitialFiles();
+
+  // Tab switching functionality
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabType = this.getAttribute('data-tab');
+
+      // Update active tab styling
+      tabs.forEach(t => {
+        t.classList.remove('bg-blue-600', 'text-white');
+        t.classList.add('text-gray-400');
+      });
+      this.classList.add('bg-blue-600', 'text-white');
+      this.classList.remove('text-gray-400');
+
+      currentTab = tabType;
+      currentPage = 1; // Reset to first page when switching tabs
+
+      if (isSearching) {
+        // If searching, perform search with new tab
+        performSearch();
+      } else {
+        // Otherwise, just filter by tab
+        filterByTab();
+      }
+    });
+  });
+
+  // Search functionality
+  searchInput.addEventListener('input', function() {
+    const query = this.value.trim();
+    currentPage = 1; // Reset to first page when searching
+
+    if (query === '') {
+      isSearching = false;
+      filterByTab(); // Show tab content when search is cleared
+    } else {
+      isSearching = true;
+      performSearch();
+    }
+  });
+
+  // Pagination event listeners
+  paginationPrev.addEventListener('click', function() {
+    if (currentPage > 1) {
+      currentPage--;
+      updateCurrentView();
+    }
+  });
+
+  paginationNext.addEventListener('click', function() {
+    const totalPages = Math.ceil(filteredFiles.length / itemsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      updateCurrentView();
+    }
+  });
+
+  function loadInitialFiles() {
+    const fileRows = document.querySelectorAll('.file-row');
+    allFiles = [];
+
+    fileRows.forEach(row => {
+      const fileData = {
+        id: row.getAttribute('data-file-id'),
+        type: row.getAttribute('data-file-type'),
+        name: row.cells[0].textContent.trim(),
+        caseNumber: row.cells[1].textContent.trim(),
+        size: row.cells[3].textContent.trim(),
+        dateAdded: row.cells[4].textContent.trim(),
+        element: row.cloneNode(true)
+      };
+      allFiles.push(fileData);
+    });
+
+    // Initialize filtered files and pagination after loading
+    filterByTab();
+  }
+
+  function filterByTab() {
+    if (currentTab === 'all') {
+      filteredFiles = allFiles;
+    } else {
+      filteredFiles = allFiles.filter(file => file.type === currentTab);
+    }
+
+    updateCurrentView();
+  }
+
+  function performSearch() {
+    const searchQuery = searchInput.value.toLowerCase().trim();
+
+    filteredFiles = allFiles.filter(file => {
+      const matchesType = currentTab === 'all' || file.type === currentTab;
+      const matchesQuery = file.name.toLowerCase().includes(searchQuery) ||
+                          file.caseNumber.toLowerCase().includes(searchQuery);
+      return matchesType && matchesQuery;
+    });
+
+    updateCurrentView();
+  }
+
+  function updateCurrentView() {
+    updateTable();
+    updatePagination();
+  }
+
+  function updateTable() {
+    tableBody.innerHTML = '';
+
+    if (filteredFiles.length === 0) {
+      const emptyRow = document.createElement('tr');
+      emptyRow.innerHTML = `
+        <td class="text-center py-10 text-gray-500" colspan="6">
+          No files found.
+        </td>
+      `;
+      tableBody.appendChild(emptyRow);
+      return;
+    }
+
+    // Calculate pagination
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, filteredFiles.length);
+    const paginatedFiles = filteredFiles.slice(startIndex, endIndex);
+
+    paginatedFiles.forEach(file => {
+      const row = document.createElement('tr');
+      row.className = 'file-row border-b border-gray-700 hover:bg-gray-700';
+      row.setAttribute('data-file-id', file.id);
+      row.setAttribute('data-file-type', file.type);
+      row.innerHTML = `
+        <td class="py-4 px-6 font-medium text-white">${file.name}</td>
+        <td class="py-4 px-6">${file.caseNumber}</td>
+        <td class="py-4 px-6 capitalize">${file.type}</td>
+        <td class="py-4 px-6">${file.size}</td>
+        <td class="py-4 px-6">${file.dateAdded}</td>
+        <td class="py-4 px-6 text-right">
+          <button
+            class="delete-file-btn text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-gray-600"
+            data-file-id="${file.id}"
+            data-file-name="${file.name}"
+            title="Delete file"
+          >
+            <span class="material-icons">delete</span>
+          </button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+
+  function updatePagination() {
+    const totalFiles = filteredFiles.length;
+    const totalPages = Math.ceil(totalFiles / itemsPerPage);
+
+    // Hide pagination if 10 or fewer items
+    if (totalFiles <= itemsPerPage) {
+      paginationContainer.classList.add('hidden');
+      return;
+    }
+
+    // Show pagination
+    paginationContainer.classList.remove('hidden');
+
+    // Update pagination info
+    const startItem = totalFiles === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalFiles);
+
+    paginationStart.textContent = startItem;
+    paginationEnd.textContent = endItem;
+    paginationTotal.textContent = totalFiles;
+
+    // Update previous button
+    paginationPrev.disabled = currentPage === 1;
+
+    // Update next button
+    paginationNext.disabled = currentPage === totalPages;
+
+    // Update page numbers
+    updatePageNumbers(totalPages);
+  }
+
+  function updatePageNumbers(totalPages) {
+    paginationNumbers.innerHTML = '';
+
+    // Show max 5 page numbers
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, startPage + 4);
+
+    // Adjust start if we're near the end
+    if (endPage - startPage < 4) {
+      startPage = Math.max(1, endPage - 4);
+    }
+
+    // Add first page and ellipsis if needed
+    if (startPage > 1) {
+      addPageButton(1);
+      if (startPage > 2) {
+        addEllipsis();
+      }
+    }
+
+    // Add page numbers
+    for (let i = startPage; i <= endPage; i++) {
+      addPageButton(i);
+    }
+
+    // Add ellipsis and last page if needed
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        addEllipsis();
+      }
+      addPageButton(totalPages);
+    }
+  }
+
+  function addPageButton(pageNum) {
+    const button = document.createElement('button');
+    button.className = `px-3 py-2 text-sm font-medium border border-gray-600 rounded-lg ${
+      pageNum === currentPage
+        ? 'bg-blue-600 text-white border-blue-600'
+        : 'text-gray-400 bg-gray-800 hover:bg-gray-700 hover:text-white'
+    }`;
+    button.textContent = pageNum;
+    button.addEventListener('click', function() {
+      currentPage = pageNum;
+      updateCurrentView();
+    });
+    paginationNumbers.appendChild(button);
+  }
+
+  function addEllipsis() {
+    const ellipsis = document.createElement('span');
+    ellipsis.className = 'px-3 py-2 text-sm text-gray-400';
+    ellipsis.textContent = '...';
+    paginationNumbers.appendChild(ellipsis);
+  }
+
+  // Delete functionality
+  let fileToDelete = null;
+  const deleteModal = document.getElementById('deleteModal');
+  const deleteFileName = document.getElementById('deleteFileName');
+  const cancelDeleteBtn = document.getElementById('cancelDelete');
+  const confirmDeleteBtn = document.getElementById('confirmDelete');
+
+  // Handle delete button clicks
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.delete-file-btn')) {
+      const deleteBtn = e.target.closest('.delete-file-btn');
+      const fileId = deleteBtn.getAttribute('data-file-id');
+      const fileName = deleteBtn.getAttribute('data-file-name');
+
+      fileToDelete = { id: fileId, name: fileName };
+      deleteFileName.textContent = fileName;
+      deleteModal.classList.remove('hidden');
+      deleteModal.classList.add('flex');
+    }
+  });
+
+  // Cancel delete
+  cancelDeleteBtn.addEventListener('click', function() {
+    deleteModal.classList.add('hidden');
+    deleteModal.classList.remove('flex');
+    fileToDelete = null;
+  });
+
+  // Confirm delete
+  confirmDeleteBtn.addEventListener('click', function() {
+    if (fileToDelete) {
+      fetch(`/api/files/${fileToDelete.id}`, {
+        method: 'DELETE'
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          // Remove from allFiles array
+          allFiles = allFiles.filter(file => file.id !== fileToDelete.id);
+
+          // Check if current page becomes empty after deletion
+          const totalPages = Math.ceil(filteredFiles.length / itemsPerPage);
+          if (currentPage > totalPages && totalPages > 0) {
+            currentPage = totalPages;
+          }
+
+          // Refresh the current view
+          if (isSearching) {
+            performSearch();
+          } else {
+            filterByTab();
+          }
+
+          deleteModal.classList.add('hidden');
+          deleteModal.classList.remove('flex');
+          fileToDelete = null;
+        } else {
+          alert('Failed to delete file: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting file:', error);
+        alert('Failed to delete file. Please try again.');
+      });
+    }
+  });
+
+  // Close modal on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !deleteModal.classList.contains('hidden')) {
+      deleteModal.classList.add('hidden');
+      deleteModal.classList.remove('flex');
+      fileToDelete = null;
+    }
+  });
+
+  // Close modal on backdrop click
+  deleteModal.addEventListener('click', function(e) {
+    if (e.target === deleteModal) {
+      deleteModal.classList.add('hidden');
+      deleteModal.classList.remove('flex');
+      fileToDelete = null;
+    }
+  });
+}
+
+// === FILE UPLOAD FUNCTIONALITY ===
+function initializeFileUploadFunctionality() {
+  const uploadForm = document.getElementById('uploadForm');
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInput = document.getElementById('file-upload');
+  const uploadProgress = document.getElementById('uploadProgress');
+  const progressBar = document.getElementById('progressBar');
+  const progressPercentage = document.getElementById('progressPercentage');
+  const uploadStatus = document.getElementById('uploadStatus');
+  const uploadResults = document.getElementById('uploadResults');
+  const uploadedFilesList = document.getElementById('uploadedFilesList');
+  const doneButton = document.getElementById('doneButton');
+  const uploadError = document.getElementById('uploadError');
+  const errorMessage = document.getElementById('errorMessage');
+  const retryButton = document.getElementById('retryButton');
+
+  let tempUploadedFiles = [];
+
+  // Drag and drop functionality
+  uploadArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    uploadArea.classList.add('border-blue-500', 'bg-blue-50', 'bg-opacity-10');
+  });
+
+  uploadArea.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    uploadArea.classList.remove('border-blue-500', 'bg-blue-50', 'bg-opacity-10');
+  });
+
+  uploadArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    uploadArea.classList.remove('border-blue-500', 'bg-blue-50', 'bg-opacity-10');
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFileUpload(files);
+    }
+  });
+
+  // File input change
+  fileInput.addEventListener('change', function(e) {
+    const files = e.target.files;
+    if (files.length > 0) {
+      handleFileUpload(files);
+    }
+  });
+
+  // Done button functionality
+  doneButton.addEventListener('click', function() {
+    if (tempUploadedFiles.length > 0) {
+      // Finalize uploads on server
+      fetch('/api/files/finalize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tempUploadedFiles)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          window.location.href = '/gallery';
+        } else {
+          alert('Failed to finalize uploads: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error finalizing uploads:', error);
+        alert('Failed to finalize uploads. Please try again.');
+      });
+    } else {
+      window.location.href = '/gallery';
+    }
+  });
+
+  // Retry button functionality
+  retryButton.addEventListener('click', function() {
+    hideAllSections();
+    resetForm();
+  });
+
+  function handleFileUpload(files) {
+    hideAllSections();
+    uploadProgress.classList.remove('hidden');
+
+    tempUploadedFiles = [];
+    let completedUploads = 0;
+    const totalFiles = files.length;
+
+    uploadStatus.textContent = `Uploading ${totalFiles} file(s)...`;
+
+    Array.from(files).forEach((file, index) => {
+      uploadSingleFile(file, index, totalFiles, () => {
+        completedUploads++;
+        const progress = (completedUploads / totalFiles) * 100;
+        updateProgress(progress);
+
+        if (completedUploads === totalFiles) {
+          showUploadResults();
+        }
+      });
+    });
+  }
+
+  function uploadSingleFile(file, index, totalFiles, callback) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch('/api/files/upload', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        tempUploadedFiles.push(data.fileInfo);
+      }
+      callback();
+    })
+    .catch(error => {
+      console.error('Upload error:', error);
+      callback();
+    });
+  }
+
+  function updateProgress(percentage) {
+    progressBar.style.width = percentage + '%';
+    progressPercentage.textContent = Math.round(percentage) + '%';
+
+    if (percentage === 100) {
+      uploadStatus.textContent = 'Processing uploads...';
+    }
+  }
+
+  function showUploadResults() {
+    uploadProgress.classList.add('hidden');
+
+    if (tempUploadedFiles.length === 0) {
+      errorMessage.textContent = 'All uploads failed. Please try again.';
+      uploadError.classList.remove('hidden');
+    } else {
+      uploadResults.classList.remove('hidden');
+
+      uploadedFilesList.innerHTML = '';
+      tempUploadedFiles.forEach(file => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'flex items-center justify-between p-2 bg-gray-700 rounded';
+        fileItem.innerHTML = `
+          <div class="flex items-center">
+            <span class="material-icons text-green-500 mr-2">check_circle</span>
+            <span class="text-white">${file.name}</span>
+          </div>
+          <span class="text-gray-400 text-sm">${file.size}</span>
+        `;
+        uploadedFilesList.appendChild(fileItem);
+      });
+    }
+  }
+
+  function hideAllSections() {
+    uploadProgress.classList.add('hidden');
+    uploadResults.classList.add('hidden');
+    uploadError.classList.add('hidden');
+  }
+
+  function resetForm() {
+    fileInput.value = '';
+    tempUploadedFiles = [];
+    progressBar.style.width = '0%';
+    progressPercentage.textContent = '0%';
+    uploadStatus.textContent = '';
+  }
+}
