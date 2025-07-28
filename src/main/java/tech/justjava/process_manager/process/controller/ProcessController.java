@@ -81,6 +81,7 @@ public class ProcessController {
     @GetMapping
     public String list(final Model model) {
 
+
         System.out.println(" The Sub in the Process==...."+authenticationManager.get("sub"));
         List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery()
                 .processDefinitionKey(processKey)
@@ -89,6 +90,21 @@ public class ProcessController {
                 .list();
 processInstances.forEach(processInstance -> {
     System.out.println(" The Process variable here==="+processInstance.getProcessVariables());
+    Map<String,Object> aiResponse = (Map<String,Object>) processInstance.getProcessVariables().get("aiResponse");
+
+    //System.out.println(" AiResponse==="+aiResponse);
+    //System.out.println(" reason==="+aiResponse.get("reason"));
+    List<String> reasons= (List<String>) aiResponse.get("reason");
+    reasons.forEach(reason->{
+        System.out.println(" reason==="+reason);
+            }
+    );
+
+    List<String> clientDocuments = (List<String>) aiResponse.get("clientDocuments");
+    clientDocuments.forEach(clientDocument->{
+        System.out.println(" clientDocument==="+clientDocument);
+    });
+    //System.out.println(" clientDocuments==="+aiResponse.get("clientDocuments"));
 });
         model.addAttribute("processes", processInstances);
 
