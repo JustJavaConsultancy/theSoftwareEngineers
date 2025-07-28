@@ -1,5 +1,6 @@
 package tech.justjava.process_manager;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import tech.justjava.process_manager.account.AuthenticationManager;
 import tech.justjava.process_manager.support.SupportFeignClient;
 
 import java.util.HashMap;
@@ -22,6 +24,7 @@ public class HomeController {
     private final TaskService taskService;
     private final HistoryService historyService;
     private final SupportFeignClient supportFeignClient;
+    private final AuthenticationManager authenticationManager;
 
     @Value("${app.processKey}")
     private String processKey;
@@ -30,16 +33,23 @@ public class HomeController {
             RuntimeService runtimeService,
             TaskService taskService,
             HistoryService historyService,
-            SupportFeignClient supportFeignClient
+            SupportFeignClient supportFeignClient,
+            AuthenticationManager authenticationManager
     ) {
         this.runtimeService = runtimeService;
         this.taskService = taskService;
         this.historyService = historyService;
         this.supportFeignClient = supportFeignClient;
+        this.authenticationManager = authenticationManager;
     }
 
     @GetMapping("/")
-    public String index() {
+    public String index(HttpServletRequest request) {
+
+        if(authenticationManager.isAdmin()){
+            request.getSession(true).setAttribute("isAdmin", true);
+        }
+
         return "redirect:/dashboard";
     }
 
