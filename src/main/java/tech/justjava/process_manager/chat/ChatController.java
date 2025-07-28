@@ -1,10 +1,14 @@
 package tech.justjava.process_manager.chat;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tech.justjava.process_manager.chat.domain.Message;
 import tech.justjava.process_manager.chat.service.ChatService;
+import tech.justjava.process_manager.chat.model.ChatUserDTO;
+import tech.justjava.process_manager.chat.model.ConversationDTO;
 
 import java.util.*;
 
@@ -22,6 +26,33 @@ public class ChatController {
         return "chat";
     }
     
+    // New endpoints for the updated API format
+    @GetMapping("/api/chat/conversations")
+    @ResponseBody
+    public ResponseEntity<List<ConversationDTO>> getConversations(Authentication authentication) {
+        try {
+            String currentUserId = getCurrentUserId(authentication);
+            List<ConversationDTO> conversations = chatService.getConversationsForChat(currentUserId);
+            return ResponseEntity.ok(conversations);
+        } catch (Exception e) {
+            System.err.println("Error getting conversations: " + e.getMessage());
+            return ResponseEntity.status(500).body(new ArrayList<>());
+        }
+    }
+    
+    @GetMapping("/api/chat/users")
+    @ResponseBody
+    public ResponseEntity<List<ChatUserDTO>> getUsers() {
+        try {
+            List<ChatUserDTO> users = chatService.getUsersForChat();
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            System.err.println("Error getting users: " + e.getMessage());
+            return ResponseEntity.status(500).body(new ArrayList<>());
+        }
+    }
+    
+    // Existing endpoints remain the same
     @PostMapping("/api/chat/messages/send")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> sendMessage(
@@ -88,5 +119,13 @@ public class ChatController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ArrayList<>());
         }
+    }
+    
+    private String getCurrentUserId(Authentication authentication) {
+        if (authentication != null && authentication.getPrincipal() instanceof OidcUser) {
+            OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
+            return oidcUser.getSubject(); // This is the user ID from Keycloak
+        }
+        return "anonymous"; // Fallback for testing
     }
 } 
