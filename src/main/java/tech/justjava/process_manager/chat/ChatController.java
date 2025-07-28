@@ -26,6 +26,29 @@ public class ChatController {
         return "chat";
     }
     
+    // Video call endpoint
+    @GetMapping("/api/chat/video-call/user-info")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getVideoCallUserInfo(Authentication authentication) {
+        try {
+            String currentUserId = getCurrentUserId(authentication);
+            String currentUserName = getCurrentUserName(authentication);
+            
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("userId", currentUserId);
+            userInfo.put("userName", currentUserName);
+            userInfo.put("status", "success");
+            
+            return ResponseEntity.ok(userInfo);
+        } catch (Exception e) {
+            System.err.println("Error getting video call user info: " + e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", "Failed to get user info");
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+    
     // New endpoints for the updated API format
     @GetMapping("/api/chat/conversations")
     @ResponseBody
@@ -127,5 +150,22 @@ public class ChatController {
             return oidcUser.getSubject(); // This is the user ID from Keycloak
         }
         return "anonymous"; // Fallback for testing
+    }
+    
+    private String getCurrentUserName(Authentication authentication) {
+        if (authentication != null && authentication.getPrincipal() instanceof OidcUser) {
+            OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
+            String firstName = oidcUser.getClaimAsString("given_name");
+            String lastName = oidcUser.getClaimAsString("family_name");
+            
+            if (firstName != null && lastName != null) {
+                return firstName + " " + lastName;
+            } else if (firstName != null) {
+                return firstName;
+            } else {
+                return oidcUser.getClaimAsString("preferred_username");
+            }
+        }
+        return "User"; // Fallback for testing
     }
 } 

@@ -13,6 +13,12 @@
         #support-chat-btn {
             display: none !important;
         }
+        /* Video call modal styles */
+        #video-call-modal .video-container {
+            width: 100%;
+            height: 80vh;
+            min-height: 500px;
+        }
     </style>
 </head>
 <body>
@@ -30,7 +36,42 @@
         <div th:replace="chat/input.html"></div>
     </main>
     <div th:replace="chat/new-chat-modal.html"></div>
+    
+    <!-- Video Call Modal -->
+    <div id="video-call-modal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-lg w-full max-w-6xl h-full max-h-[90vh] shadow-lg border border-slate-200 dark:border-slate-700 flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <span class="material-icons text-blue-600">videocam</span>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Video Call</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400" id="video-call-participant">with <span id="video-call-with"></span></p>
+                    </div>
+                </div>
+                <button id="end-video-call" class="text-slate-400 hover:text-red-600 dark:text-slate-300 dark:hover:text-red-400 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="End Call">
+                    <span class="material-icons">call_end</span>
+                </button>
+            </div>
+            
+            <!-- Video Container -->
+            <div class="flex-1 p-4">
+                <div id="video-call-container" class="video-container bg-slate-100 dark:bg-slate-700 rounded-lg"></div>
+            </div>
+            
+            <!-- Call Status -->
+            <div id="video-call-status" class="hidden p-4 text-center border-t border-slate-200 dark:border-slate-700">
+                <div class="text-slate-600 dark:text-slate-400">
+                    <span class="material-icons animate-pulse">videocam</span>
+                    <span class="ml-2">Connecting to video call...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
     <script src="/js/chat.js"></script>
+    <script src="/js/videocall.js"></script>
 </section>
 </body>
 </html> 
