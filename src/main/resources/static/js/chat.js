@@ -13,7 +13,7 @@ let modalSelectedUsers = []; // For the new chat modal
 async function fetchUsers() {
   try {
     console.log('Fetching users from /api/chat/users...');
-    const response = await fetch('/api/chat/users');
+    const response = await fetch('/api/users');
     console.log('Users API response status:', response.status);
     
     if (response.ok) {
@@ -50,7 +50,7 @@ async function fetchUsers() {
 async function fetchConversations() {
   try {
     console.log('Fetching conversations from /api/chat/conversations...');
-    const response = await fetch('/api/chat/conversations');
+    const response = await fetch('/api/conversations');
     console.log('Conversations API response status:', response.status);
     
     if (response.ok) {
