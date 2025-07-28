@@ -1,0 +1,363 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Invoice</title>
+    <style>
+        }
+        .search-bar {
+            background-color: #374151;
+        }
+        .btn-primary {
+            background-color: #3B82F6;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #2563EB;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        .card {
+            background-color: #1F2937;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+        .status-paid {
+            background-color: #10B981;
+            color: #FFFFFF;
+        }
+        .status-pending {
+            background-color: #F59E0B;
+            color: #FFFFFF;
+        }
+        .status-overdue {
+            background-color: #EF4444;
+            color: #FFFFFF;
+        }
+        .invoice-progress {
+            height: 4px;
+            background-color: #374151;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-paid {
+            background-color: #10B981;
+            width: 100%;
+        }
+        .progress-pending {
+            background-color: #F59E0B;
+            width: 50%;
+        }
+        .progress-overdue {
+            background-color: #EF4444;
+            width: 0%;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .glow {
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        .card-paid {
+            border-left-color: #10B981;
+        }
+        .card-pending {
+            border-left-color: #F59E0B;
+        }
+        .card-overdue {
+            border-left-color: #EF4444;
+        }
+        .pagination-btn {
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover {
+            background-color: #374151;
+            transform: scale(1.1);
+        }
+        .copy-btn {
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            transform: translateX(3px);
+        }
+    </style>
+</head>
+<div layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
+    <main>
+        <div class="flex justify-between items-center mb-8 animate__animated animate__fadeIn">
+            <div>
+                <h2 class="text-3xl font-bold text-white">Invoices</h2>
+                <p class="text-gray-400 mt-1">Manage and track your invoices</p>
+            </div>
+            <a th:href="@{/invoice/create}" class="inline-block">
+                <button class="btn-primary flex items-center px-4 py-2 rounded-lg text-white font-semibold animate__animated animate__pulse animate__infinite animate__slower">
+                    <span class="material-icons mr-2">add</span>
+                    Create New Invoice
+                </button>
+            </a>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gradient-to-r from-blue-900 to-blue-700 p-6 rounded-xl shadow-lg transform transition hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-blue-200">Total Revenue</p>
+                        <p class="text-2xl font-bold text-white">$24,500.00</p>
+                    </div>
+                    <span class="material-icons text-blue-300 text-3xl">attach_money</span>
+                </div>
+                <div class="mt-4 h-2 bg-blue-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-400 rounded-full" style="width: 75%"></div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-green-900 to-green-700 p-6 rounded-xl shadow-lg transform transition hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-green-200">Paid Invoices</p>
+                        <p class="text-2xl font-bold text-white">18</p>
+                    </div>
+                    <span class="material-icons text-green-300 text-3xl">check_circle</span>
+                </div>
+                <div class="mt-4 h-2 bg-green-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-green-400 rounded-full" style="width: 72%"></div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-900 to-amber-700 p-6 rounded-xl shadow-lg transform transition hover:scale-105">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-amber-200">Pending Invoices</p>
+                        <p class="text-2xl font-bold text-white">7</p>
+                    </div>
+                    <span class="material-icons text-amber-300 text-3xl">schedule</span>
+                </div>
+                <div class="mt-4 h-2 bg-amber-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-amber-400 rounded-full" style="width: 28%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoice List Header -->
+        <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h3 class="text-xl font-semibold text-white">Recent Invoices</h3>
+                <p class="text-sm text-gray-400 mt-1">Your most recent invoice transactions</p>
+            </div>
+            <div class="relative w-full md:w-72">
+                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                <input class="bg-gray-800 w-full pl-10 pr-4 py-2 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search invoices..." type="text"/>
+            </div>
+        </div>
+
+        <!-- Invoice Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Paid Invoice -->
+            <div class="card rounded-xl p-6 flex flex-col justify-between card-paid fade-in" style="animation-delay: 0.1s">
+                <div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-mono text-gray-400 tracking-wider">#INV-00123</p>
+                            <p class="text-lg font-semibold text-white mt-2">Tech Solutions Inc.</p>
+                            <p class="text-sm text-gray-400 mt-1 flex items-center">
+                                <span class="material-icons text-xs mr-1">person</span>
+                                John Doe
+                            </p>
+                            <p class="text-sm text-gray-400 mt-1 flex items-center">
+                                <span class="material-icons text-xs mr-1">location_on</span>
+                                Silicon Valley, CA
+                            </p>
+                        </div>
+                        <span class="status-paid text-xs font-semibold px-2.5 py-1 rounded-full flex items-center">
+                                <span class="material-icons text-xs mr-1">check</span>
+                                Paid
+                            </span>
+                    </div>
+                    <div class="mt-6">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-xs text-gray-400">Amount</p>
+                                <p class="text-2xl font-bold text-white">$2,500.00</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-gray-400">Due Date</p>
+                                <p class="text-sm font-medium text-white">Aug 15, 2024</p>
+                            </div>
+                        </div>
+                        <div class="invoice-progress mt-3">
+                            <div class="progress-paid h-full"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-between items-center">
+                    <button class="copy-btn text-blue-400 hover:text-blue-300 flex items-center text-sm">
+                        <span class="material-icons text-base mr-1">content_copy</span>
+                        Copy Link
+                    </button>
+                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
+                        <span class="material-icons text-base mr-1">visibility</span>
+                        View
+                    </button>
+                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
+                        <span class="material-icons text-base mr-1">download</span>
+                        PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pending Invoice -->
+            <div class="card rounded-xl p-6 flex flex-col justify-between card-pending fade-in" style="animation-delay: 0.2s">
+                <div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-mono text-gray-400 tracking-wider">#INV-00122</p>
+                            <p class="text-lg font-semibold text-white mt-2">Innovate Co.</p>
+                            <p class="text-sm text-gray-400 mt-1 flex items-center">
+                                <span class="material-icons text-xs mr-1">person</span>
+                                Jane Smith
+                            </p>
+                            <p class="text-sm text-gray-400 mt-1 flex items-center">
+                                <span class="material-icons text-xs mr-1">location_on</span>
+                                Boston, MA
+                            </p>
+                        </div>
+                        <span class="status-pending text-xs font-semibold px-2.5 py-1 rounded-full flex items-center">
+                                <span class="material-icons text-xs mr-1">schedule</span>
+                                Pending
+                            </span>
+                    </div>
+                    <div class="mt-6">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-xs text-gray-400">Amount</p>
+                                <p class="text-2xl font-bold text-white">$1,200.00</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-gray-400">Due Date</p>
+                                <p class="text-sm font-medium text-white">Aug 10, 2024</p>
+                            </div>
+                        </div>
+                        <div class="invoice-progress mt-3">
+                            <div class="progress-pending h-full"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-between items-center">
+                    <button class="copy-btn text-blue-400 hover:text-blue-300 flex items-center text-sm">
+                        <span class="material-icons text-base mr-1">content_copy</span>
+                        Copy Link
+                    </button>
+                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
+                        <span class="material-icons text-base mr-1">visibility</span>
+                        View
+                    </button>
+                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
+                        <span class="material-icons text-base mr-1">download</span>
+                        PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overdue Invoice -->
+            <div class="card rounded-xl p-6 flex flex-col justify-between card-overdue fade-in" style="animation-delay: 0.3s">
+                <div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-mono text-gray-400 tracking-wider">#INV-00121</p>
+                            <p class="text-lg font-semibold text-white mt-2">Digital Crafters</p>
+                            <p class="text-sm text-gray-400 mt-1 flex items-center">
+                                <span class="material-icons text-xs mr-1">person</span>
+                                Sam Wilson
+                            </p>
+                            <p class="text-sm text-gray-400 mt-1 flex items-center">
+                                <span class="material-icons text-xs mr-1">location_on</span>
+                                Austin, TX
+                            </p>
+                        </div>
+                        <span class="status-overdue text-xs font-semibold px-2.5 py-1 rounded-full flex items-center">
+                                <span class="material-icons text-xs mr-1">warning</span>
+                                Overdue
+                            </span>
+                    </div>
+                    <div class="mt-6">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-xs text-gray-400">Amount</p>
+                                <p class="text-2xl font-bold text-white">$3,750.00</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-gray-400">Due Date</p>
+                                <p class="text-sm font-medium text-rose-400">Jul 25, 2024</p>
+                            </div>
+                        </div>
+                        <div class="invoice-progress mt-3">
+                            <div class="progress-overdue h-full"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-between items-center">
+                    <button class="copy-btn text-blue-400 hover:text-blue-300 flex items-center text-sm">
+                        <span class="material-icons text-base mr-1">content_copy</span>
+                        Copy Link
+                    </button>
+                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
+                        <span class="material-icons text-base mr-1">visibility</span>
+                        View
+                    </button>
+                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
+                        <span class="material-icons text-base mr-1">download</span>
+                        PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+            <span>Showing <span class="font-medium text-white">1</span> to <span class="font-medium text-white">5</span> of <span class="font-medium text-white">25</span> results</span>
+            <div class="flex items-center space-x-2">
+                <button class="pagination-btn p-2 rounded-md hover:bg-gray-700 disabled:opacity-50" disabled>
+                    <span class="material-icons">chevron_left</span>
+                </button>
+                <button class="pagination-btn px-3 py-1 rounded-md hover:bg-gray-700 font-medium text-white">
+                    1
+                </button>
+                <button class="pagination-btn px-3 py-1 rounded-md hover:bg-gray-700">
+                    2
+                </button>
+                <button class="pagination-btn px-3 py-1 rounded-md hover:bg-gray-700">
+                    3
+                </button>
+                <button class="pagination-btn p-2 rounded-md hover:bg-gray-700">
+                    <span class="material-icons">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </main>
+    <script>
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                // Add delay based on index for staggered animation
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Add glow effect to create button on hover
+            const createBtn = document.querySelector('.btn-primary');
+            createBtn.addEventListener('mouseenter', () => {
+                createBtn.classList.add('glow');
+            });
+            createBtn.addEventListener('mouseleave', () => {
+                createBtn.classList.remove('glow');
+            });
+    </script>
+</div>
+</html>
