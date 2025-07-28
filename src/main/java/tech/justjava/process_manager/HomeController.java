@@ -23,6 +23,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import tech.justjava.process_manager.account.AuthenticationManager;
 
 @Controller
 public class HomeController {
@@ -31,6 +35,7 @@ public class HomeController {
     private final TaskService taskService;
     private final HistoryService historyService;
     private final SupportFeignClient supportFeignClient;
+    private final AuthenticationManager authenticationManager;
 
     @Value("${app.processKey}")
     private String processKey;
@@ -45,11 +50,13 @@ public class HomeController {
             TaskService taskService,
             HistoryService historyService,
             SupportFeignClient supportFeignClient
+            AuthenticationManager authenticationManager
     ) {
         this.runtimeService = runtimeService;
         this.taskService = taskService;
         this.historyService = historyService;
         this.supportFeignClient = supportFeignClient;
+        this.authenticationManager = authenticationManager;
 
         // Create upload directories if they don't exist
         try {
@@ -61,7 +68,12 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String index() {
+    public String index(HttpServletRequest request) {
+
+        if(authenticationManager.isAdmin()){
+            request.getSession(true).setAttribute("isAdmin", true);
+        }
+
         return "redirect:/dashboard";
     }
 
