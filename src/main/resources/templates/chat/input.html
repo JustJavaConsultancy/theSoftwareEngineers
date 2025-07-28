@@ -5,41 +5,13 @@
             <div class="p-3">
                 <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-2">Send to multiple recipients</h4>
                 <div class="space-y-2 max-h-48 overflow-y-auto">
-                    <!-- Individual users -->
+                    <!-- Users will be populated dynamically by JavaScript -->
                     <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Users</div>
-                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
-                        <input type="checkbox" class="recipient-checkbox" data-type="user" data-id="1" data-name="Chinedu">
-                        <span class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">C</span>
-                        <span class="text-sm text-slate-900 dark:text-white">Chinedu</span>
-                    </label>
-                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
-                        <input type="checkbox" class="recipient-checkbox" data-type="user" data-id="2" data-name="Amaka">
-                        <span class="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-bold">A</span>
-                        <span class="text-sm text-slate-900 dark:text-white">Amaka</span>
-                    </label>
-                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
-                        <input type="checkbox" class="recipient-checkbox" data-type="user" data-id="3" data-name="Tunde">
-                        <span class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold">T</span>
-                        <span class="text-sm text-slate-900 dark:text-white">Tunde</span>
-                    </label>
-                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
-                        <input type="checkbox" class="recipient-checkbox" data-type="user" data-id="4" data-name="Ngozi">
-                        <span class="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-bold">N</span>
-                        <span class="text-sm text-slate-900 dark:text-white">Ngozi</span>
-                    </label>
+                    <!-- Dynamic user list populated by chat.js -->
                     
-                    <!-- Groups -->
+                    <!-- Groups section (if needed) -->
                     <div class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-3 pt-2 border-t border-slate-200 dark:border-slate-600">Groups</div>
-                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
-                        <input type="checkbox" class="recipient-checkbox" data-type="group" data-id="5" data-name="Lagos Office">
-                        <span class="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold">L</span>
-                        <span class="text-sm text-slate-900 dark:text-white">Lagos Office</span>
-                    </label>
-                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded">
-                        <input type="checkbox" class="recipient-checkbox" data-type="group" data-id="6" data-name="Dev Team">
-                        <span class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-xs font-bold">D</span>
-                        <span class="text-sm text-slate-900 dark:text-white">Dev Team</span>
-                    </label>
+                    <!-- Dynamic group list (can be added later) -->
                 </div>
             </div>
         </div>
