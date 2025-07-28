@@ -102,6 +102,13 @@ public class TaskController {
         formData.put("id", task.getId());
 
         String formHtml=templateRenderer.render(formThymeleaf,formData);
+        List<String> lawyerDocuments = List.of(
+                "Letter of Demand",
+                "Statement of Claim",
+                "Affidavit of Evidence",
+                "Preliminary Objections"
+        );
+        model.addAttribute("lawyerDocuments", lawyerDocuments);
 
         model.addAttribute("formHtml",formHtml);
         model.addAttribute("name",task.getName());
