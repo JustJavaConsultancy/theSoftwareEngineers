@@ -35,17 +35,13 @@ public class User {
     private String email;
     private Boolean status;
     @ManyToOne
-    @JoinColumn(name = "user_group_id", nullable = false)
+    @JoinColumn(name = "user_group_id")
     private UserGroup userGroup;
 
     @Transient
     private String avatar;
     @Transient
     private Boolean online;
-
-
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Message> messages = new ArrayList<>();
 
     @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
     private List<Conversation> conversations = new ArrayList<>();
