@@ -28,7 +28,7 @@ public class ChatService {
     public List<UserDTO> getUsers() {
         return mapUsersToDTO(userRepository.findAll());
     }
-@Transactional
+    @Transactional
     public List<ConversationDto> getConversations(String userId) {
         List<Conversation> conversations = conversationRepository.findAllByMembers_UserId("85c5f3ca-cd54-4484-8efc-669d9e6faf61");
         return mapConversationsToDTO(conversations, userId);
@@ -74,10 +74,10 @@ public class ChatService {
         if (conversation.isPresent() && user != null) {
             Message message = new Message();
             message.setConversation(conversation.get());
-            message.setSender(user);
+            message.setSenderId(chatMessage.getSenderId());
             message.setContent(chatMessage.getContent());
             conversation.get().getMessages().add(message);
-            user.getMessages().add(message);
+//            user.getMessages().add(message);
             messageRepository.save(message);
 
         }else {

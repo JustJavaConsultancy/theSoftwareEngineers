@@ -3,7 +3,6 @@ package tech.justjava.process_manager.chat.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,9 +30,7 @@ public class Message {
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id")
-    private User sender;
+    private String senderId;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -41,7 +38,7 @@ public class Message {
     private Instant sentAt = Instant.now();
 
     public boolean getSender(String userId) {
-        return this.sender.getUserId().equals(userId);
+        return this.senderId.equals(userId);
     }
     public String getSentAt() {
         return InstantToStringDate(this.sentAt);
