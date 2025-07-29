@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.justjava.process_manager.chat.entity.Conversation;
@@ -16,9 +15,12 @@ import tech.justjava.process_manager.chat.repository.UserRepository;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -150,15 +152,19 @@ public class KeycloakService {
         return userGroupRepository.findByGroupId(groupId);
     }
 
-    @Async
-    public void updateGroups() {
+    public void syncGroups() {
+        System.out.println("\nSyncing Groups:::");
         List<Map<String, Object>> realmGroups = keycloakClient.getRealmGroups(getAccessToken());
         List<UserGroup> existingGroups = userGroupRepository.findAll();
         List<UserGroup> groupsToSave = new ArrayList<>();
 
+        Set<String> realmGroupNames = new HashSet<>();
         for (Map<String, Object> realmGroup : realmGroups) {
             String groupName = (String) realmGroup.get("name");
             String groupId = (String) realmGroup.get("id");
+            String groupDescription = (String) realmGroup.get("description");
+
+            realmGroupNames.add(groupName.toLowerCase());
 
             Optional<UserGroup> matched = existingGroups.stream()
                     .filter(g -> g.getGroupName().equalsIgnoreCase(groupName))
@@ -173,7 +179,7 @@ public class KeycloakService {
                 UserGroup newGroup = UserGroup.builder()
                         .groupName(groupName)
                         .groupId(groupId)
-                        .description(null)
+                        .description(groupDescription)
                         .build();
                 groupsToSave.add(newGroup);
             }
@@ -181,6 +187,13 @@ public class KeycloakService {
         if (!groupsToSave.isEmpty()) {
             userGroupRepository.saveAll(groupsToSave);
         }
+        List<UserGroup> groupsToDelete = existingGroups.stream()
+                .filter(group -> !realmGroupNames.contains(group.getGroupName().toLowerCase()))
+                .collect(Collectors.toList());
+        if (!groupsToDelete.isEmpty()) {
+            userGroupRepository.deleteAll(groupsToDelete);
+        }
+        System.out.println("\nDone Syncing Groups");
     }
 
     public List<UserDTO> getAllUserInGroup(UserGroup group) {
@@ -286,7 +299,7 @@ public class KeycloakService {
 
         keycloakClient.createGroup(getAccessToken(), body);
         userGroupRepository.save(group);
-        updateGroups();
+        syncGroups();
     }
 
     public void updateGroup(Map<String,String> params) {
@@ -331,7 +344,7 @@ public class KeycloakService {
         }
     }
     @Transactional
-    public void deleteUser(User user) {
+    protected void deleteUser(User user) {
 
         // Remove from conversations
         for (Conversation conversation : user.getConversations()) {
@@ -345,54 +358,49 @@ public class KeycloakService {
     }
 
     @Transactional
-    protected void syncGroups() {
-        System.out.println("\nSyncing Groups:::");
-        List<Map<String, Object>> realmGroups = keycloakClient.getRealmGroups(getAccessToken());
-        userRepository.findAll().forEach(this::deleteUser);
-        userGroupRepository.deleteAll();
-        List<UserGroup> groupsToSave = new ArrayList<>();
-
-        for (Map<String, Object> realmGroup : realmGroups) {
-            String groupName = (String) realmGroup.get("name");
-            String groupId = (String) realmGroup.get("id");
-            String groupDescription = (String) realmGroup.get("description");
-            UserGroup group = UserGroup.builder()
-                    .groupName(groupName)
-                    .groupId(groupId)
-                    .description(groupDescription)
-                    .build();
-            groupsToSave.add(group);
-
-        }
-        if (!groupsToSave.isEmpty()) {
-            userGroupRepository.saveAll(groupsToSave);
-        }
-        System.out.println("\nDone Syncing Groups");
-
-    }
-
-    @Transactional
     protected void syncClientUsers(){
         System.out.println("\nSyncing Users:::");
         List<UserGroup> userGroup = userGroupRepository.findAll();
-        List<User> users = new ArrayList<>();
+        List<User> savedUsers = userRepository.findAll();
         List<Map<String, Object>> clientUsers = keycloakClient.getUsers(getAccessToken());
+        List<User> usersToSave = new ArrayList<>();
+        
+        Set<String> userIds = new HashSet<>();
+
         for (Map<String, Object> clientUser : clientUsers) {
-            User user = new User();
-            User mappedUser = mapUser(null, clientUser, user);
-            users.add(mappedUser);
+            String userId = (String) clientUser.get("id");
+            Optional<User> matched = savedUsers.stream()
+                    .filter(u -> u.getUserId().equals(userId))
+                    .findFirst();
+            userIds.add(userId);
+            if (matched.isPresent()){
+                User user = matched.get();
+                mapUser(user.getUserGroup(),clientUser, user);
+                usersToSave.add(user);
+            }else {
+                User user = new User();
+                User mappedUser = mapUser(null, clientUser, user);
+                usersToSave.add(mappedUser);
+            }
         }
         for (UserGroup group : userGroup) {
             List<Map<String, Object>> clientUsersInGroup = keycloakClient.getAllUserInGroup(getAccessToken(), group.getGroupId());
             for (Map<String, Object> user : clientUsersInGroup) {
                 String userId = (String) user.get("id");
-                Optional<User> optionalUser = users.stream()
+                Optional<User> optionalUser = usersToSave.stream()
                         .filter(u -> userId.equals(u.getUserId())).findFirst();
                 optionalUser.ifPresent(value -> mapUser(group, user, value));
             }
         }
-        if (!users.isEmpty()) {
-            userRepository.saveAll(users);
+        if (!usersToSave.isEmpty()) {
+            userRepository.saveAll(usersToSave);
+        }
+        List<User> usersToDelete = savedUsers.stream()
+                .filter(user -> !userIds.contains(user.getUserId()))
+                .toList();
+
+        if (!usersToDelete.isEmpty()) {
+            usersToDelete.forEach(this::deleteUser);
         }
         System.out.println("\nDone Syncing Users");
 

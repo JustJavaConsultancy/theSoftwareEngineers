@@ -30,7 +30,7 @@ public class ChatService {
     }
     @Transactional
     public List<ConversationDto> getConversations(String userId) {
-        List<Conversation> conversations = conversationRepository.findAllByMembers_UserId("85c5f3ca-cd54-4484-8efc-669d9e6faf61");
+        List<Conversation> conversations = conversationRepository.findAllByMembers_UserId(userId);
         return mapConversationsToDTO(conversations, userId);
     }
 
@@ -43,7 +43,7 @@ public class ChatService {
             userDTO.setLastName(user.getLastName());
             userDTO.setEmail(user.getEmail());
             userDTO.setStatus(user.getStatus());
-            userDTO.setGroup(user.getUserGroup().getGroupName());
+            userDTO.setGroup(user.getUserGroup() != null? user.getUserGroup().getGroupName(): "");
             userDTO.setAvatar(user.getAvatar());
             dtos.add(userDTO);
         }
