@@ -814,4 +814,42 @@ document.addEventListener('DOMContentLoaded', function() {
       clearModalSelection();
     }
   });
-}); 
+});
+
+/*
+//TODO THis is to send message via web socket
+function sendMessageOverWebSocket(text) {
+  if (!stompClient || !stompClient.connected) {
+    console.warn("STOMP not connected. Message not sent.");
+    return;
+  }
+
+  const message = {
+    conversationId: 123,
+    content: text
+  };
+  stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
+}
+
+//TODO THis is to receive messages via websockets
+let stompClient = null //At the beginning
+const socket = new SockJS('/ws');
+  stompClient = Stomp.over(socket);
+
+  stompClient.connect({}, function (frame) {
+    console.log('Connected:', frame);
+
+    const conv = conversations[1];
+    stompClient.subscribe(`/topic/group/123`, function (messageOutput) {
+      console.log(messageOutput);
+      const message = JSON.parse(messageOutput.body);
+      conv.messages.push({fromMe: false, text: message.content});
+      conv.last = message.content;
+      conv.lastTime = 'now';
+      if (currentConversation.id === conv.id) {
+        renderChat();
+        renderConversations();
+      }
+    });
+  });
+*/
