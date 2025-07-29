@@ -4,7 +4,6 @@
 <head>
     <title>Invoice</title>
     <style>
-        }
         .search-bar {
             background-color: #374151;
         }
@@ -111,7 +110,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <p class="text-sm text-blue-200">Total Revenue</p>
-                        <p class="text-2xl font-bold text-white">$24,500.00</p>
+                        <p class="text-2xl font-bold text-white">$<span>24,500.00</span></p>
                     </div>
                     <span class="material-icons text-blue-300 text-3xl">attach_money</span>
                 </div>
@@ -124,7 +123,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <p class="text-sm text-green-200">Paid Invoices</p>
-                        <p class="text-2xl font-bold text-white">18</p>
+                        <p class="text-2xl font-bold text-white" >18</p>
                     </div>
                     <span class="material-icons text-green-300 text-3xl">check_circle</span>
                 </div>
@@ -137,7 +136,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <p class="text-sm text-yellow-200">Pending Invoices</p>
-                        <p class="text-2xl font-bold text-white">7</p>
+                        <p class="text-2xl font-bold text-white" >7</p>
                     </div>
                     <span class="material-icons text-yellow-300 text-3xl">schedule</span>
                 </div>
@@ -161,146 +160,47 @@
 
         <!-- Invoice Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Paid Invoice -->
-            <div class="card rounded-xl p-6 flex flex-col justify-between card-paid fade-in" style="animation-delay: 0.1s">
+            <!-- Invoice Cards - Dynamically generated from backend -->
+            <div th:each="invoice,iter : ${invoices}"
+                 class="card rounded-xl p-6 flex flex-col justify-between fade-in"
+                 th:classappend="${(invoice.status == 'PAID') ? 'card-paid' : (invoice.status == 'PENDING') ? 'card-pending' : 'card-overdue'}"
+                 th:style="'animation-delay: ' + ${iter.index * 0.1} + 's'">
                 <div>
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-xs font-mono text-gray-400 tracking-wider">#INV-00123</p>
-                            <p class="text-lg font-semibold text-white mt-2">Tech Solutions Inc.</p>
+                            <p class="text-xs font-mono text-gray-400 tracking-wider" th:text="'#' + ${invoice.invoiceNumber}">#INV-00123</p>
+                            <p class="text-lg font-semibold text-white mt-2" th:text="${invoice.companyName}">Tech Solutions Inc.</p>
                             <p class="text-sm text-gray-400 mt-1 flex items-center">
                                 <span class="material-icons text-xs mr-1">person</span>
-                                John Doe
+                                <span th:text="${invoice.contactPerson}">John Doe</span>
                             </p>
                             <p class="text-sm text-gray-400 mt-1 flex items-center">
                                 <span class="material-icons text-xs mr-1">location_on</span>
-                                Silicon Valley, CA
+                                <span th:text="${invoice.location}">Silicon Valley, CA</span>
                             </p>
                         </div>
-                        <span class="status-paid text-xs font-semibold px-2.5 py-1 rounded-full flex items-center">
-                                <span class="material-icons text-xs mr-1">check</span>
-                                Paid
-                            </span>
+                        <span th:class="${(invoice.status == 'PAID') ? 'status-paid' : (invoice.status == 'PENDING') ? 'status-pending' : 'status-overdue'} + ' text-xs font-semibold px-2.5 py-1 rounded-full flex items-center'"
+                              class="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center">
+                            <span class="material-icons text-xs mr-1"
+                                  th:text="${(invoice.status == 'PAID') ? 'check' : (invoice.status == 'PENDING') ? 'schedule' : 'warning'}"></span>
+                            <span th:text="${#strings.capitalize(invoice.status.toString().toLowerCase())}">Paid</span>
+                        </span>
                     </div>
                     <div class="mt-6">
                         <div class="flex justify-between items-end">
                             <div>
                                 <p class="text-xs text-gray-400">Amount</p>
-                                <p class="text-2xl font-bold text-white">$2,500.00</p>
+                                <p class="text-2xl font-bold text-white">$<span th:text="${#numbers.formatDecimal(invoice.amount, 1, 2)}">2,500.00</span></p>
                             </div>
                             <div class="text-right">
                                 <p class="text-xs text-gray-400">Due Date</p>
-                                <p class="text-sm font-medium text-white">Aug 15, 2024</p>
+                                <p th:class="'text-sm font-medium ' + ${invoice.status == 'OVERDUE' ? 'text-rose-400' : 'text-white'}"
+                                   th:text="${#temporals.format(invoice.dueDate, 'MMM d, yyyy')}">Aug 15, 2024</p>
                             </div>
                         </div>
                         <div class="invoice-progress mt-3">
-                            <div class="progress-paid h-full"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-6 flex justify-between items-center">
-                    <button class="copy-btn text-blue-400 hover:text-blue-300 flex items-center text-sm">
-                        <span class="material-icons text-base mr-1">content_copy</span>
-                        Copy Link
-                    </button>
-                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
-                        <span class="material-icons text-base mr-1">visibility</span>
-                        View
-                    </button>
-                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
-                        <span class="material-icons text-base mr-1">download</span>
-                        PDF
-                    </button>
-                </div>
-            </div>
-
-            <!-- Pending Invoice -->
-            <div class="card rounded-xl p-6 flex flex-col justify-between card-pending fade-in" style="animation-delay: 0.2s">
-                <div>
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-mono text-gray-400 tracking-wider">#INV-00122</p>
-                            <p class="text-lg font-semibold text-white mt-2">Innovate Co.</p>
-                            <p class="text-sm text-gray-400 mt-1 flex items-center">
-                                <span class="material-icons text-xs mr-1">person</span>
-                                Jane Smith
-                            </p>
-                            <p class="text-sm text-gray-400 mt-1 flex items-center">
-                                <span class="material-icons text-xs mr-1">location_on</span>
-                                Boston, MA
-                            </p>
-                        </div>
-                        <span class="status-pending text-xs font-semibold px-2.5 py-1 rounded-full flex items-center">
-                                <span class="material-icons text-xs mr-1">schedule</span>
-                                Pending
-                            </span>
-                    </div>
-                    <div class="mt-6">
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <p class="text-xs text-gray-400">Amount</p>
-                                <p class="text-2xl font-bold text-white">$1,200.00</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs text-gray-400">Due Date</p>
-                                <p class="text-sm font-medium text-white">Aug 10, 2024</p>
-                            </div>
-                        </div>
-                        <div class="invoice-progress mt-3">
-                            <div class="progress-pending h-full"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-6 flex justify-between items-center">
-                    <button class="copy-btn text-blue-400 hover:text-blue-300 flex items-center text-sm">
-                        <span class="material-icons text-base mr-1">content_copy</span>
-                        Copy Link
-                    </button>
-                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
-                        <span class="material-icons text-base mr-1">visibility</span>
-                        View
-                    </button>
-                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
-                        <span class="material-icons text-base mr-1">download</span>
-                        PDF
-                    </button>
-                </div>
-            </div>
-
-            <!-- Overdue Invoice -->
-            <div class="card rounded-xl p-6 flex flex-col justify-between card-overdue fade-in" style="animation-delay: 0.3s">
-                <div>
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-mono text-gray-400 tracking-wider">#INV-00121</p>
-                            <p class="text-lg font-semibold text-white mt-2">Digital Crafters</p>
-                            <p class="text-sm text-gray-400 mt-1 flex items-center">
-                                <span class="material-icons text-xs mr-1">person</span>
-                                Sam Wilson
-                            </p>
-                            <p class="text-sm text-gray-400 mt-1 flex items-center">
-                                <span class="material-icons text-xs mr-1">location_on</span>
-                                Austin, TX
-                            </p>
-                        </div>
-                        <span class="status-overdue text-xs font-semibold px-2.5 py-1 rounded-full flex items-center">
-                                <span class="material-icons text-xs mr-1">warning</span>
-                                Overdue
-                            </span>
-                    </div>
-                    <div class="mt-6">
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <p class="text-xs text-gray-400">Amount</p>
-                                <p class="text-2xl font-bold text-white">$3,750.00</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs text-gray-400">Due Date</p>
-                                <p class="text-sm font-medium text-rose-400">Jul 25, 2024</p>
-                            </div>
-                        </div>
-                        <div class="invoice-progress mt-3">
-                            <div class="progress-overdue h-full"></div>
+                            <div th:class="'progress-' + ${#strings.toLowerCase(invoice.status)}"
+                                 class="h-full"></div>
                         </div>
                     </div>
                 </div>
@@ -344,20 +244,20 @@
         </div>
     </main>
     <script>
-            const cards = document.querySelectorAll('.card');
-            cards.forEach((card, index) => {
-                // Add delay based on index for staggered animation
-                card.style.animationDelay = `${index * 0.1}s`;
-            });
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            // Add delay based on index for staggered animation
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
 
-            // Add glow effect to create button on hover
-            const createBtn = document.querySelector('.btn-primary');
-            createBtn.addEventListener('mouseenter', () => {
-                createBtn.classList.add('glow');
-            });
-            createBtn.addEventListener('mouseleave', () => {
-                createBtn.classList.remove('glow');
-            });
+        // Add glow effect to create button on hover
+        const createBtn = document.querySelector('.btn-primary');
+        createBtn.addEventListener('mouseenter', () => {
+            createBtn.classList.add('glow');
+        });
+        createBtn.addEventListener('mouseleave', () => {
+            createBtn.classList.remove('glow');
+        });
     </script>
 </div>
 </html>
