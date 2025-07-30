@@ -27,6 +27,7 @@
         <h3 class="text-2xl font-semibold mb-6">Edit User</h3>
         <form hx-post="/users/editUser" >
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <input type="hidden" name="id" th:value="${user.userId}">
                 <div>
                     <label class="block text-sm font-medium text-gray-400 mb-2" for="firstName">First Name</label>
                     <input th:value="${user.firstName}" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" id="firstName" name="firstName" type="text"
@@ -50,8 +51,8 @@
                     <select class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             id="status"
                             name="status">
-                        <option value="Enabled" th:selected="${user.status == Enabled}">Enable</option>
-                        <option value="Disabled" th:selected="${user.status ==Disabled}">Disable</option>
+                        <option value="true" th:selected="${user.status == Enabled}">Enable</option>
+                        <option value="false" th:selected="${user.status ==Disabled}">Disable</option>
                     </select>
                 </div>
                 <div class="md:col-span-2">

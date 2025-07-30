@@ -6,12 +6,47 @@ body {
         .sidebar {
             background-color: #1E293B;
         }
+
+        .upload-btn-primary {
+        background-color: #3b82f6;
+        }
+
+        .btn-primary2 {
+                  background-color: #3b82f6;
+                }
+                .btn-primary2:hover {
+                  background-color: #2563eb;
+                }
+                .search-bar2 {
+                  background-color: #374151;
+                }
+
+                .upload-area {
+                        border-color: #4b5563;
+                      }
+
+                      .tab-active {
+                                background-color: #3b82f6 !important;
+                                color: white !important;
+                              }
+                              .file-row {
+                                transition: background-color 0.2s ease;
+                              }
+                              .file-row:hover {
+                                background-color: #374151;
+                              }
+
         .main-content {
             background-color: #0F172A;
         }
         .card {
             background-color: #1E40AF;
         }
+
+        .upload-card {
+                background-color: #374151;
+              }
+
         .table-header, .table-row {
             border-bottom: 1px solid #334155;
         }

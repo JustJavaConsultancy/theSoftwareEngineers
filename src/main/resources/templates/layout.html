@@ -18,9 +18,11 @@
             rel="stylesheet"
             crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <!-- Application CSS -->
     <link th:href="@{/css/app.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 </head>
 
 <body class="flex h-screen">
@@ -64,10 +66,20 @@
                 <span class="material-icons mr-3">group</span>
                 <span>User Management</span>
             </a>
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/invoice}"
+               th:classappend="${currentPath == '/invoice'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">receipt_long</span>
+                <span>Invoices</span>
+            </a>
             <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/chat}"
                th:classappend="${currentPath == '/chat'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">chat</span>
                 <span>Chat</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/gallery}"
+               th:classappend="${currentPath == '/gallery' or currentPath == '/addFile'} ? ' bg-blue-600'">
+            <span class="material-icons mr-3">collections</span>
+                <span>Gallery</span>
             </a>
         </nav>
     </div>
@@ -160,6 +172,7 @@
 <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
 <script src="https://unpkg.com/hyperscript.org@0.9.14/dist/_hyperscript.min.js"></script>
+<script defer src="//unpkg.com/alpinejs"></script>
 
 <!-- Custom JS -->
 <script th:src="@{/js/app.js}"></script>

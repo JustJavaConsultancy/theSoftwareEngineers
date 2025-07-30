@@ -82,10 +82,10 @@ public class TaskController {
         //System.out.println(" Process Variable =="+task.getProcessVariables());
         String formThymeleaf=null;
         Optional<Form> form=formService.findByFormCode(task.getTaskDefinitionKey());
-        System.out.println(" The form code==="+task.getTaskDefinitionKey()+"");
+        //System.out.println(" The form code==="+task.getTaskDefinitionKey()+"");
         if(form.isPresent()){
             formThymeleaf=form.get().getFormInterface();
-            System.out.println(" formThymeleaf  "+formThymeleaf);
+            //System.out.println(" formThymeleaf  "+formThymeleaf);
         }else{
             Form newForm=new Form();
             newForm.setFormCode(task.getTaskDefinitionKey());
@@ -98,10 +98,21 @@ public class TaskController {
         }
 
         Map<String,Object> formData= task.getProcessVariables();
+        System.out.println(" The FormData Here ===="+formData);
+
 
         formData.put("id", task.getId());
 
+        List<String> lawyerDocuments = List.of(
+                "Letter of Demand",
+                "Statement of Claim",
+                "Affidavit of Evidence",
+                "Preliminary Objections"
+        );
+        formData.put("lawyerDocuments",lawyerDocuments);
         String formHtml=templateRenderer.render(formThymeleaf,formData);
+
+        model.addAttribute("lawyerDocuments", lawyerDocuments);
 
         model.addAttribute("formHtml",formHtml);
         model.addAttribute("name",task.getName());

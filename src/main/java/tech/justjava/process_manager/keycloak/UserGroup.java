@@ -1,15 +1,20 @@
 package tech.justjava.process_manager.keycloak;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tech.justjava.process_manager.chat.entity.User;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +33,10 @@ public class UserGroup {
     private String description;
     @Builder.Default
     private Integer members = 0;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "userGroup")
+    List<User> users;
 
     public String getGroupName() {
         if (groupName == null || groupName.isEmpty())

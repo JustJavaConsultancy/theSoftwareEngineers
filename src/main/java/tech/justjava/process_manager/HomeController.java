@@ -64,6 +64,12 @@ public class HomeController {
                 .active()
                 .count();
 
+        long completedProcessCount= historyService.createHistoricProcessInstanceQuery()
+                .finished() // Only completed
+                .orderByProcessInstanceEndTime()
+                .desc() // Sort by end time
+                .count();
+
         List<Task> activeTasks = taskService.createTaskQuery()
                 .processDefinitionKey(processKey)
                 .active()
@@ -81,6 +87,7 @@ public class HomeController {
         model.addAttribute("processInstancesCount", processInstancesCount);
         model.addAttribute("activeTasksCount", activeTasksCount);
         model.addAttribute("completedTasksCount", completedTasksCount);
+        model.addAttribute("completedProcessCount", completedProcessCount);
         model.addAttribute("activeTasks", activeTasks);
 
         return "dashboard";
