@@ -31,19 +31,17 @@ public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String title;            // e.g. "Team‑meeting", or null for 1‑on‑1
+    private String title;
     @Column(name = "isGroup")
     private Boolean group = false;
     private Instant createdAt = Instant.now();
 
-    /** all users in this chat */
     @ManyToMany
     @JoinTable(name = "conversation_users",
             joinColumns = @JoinColumn(name = "conversation_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> members = new HashSet<>();
 
-    /** every message ever sent here */
     @OneToMany(mappedBy = "conversation")
     @OrderBy("sentAt ASC")
     private List<Message> messages = new ArrayList<>();
