@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import tech.justjava.process_manager.account.AuthenticationManager;
 import tech.justjava.process_manager.chat.domain.TestMessage;
 import tech.justjava.process_manager.chat.service.TestChatService;
+import tech.justjava.process_manager.keycloak.UserDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +34,12 @@ public class ChatController {
     private final AuthenticationManager authenticationManager;
 
     @GetMapping("/chat")
-    public String chatPage() {
-        return "chat";
+    public String chatPage(Model model)
+    {
+        List<UserDTO> users = chatService.getUsers();
+        System.out.println(users);
+        model.addAttribute("users",users);
+        return "chat/chat";
     }
     
     // Video call endpoint

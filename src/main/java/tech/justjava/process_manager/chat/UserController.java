@@ -30,6 +30,7 @@ public class UserController {
 
     @PostMapping("/conversations")
     public ResponseEntity<?> createConversation(@RequestParam List<String> conversationIds){
+
         return ResponseEntity.ok(chatService.createConversation(conversationIds));
     }
 

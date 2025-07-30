@@ -15,11 +15,11 @@ async function fetchUsers() {
     console.log('Fetching users from /api/chat/users...');
     const response = await fetch('/api/users');
     console.log('Users API response status:', response.status);
-    
+
     if (response.ok) {
       const userData = await response.json();
       console.log('Raw user data from API:', userData);
-      
+
       if (userData && userData.length > 0) {
         users = userData.map(user => ({
           id: user.id,
@@ -52,19 +52,19 @@ async function fetchConversations() {
     console.log('Fetching conversations from /api/chat/conversations...');
     const response = await fetch('/api/conversations');
     console.log('Conversations API response status:', response.status);
-    
+
     if (response.ok) {
       const conversationData = await response.json();
       console.log('Raw conversation data from API:', conversationData);
-      
+
       if (conversationData && conversationData.length > 0) {
         const apiConversations = conversationData.map(conv => ({
           id: conv.id,
           name: conv.title || (conv.group ? 'Group Chat' : 'Unknown'),
           avatar: conv.title ? conv.title.charAt(0).toUpperCase() : 'G',
-          last: conv.messages && conv.messages.length > 0 ? 
+          last: conv.messages && conv.messages.length > 0 ?
             conv.messages[conv.messages.length - 1].content : '',
-          lastTime: conv.messages && conv.messages.length > 0 ? 
+          lastTime: conv.messages && conv.messages.length > 0 ?
             formatTimeForDisplay(conv.messages[conv.messages.length - 1].sentAt) : '',
           online: true,
           group: conv.group,
@@ -76,14 +76,14 @@ async function fetchConversations() {
           createdAt: conv.createdAt,
           fromAPI: true // Mark as coming from API
         }));
-        
+
         // Merge API conversations with local conversations
         // Keep local conversations that aren't in API, and update API ones
         const localConversations = conversations.filter(conv => !conv.fromAPI);
         const mergedConversations = [...localConversations, ...apiConversations];
-        
+
         conversations = mergedConversations;
-        
+
         if (conversations.length > 0 && !currentConversation) {
           currentConversation = conversations[0];
         }
@@ -129,14 +129,14 @@ async function initializeChat() {
 function populateModalUsers() {
   const usersList = document.getElementById('modal-users-list');
   const emptyState = document.getElementById('modal-users-empty');
-  
+
   if (!usersList || !emptyState) return;
-  
+
   usersList.innerHTML = '';
-  
+
   if (users && users.length > 0) {
     emptyState.classList.add('hidden');
-    
+
     users.forEach(user => {
       const userOption = document.createElement('div');
       userOption.className = 'flex items-center p-2 hover:bg-slate-100 dark:hover:bg-slate-600 rounded cursor-pointer transition-colors';
@@ -150,7 +150,7 @@ function populateModalUsers() {
           <div class="text-xs text-slate-500 dark:text-slate-400 truncate">${user.email || user.userGroup || ''}</div>
         </div>
       `;
-      
+
       // Make the entire row clickable
       userOption.addEventListener('click', (e) => {
         if (e.target.type !== 'checkbox') {
@@ -159,11 +159,11 @@ function populateModalUsers() {
           handleModalUserSelection(checkbox);
         }
       });
-      
+
       // Handle checkbox change
       const checkbox = userOption.querySelector('.modal-user-checkbox');
       checkbox.addEventListener('change', () => handleModalUserSelection(checkbox));
-      
+
       usersList.appendChild(userOption);
     });
   } else {
@@ -174,7 +174,7 @@ function populateModalUsers() {
 function handleModalUserSelection(checkbox) {
   const userId = checkbox.dataset.userId;
   const userName = checkbox.dataset.userName;
-  
+
   if (checkbox.checked) {
     // Add user to selection
     if (!modalSelectedUsers.find(u => u.id === userId)) {
@@ -184,7 +184,7 @@ function handleModalUserSelection(checkbox) {
     // Remove user from selection
     modalSelectedUsers = modalSelectedUsers.filter(u => u.id !== userId);
   }
-  
+
   updateModalSelectedUsersDisplay();
   updateStartChatButton();
 }
@@ -192,17 +192,17 @@ function handleModalUserSelection(checkbox) {
 function updateModalSelectedUsersDisplay() {
   const display = document.getElementById('modal-selected-users-display');
   const container = document.getElementById('modal-selected-users-container');
-  
+
   if (!display || !container) return;
-  
+
   if (modalSelectedUsers.length === 0) {
     display.classList.add('hidden');
     return;
   }
-  
+
   display.classList.remove('hidden');
   container.innerHTML = '';
-  
+
   modalSelectedUsers.forEach(user => {
     const badge = document.createElement('span');
     badge.className = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
@@ -218,11 +218,11 @@ function updateModalSelectedUsersDisplay() {
 
 function removeModalUser(userId) {
   modalSelectedUsers = modalSelectedUsers.filter(u => u.id !== userId);
-  
+
   // Uncheck the checkbox
   const checkbox = document.querySelector(`#modal-users-list .modal-user-checkbox[data-user-id="${userId}"]`);
   if (checkbox) checkbox.checked = false;
-  
+
   updateModalSelectedUsersDisplay();
   updateStartChatButton();
 }
@@ -244,16 +244,16 @@ function clearModalSelection() {
 function filterModalUsers() {
   const searchInput = document.getElementById('modal-user-search');
   const usersList = document.getElementById('modal-users-list');
-  
+
   if (!searchInput || !usersList) return;
-  
+
   const searchTerm = searchInput.value.toLowerCase();
   const userOptions = usersList.querySelectorAll('.flex.items-center');
-  
+
   userOptions.forEach(option => {
     const userName = option.querySelector('.text-sm.font-medium').textContent.toLowerCase();
     const userEmail = option.querySelector('.text-xs').textContent.toLowerCase();
-    
+
     if (userName.includes(searchTerm) || userEmail.includes(searchTerm)) {
       option.style.display = 'flex';
     } else {
@@ -262,50 +262,12 @@ function filterModalUsers() {
   });
 }
 
-// Existing dropdown functionality (for multi-recipient in chat input)
-function populateUserDropdown() {
-  const dropdown = document.getElementById('recipients-dropdown');
-  if (!dropdown) return;
-  
-  // Clear existing options
-  const existingUsers = dropdown.querySelectorAll('.recipient-option');
-  existingUsers.forEach(option => option.remove());
-  
-  // Add users to dropdown
-  if (users && users.length > 0) {
-    users.forEach(user => {
-      if (!user.group) { // Only add individual users, not groups
-        const option = document.createElement('div');
-        option.className = 'recipient-option flex items-center p-2 hover:bg-slate-100 dark:hover:bg-slate-600';
-        option.innerHTML = `
-          <input type="checkbox" class="recipient-checkbox mr-2" 
-                 data-id="${user.id}" data-type="user" data-name="${user.name}">
-          <span class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm mr-2 flex-shrink-0">
-            ${user.avatar}
-          </span>
-          <div class="flex-1 min-w-0">
-            <div class="text-sm font-medium truncate">${user.name}</div>
-            <div class="text-xs text-slate-500 truncate">${user.email || ''}</div>
-          </div>
-        `;
-        dropdown.appendChild(option);
-      }
-    });
-  } else {
-    // Show empty state in dropdown
-    const emptyState = document.createElement('div');
-    emptyState.className = 'p-4 text-center text-slate-500 dark:text-slate-400 text-sm';
-    emptyState.innerHTML = 'No users available';
-    dropdown.appendChild(emptyState);
-  }
-}
-
 function renderConversations() {
   const list = document.getElementById('conversation-list');
   if (!list) return;
-  
+
   list.innerHTML = '';
-  
+
   if (conversations && conversations.length > 0) {
     conversations.forEach(conv => {
       const li = document.createElement('li');
@@ -337,7 +299,7 @@ function renderConversations() {
       </div>
     `;
     list.appendChild(emptyState);
-    
+
     // Add click handler for the start chat button
     const startFirstChatBtn = emptyState.querySelector('#start-first-chat');
     if (startFirstChatBtn) {
@@ -354,20 +316,20 @@ function renderChat() {
   const status = document.getElementById('chat-status');
   const messagesDiv = document.getElementById('chat-messages');
   const videoCallBtn = document.getElementById('video-call-btn');
-  
+
   if (!title || !avatar || !status || !messagesDiv) return;
-  
+
   if (!currentConversation) {
     // Show empty state in chat area
     title.textContent = 'No conversation selected';
     avatar.innerHTML = '<span class="material-icons">chat</span>';
     status.textContent = '';
-    
+
     // Hide video call button when no conversation selected
     if (videoCallBtn) {
       videoCallBtn.style.display = 'none';
     }
-    
+
     messagesDiv.innerHTML = `
       <div class="flex-1 flex items-center justify-center">
         <div class="text-center text-slate-400 dark:text-slate-500">
@@ -381,7 +343,7 @@ function renderChat() {
         </div>
       </div>
     `;
-    
+
     // Add click handler for the main start chat button
     const mainStartChatBtn = messagesDiv.querySelector('#main-start-chat');
     if (mainStartChatBtn) {
@@ -391,19 +353,19 @@ function renderChat() {
     }
     return;
   }
-  
+
   // Show conversation details
   title.textContent = currentConversation.name;
   avatar.textContent = currentConversation.avatar;
   status.textContent = currentConversation.online ? 'Online' : 'Offline';
-  
+
   // Show video call button when conversation is selected
   if (videoCallBtn) {
     videoCallBtn.style.display = 'block';
   }
-  
+
   messagesDiv.innerHTML = '';
-  
+
   if (currentConversation.messages && currentConversation.messages.length > 0) {
     currentConversation.messages.forEach(msg => {
       const msgDiv = document.createElement('div');
@@ -440,7 +402,7 @@ function updateRecipientsDisplay() {
 
   display.classList.remove('hidden');
   container.innerHTML = '';
-  
+
   selectedRecipients.forEach(recipient => {
     const badge = document.createElement('span');
     badge.className = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
@@ -482,7 +444,7 @@ async function sendMessageToBackend(receiverId, receiverName, content, isGroup =
     formData.append('senderId', currentUserId);
     formData.append('senderName', currentUserName);
     formData.append('content', content);
-    
+
     let url;
     if (isGroup) {
       url = '/api/chat/messages/send-group';
@@ -492,12 +454,12 @@ async function sendMessageToBackend(receiverId, receiverName, content, isGroup =
       formData.append('receiverId', receiverId);
       formData.append('receiverName', receiverName);
     }
-    
+
     const response = await fetch(url, {
       method: 'POST',
       body: formData
     });
-    
+
     const result = await response.json();
     if (result.status === 'success') {
       console.log('Message sent successfully:', result);
@@ -522,16 +484,16 @@ async function sendToMultipleRecipients(content) {
       return sendMessageToBackend(recipient.id, recipient.name, content, false);
     }
   });
-  
+
   try {
     const results = await Promise.all(promises);
     const successful = results.filter(r => r !== null).length;
     console.log(`Message sent to ${successful}/${selectedRecipients.length} recipients`);
-    
+
     if (successful > 0) {
       addRecipientsToSidebar(content);
     }
-    
+
     return successful > 0;
   } catch (error) {
     console.error('Error sending to multiple recipients:', error);
@@ -549,11 +511,11 @@ function addRecipientsToSidebar(lastMessage) {
       const userIds = [currentUserId, recipient.id].sort();
       conversationId = userIds.join('_');
     }
-    
-    const existingConv = conversations.find(conv => 
+
+    const existingConv = conversations.find(conv =>
       conv.id.toString() === conversationId
     );
-    
+
     if (!existingConv) {
       const newConv = {
         id: conversationId, // Use proper conversation ID instead of parseInt
@@ -569,13 +531,13 @@ function addRecipientsToSidebar(lastMessage) {
         members: [recipient.id], // Always store as array for consistency
         fromAPI: false // Mark as local conversation
       };
-      
+
       conversations.unshift(newConv);
     } else {
       existingConv.last = lastMessage.length > 30 ? lastMessage.substring(0, 30) + '...' : lastMessage;
       existingConv.lastTime = 'now';
       existingConv.messages.push({ fromMe: true, text: lastMessage });
-      
+
       const index = conversations.indexOf(existingConv);
       if (index > 0) {
         conversations.splice(index, 1);
@@ -583,7 +545,7 @@ function addRecipientsToSidebar(lastMessage) {
       }
     }
   });
-  
+
   renderConversations();
 }
 
@@ -613,7 +575,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const id = e.target.dataset.id;
       const type = e.target.dataset.type;
       const name = e.target.dataset.name;
-      
+
       if (e.target.checked) {
         addRecipient(id, type, name);
       } else {
@@ -636,9 +598,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const input = document.getElementById('user-chat-input');
       const text = input.value.trim();
       if (!text) return;
-      
+
       let success = false;
-      
+
       if (selectedRecipients.length > 0) {
         success = await sendToMultipleRecipients(text);
         if (success) {
@@ -649,7 +611,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentConversation.messages.push({ fromMe: true, text });
         currentConversation.last = text;
         currentConversation.lastTime = 'now';
-        
+
         // Ensure the conversation is in the conversations array (for modal-created conversations)
         const existingConvIndex = conversations.findIndex(conv => conv.id === currentConversation.id);
         if (existingConvIndex === -1) {
@@ -663,13 +625,13 @@ document.addEventListener('DOMContentLoaded', function() {
             conversations.unshift(currentConversation);
           }
         }
-        
+
         renderChat();
         renderConversations();
-        
+
         // Fix receiverId logic for modal-created conversations
         let receiverId, receiverName, isGroup;
-        
+
         if (currentConversation.group) {
           // For group conversations, use all member IDs
           receiverId = currentConversation.members?.join(',') || 'group';
@@ -688,11 +650,11 @@ document.addEventListener('DOMContentLoaded', function() {
           receiverName = currentConversation.name;
           isGroup = false;
         }
-        
+
         const result = await sendMessageToBackend(receiverId, receiverName, text, isGroup);
         success = result !== null;
       }
-      
+
       if (success) {
         input.value = '';
       } else {
@@ -710,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function() {
       sidebar.classList.toggle('active');
     };
   }
-  
+
   // Hide sidebar on click outside (mobile)
   document.addEventListener('click', function(e) {
     if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target.id !== 'sidebar-toggle') {
@@ -726,43 +688,43 @@ document.addEventListener('DOMContentLoaded', function() {
   const modalDropdownBtn = document.getElementById('modal-user-dropdown-btn');
   const modalDropdown = document.getElementById('modal-user-dropdown');
   const modalUserSearch = document.getElementById('modal-user-search');
-  
+
   if (newChatBtn && modal) {
     newChatBtn.onclick = function() {
       modal.classList.remove('hidden');
       clearModalSelection();
     };
   }
-  
+
   if (modalDropdownBtn && modalDropdown) {
     modalDropdownBtn.onclick = function(e) {
       e.stopPropagation();
       modalDropdown.classList.toggle('hidden');
     };
   }
-  
+
   if (modalUserSearch) {
     modalUserSearch.addEventListener('input', filterModalUsers);
   }
-  
+
   if (cancelNewChat && modal) {
     cancelNewChat.onclick = function() {
       modal.classList.add('hidden');
       clearModalSelection();
     };
   }
-  
+
   if (startNewChat && modal) {
     startNewChat.onclick = function() {
       if (modalSelectedUsers.length === 0) return;
-      
+
       // Create conversation from selected users
       let group = modalSelectedUsers.length > 1;
-      let name = group ? 
-        `Group: ${modalSelectedUsers.map(u => u.name.split(' ')[0]).join(', ')}` : 
+      let name = group ?
+        `Group: ${modalSelectedUsers.map(u => u.name.split(' ')[0]).join(', ')}` :
         modalSelectedUsers[0].name;
       let avatar = group ? 'G' : modalSelectedUsers[0].name.charAt(0).toUpperCase();
-      
+
       // Generate proper conversation ID based on backend format
       let conversationId;
       if (group) {
@@ -775,7 +737,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const userIds = [currentUserId, otherUserId].sort();
         conversationId = userIds.join('_');
       }
-      
+
       const newConv = {
         id: conversationId,
         name,
@@ -790,7 +752,7 @@ document.addEventListener('DOMContentLoaded', function() {
         members: group ? modalSelectedUsers.map(u => u.id) : [modalSelectedUsers[0].id],
         fromAPI: false // Mark as local conversation so it doesn't get overwritten
       };
-      
+
       conversations.unshift(newConv);
       currentConversation = newConv;
       renderConversations();
@@ -799,14 +761,14 @@ document.addEventListener('DOMContentLoaded', function() {
       clearModalSelection();
     };
   }
-  
+
   // Close modal dropdown when clicking outside
   document.addEventListener('click', function(e) {
     if (modalDropdown && !modalDropdown.contains(e.target) && e.target !== modalDropdownBtn) {
       modalDropdown.classList.add('hidden');
     }
   });
-  
+
   // Close modal when clicking outside
   document.addEventListener('click', function(e) {
     if (modal && e.target === modal) {
@@ -818,6 +780,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /*
 //TODO THis is to send message via web socket
+const secureSocket = new WebSocket('wss://your-secure-websocket-server.com/path');
 function sendMessageOverWebSocket(text) {
   if (!stompClient || !stompClient.connected) {
     console.warn("STOMP not connected. Message not sent.");
@@ -825,7 +788,7 @@ function sendMessageOverWebSocket(text) {
   }
 
   const message = {
-    conversationId: 123,
+    recieverId: 123,
     content: text
   };
   stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
