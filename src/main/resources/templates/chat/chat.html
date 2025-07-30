@@ -12,6 +12,11 @@
         .hover\:bg-gray-700:hover {
             background-color: #374151;
         }
+        .modal-footer {
+    padding: 1rem;
+    border-top: 1px solid #374151;
+    flex-shrink: 0;
+}
         .border-gray-700 {
             border-color: #374151;
         }
@@ -185,12 +190,6 @@
             padding: 1rem;
             overflow-y: auto;
             flex-grow: 1;
-        }
-
-        .modal-footer {
-            padding: 1rem;
-            border-top: 1px solid #374151;
-            flex-shrink: 0;
         }
 
         .user-item:hover {
@@ -418,6 +417,7 @@
 </head>
 <body>
 <main layout:fragment="content" class="flex-1 flex flex-col overflow-hidden">
+    <input id="currentUserId" th:value="${currentUser}" type="hidden">
     <!-- Start New Chat Modal -->
     <div class="modal-overlay" id="startChatModal">
         <div class="modal-content">
@@ -446,7 +446,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer flex justify-end space-x-3">
+            <div style="display: none;" class="modal-footer flex justify-end space-x-3">
                 <button class="px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors" id="cancelStartChat">
                     Cancel
                 </button>
@@ -635,6 +635,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script>
+        const currentUser= document.getElementById('currentUserId').value
         let stompClient = null;
         const socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
@@ -657,7 +658,7 @@
             });
 
             // Subscribe to group chat
-            stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function (message) {
+            stompClient.subscribe(`/topic/group/${currentUser}`, function (message) {
                 handleIncomingMessage(message);
             });
         }, function (error) {
@@ -735,7 +736,7 @@
             if (stompClient && stompClient.connected) {
                 // Prepare message data
                 const messageData = {
-                    senderId: 'current-user-id', // You should replace this with actual sender ID
+                    senderId: currentUser,
                     receiverId: currentChat.id,
                     content: messageContent,
                     timestamp: new Date().toISOString()
@@ -747,7 +748,7 @@
                 if (currentChat.type === 'user') {
                     stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(messageData));
                 } else if (currentChat.type === 'group') {
-                    stompClient.send("/app/chat.sendGroupMessage", {}, JSON.stringify({
+                    stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({
                         ...messageData,
                         groupId: currentChat.id
                     }));

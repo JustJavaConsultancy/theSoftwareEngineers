@@ -38,6 +38,7 @@ public class ChatController {
     {
         List<UserDTO> users = chatService.getUsers();
         System.out.println(users);
+        model.addAttribute("currentUser",authenticationManager.get("sub"));
         model.addAttribute("users",users);
         return "chat/chat";
     }
@@ -140,6 +141,7 @@ public class ChatController {
          *      ///SENDING
          *      Create a Json of this, to this endpoint to send a message
          *     { receiverId : {the recipient's userId},
+         *        senderId : {you the logged in user},
          *       content : {message to be sent}
          *      }
          *
@@ -156,7 +158,7 @@ public class ChatController {
          */
         //String userId = (String) authenticationManager.get("sub");
         String destination = "/topic/group/" + message.getReceiverId();
-        message.setSenderId("449a5325-da3e-4692-93ea-ce8da8346e2f");
+        //message.setSenderId("449a5325-da3e-4692-93ea-ce8da8346e2f");
 //        chatService.newMessage(message);
         messagingTemplate.convertAndSend(destination, message);
     }
