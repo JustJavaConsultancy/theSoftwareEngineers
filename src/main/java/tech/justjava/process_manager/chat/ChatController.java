@@ -135,6 +135,7 @@ public class ChatController {
 
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessage message) {
+        System.out.println(" I received ===="+message);
         /***
          *      ///SENDING
          *      Create a Json of this, to this endpoint to send a message
@@ -153,9 +154,9 @@ public class ChatController {
          *
          *    You can then append the message to the respective user on the frontend based on the sender's Id
          */
-        String userId = (String) authenticationManager.get("sub");
+        //String userId = (String) authenticationManager.get("sub");
         String destination = "/topic/group/" + message.getReceiverId();
-        message.setSenderId(userId);
+        message.setSenderId("449a5325-da3e-4692-93ea-ce8da8346e2f");
 //        chatService.newMessage(message);
         messagingTemplate.convertAndSend(destination, message);
     }

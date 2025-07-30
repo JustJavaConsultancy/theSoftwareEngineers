@@ -632,6 +632,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script>
         let stompClient = null;
         const socket = new SockJS('/ws');
@@ -645,12 +647,35 @@
             userIds: [] // array of user IDs (for groups)
         };
 
+        // Connect to WebSocket
         stompClient.connect({}, function (frame) {
             console.log('Connected:', frame);
-            stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function () {
-                console.log('connection is ready');
+
+            // Subscribe to user's personal queue
+            stompClient.subscribe(`/user/queue/messages`, function (message) {
+                handleIncomingMessage(message);
             });
+
+            // Subscribe to group chat
+            stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function (message) {
+                handleIncomingMessage(message);
+            });
+        }, function (error) {
+            console.error('WebSocket connection error:', error);
+            // Add reconnection logic here if needed
         });
+
+        function handleIncomingMessage(message) {
+            try {
+                const receivedMessage = JSON.parse(message.body);
+                console.log('Received message:', receivedMessage);
+
+                // Display the message in the UI (as incoming message)
+                displayMessage(receivedMessage.content, false);
+            } catch (error) {
+                console.error('Error parsing message:', error);
+            }
+        }
 
         function clearChatDisplay() {
             const messagesContainer = document.getElementById('messagesContainer');
@@ -677,6 +702,12 @@
             messageElement.className = `message ${isOutgoing ? 'message-out' : 'message-in'}`;
             messageElement.textContent = message;
 
+            // Add timestamp
+            const timestamp = document.createElement('div');
+            timestamp.className = 'text-xs mt-1 text-right text-gray-400';
+            timestamp.textContent = new Date().toLocaleTimeString();
+            messageElement.appendChild(timestamp);
+
             // Add to container
             messagesContainer.appendChild(messageElement);
 
@@ -702,35 +733,24 @@
             displayMessage(messageContent, true);
 
             if (stompClient && stompClient.connected) {
-                // Prepare common message data
+                // Prepare message data
                 const messageData = {
+                    senderId: 'current-user-id', // You should replace this with actual sender ID
+                    receiverId: currentChat.id,
                     content: messageContent,
                     timestamp: new Date().toISOString()
                 };
 
+                console.log('Sending message:', messageData);
+
+                // Send via WebSocket
                 if (currentChat.type === 'user') {
-                    // Single user chat
-                    console.log(`Sending to user ID: ${currentChat.id}`);
-                    console.log(`Message: ${messageContent}`);
-
-                    // Add recipient ID for user chats
-                    messageData.recipientId = currentChat.id;
-
-                    // Send via WebSocket
-                    // stompClient.send("/app/chat/user", {}, JSON.stringify(messageData));
-
+                    stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(messageData));
                 } else if (currentChat.type === 'group') {
-                    // Group chat
-                    console.log(`Sending to group ID: ${currentChat.id}`);
-                    console.log(`Recipient User IDs: ${currentChat.userIds.join(', ')}`);
-                    console.log(`Message: ${messageContent}`);
-
-                    // Add group ID and member IDs for group chats
-                    messageData.groupId = currentChat.id;
-                    messageData.recipientIds = currentChat.userIds;
-
-                    // Send via WebSocket
-                    // stompClient.send("/app/chat/group", {}, JSON.stringify(messageData));
+                    stompClient.send("/app/chat.sendGroupMessage", {}, JSON.stringify({
+                        ...messageData,
+                        groupId: currentChat.id
+                    }));
                 }
             } else {
                 console.warn('WebSocket is not connected.');
