@@ -46,7 +46,8 @@ public class Oauth2SecurityConfig {
                                 .authenticated()
                 )
 
-                .logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler()));
+                .logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler())
+                        .logoutUrl("/logout"));
         return http.build();
     }
 
