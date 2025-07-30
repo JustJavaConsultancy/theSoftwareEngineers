@@ -150,4 +150,28 @@ public class ProcessService {
         return null;
     }
 
+    public org.flowable.engine.runtime.ProcessInstance startProcess(String processKey, String businessKey){
+
+//        System.out.println("\n\nThese are the process variables" + variables);
+        org.flowable.engine.runtime.ProcessInstance processInstance = getProcessInstanceByBusinessKey(businessKey);
+        if(processInstance!=null){
+            System.out.println("Process Continued");
+            return processInstance;
+        }
+        System.out.println("Process Started");
+
+        return runtimeService.createProcessInstanceBuilder()
+                .processDefinitionKey(processKey)
+                .businessKey(businessKey)
+                .start();
+    }
+    public org.flowable.engine.runtime.ProcessInstance getProcessInstanceByBusinessKey(String businessKey){
+
+        return runtimeService
+                .createProcessInstanceQuery()
+                .processInstanceBusinessKey(businessKey)
+                .processDefinitionKey("invoicing")
+                .singleResult();
+    }
+
 }

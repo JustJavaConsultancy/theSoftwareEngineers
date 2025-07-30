@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import tech.justjava.process_manager.account.AuthenticationManager;
+import tech.justjava.process_manager.process.service.ProcessService;
 import tech.justjava.process_manager.support.SupportFeignClient;
 
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class HomeController {
     private final HistoryService historyService;
     private final SupportFeignClient supportFeignClient;
     private final AuthenticationManager authenticationManager;
+    private final ProcessService processService;
 
     @Value("${app.processKey}")
     private String processKey;
@@ -34,13 +36,15 @@ public class HomeController {
             TaskService taskService,
             HistoryService historyService,
             SupportFeignClient supportFeignClient,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager,
+            ProcessService processService
     ) {
         this.runtimeService = runtimeService;
         this.taskService = taskService;
         this.historyService = historyService;
         this.supportFeignClient = supportFeignClient;
         this.authenticationManager = authenticationManager;
+        this.processService = processService;
     }
 
     @GetMapping("/")
@@ -80,6 +84,14 @@ public class HomeController {
         model.addAttribute("activeTasks", activeTasks);
 
         return "dashboard";
+    }
+
+    @GetMapping("/invoice")
+    public String invoices(Model model){
+        String loginUser = (String) authenticationManager.get("sub");
+        processService.startProcess("invoicing",loginUser);
+
+        return "process/processInstance";
     }
 
     // === SUPPORT CHAT BACKEND ===

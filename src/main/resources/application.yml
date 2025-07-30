@@ -2,7 +2,7 @@ spring:
   datasource:
     url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/processManager}
     username: ${JDBC_DATABASE_USERNAME:postgres}
-    password: ${JDBC_DATABASE_PASSWORD:Cyber 123$}
+    password: ${JDBC_DATABASE_PASSWORD:1234}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
@@ -68,3 +68,12 @@ keycloak:
   client-secret: ${KEYCLOAK_CLIENT_SECRET:ttXmZIEHmwmO4E2NeSUCllD3NIEVpZUW}
 app:
   processKey: "caseManager"
+message:
+  paymentGateway-routing-key: ${PAYMENT_GATEWAY_ROUTING_KEY:}
+logging:
+  level:
+    org:
+      flowable:
+        engine:
+          impl:
+            scripting: DEBUG
