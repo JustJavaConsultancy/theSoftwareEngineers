@@ -93,14 +93,6 @@ public class HomeController {
         return "dashboard";
     }
 
-    @GetMapping("/invoice")
-    public String invoices(Model model){
-        String loginUser = (String) authenticationManager.get("sub");
-        processService.startProcess("invoicing",loginUser);
-
-        return "process/processInstance";
-    }
-
     // === SUPPORT CHAT BACKEND ===
     @PostMapping("/api/chat/send")
     @ResponseBody

@@ -69,6 +69,7 @@ public class TaskService {
                 createTaskQuery()
                 .processInstanceId(processInstanceId)
                 .taskDefinitionKey(taskDefinitionKey)
+                .includeProcessVariables()
                 .singleResult();
     }
 

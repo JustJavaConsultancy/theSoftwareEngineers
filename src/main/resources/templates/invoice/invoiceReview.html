@@ -3,7 +3,7 @@
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Create Invoice</title>
+    <title>Senior Review</title>
     <style>
         .search-bar {
             background-color: #374151;
@@ -23,6 +23,14 @@
         }
         .btn-secondary:hover {
             background-color: #4B5563;
+            transform: translateY(-1px);
+        }
+        .btn-danger{
+            background-color: #c06846;
+            transition: all 0.3s ease;
+        }
+        .btn-danger:hover{
+            background-color: #c06746;
             transform: translateY(-1px);
         }
         .card {
@@ -53,21 +61,21 @@
         }
     </style>
 </head>
-<body>
+<body id="mainBody">
 <div layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
     <main>
         <div class="max-w-2xl mx-auto">
             <div class="flex justify-between items-center mb-8 animate__animated animate__fadeIn">
                 <div>
-                    <h2 th:text="${status=='new'} ? 'Create New Invoice' : 'Edit Invoice'" class="text-3xl font-bold text-white"></h2>
-                    <p class="text-gray-400 mt-1">Enter client information, amount, and due date</p>
+                    <h2 class="text-3xl font-bold text-white">Review Invoice</h2>
+<!--                    <p class="text-gray-400 mt-1">Enter client information, amount, and due date</p>-->
                 </div>
-                <button th:if="${status=='new'}" onclick="window.history.back()" class="btn-secondary flex items-center px-4 py-2 rounded-lg text-white font-medium">
-                    <span class="material-icons mr-2">arrow_back</span>
-                    Back
-                </button>
+<!--                <button onclick="window.history.back()" class="btn-secondary flex items-center px-4 py-2 rounded-lg text-white font-medium">-->
+<!--                    <span class="material-icons mr-2">arrow_back</span>-->
+<!--                    Back-->
+<!--                </button>-->
             </div>
-            <form th:attr="action=${status == 'new'} ? '/invoice/create-invoice' : '/invoice/edit-invoice'" method="post">
+            <form>
 
             <!-- Client Information Card -->
             <div class="card rounded-xl p-6 mb-6 fade-in">
@@ -78,21 +86,18 @@
                 <div class="space-y-4">
                     <div>
                         <label class="form-label block text-sm mb-1">Client Name</label>
-                        <input name="clientName" th:value="${status != 'new'} ? ${reviewData.clientName} : ''"
-                               type="text" class="form-input w-full px-4 py-2 rounded-lg"
-                               placeholder="Acme Corporation" required>
+                        <input name="clientName" th:value="${invoiceData.clientName}" type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                               placeholder="Acme Corporation" required readonly>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Email</label>
-                        <input  name="email" th:value="${status != 'new'} ? ${reviewData.email} : ''"
-                                type="email" class="form-input w-full px-4 py-2 rounded-lg"
-                                placeholder="contact@acme.com" required>
+                        <input  name="email" th:value="${invoiceData.email}" type="email" class="form-input w-full px-4 py-2 rounded-lg"
+                                placeholder="contact@acme.com" required readonly>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Phone (Optional)</label>
-                        <input name="phoneNumber"  th:value="${status != 'new'} ? ${reviewData.phoneNumber} : ''"
-                               type="tel" class="form-input w-full px-4 py-2 rounded-lg"
-                               placeholder="+1 (555) 123-4567">
+                        <input name="phoneNumber" th:value="${invoiceData.phoneNumber}"  type="tel" class="form-input w-full px-4 py-2 rounded-lg"
+                               placeholder="+1 (555) 123-4567" readonly>
                     </div>
                 </div>
             </div>
@@ -108,39 +113,48 @@
                         <label class="form-label block text-sm mb-1">Amount</label>
                         <div class="flex">
                             <span class="inline-flex items-center px-3 rounded-l-lg bg-gray-700 text-gray-300 text-sm">$</span>
-                            <input name="amount" th:value="${status != 'new'} ? ${reviewData.amount} : ''"
-                                   type="number" class="form-input flex-1 rounded-r-lg rounded-l-none"
-                                   placeholder="0.00" step="0.01" min="0" required>
+                            <input name="amount" th:value="${invoiceData.amount}"  type="number" class="form-input flex-1 rounded-r-lg rounded-l-none"
+                                   placeholder="0.00" step="0.01" min="0" required readonly>
                         </div>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Due Date</label>
-                        <input  name="dueDate" th:value="${status != 'new'} ? ${reviewData.dueDate} : ''"
-                                type="date" class="form-input w-full px-4 py-2 rounded-lg" required>
+                        <input  name="dueDate" th:value="${invoiceData.dueDate}" type="date" class="form-input w-full px-4 py-2 rounded-lg" required readonly>
                     </div>
                 </div>
                 <div class="mt-4">
                     <label class="form-label block text-sm mb-1">Description (Optional)</label>
-                    <textarea  name="description" th:text="${status != 'new'} ? ${reviewData.description} : ''"
-                               class="form-input w-full px-4 py-2 rounded-lg" rows="2"
-                               placeholder="Service description"></textarea>
+                    <textarea  name="description" th:text="${invoiceData.description}" class="form-input w-full px-4 py-2 rounded-lg" rows="2"
+                               placeholder="Service description" readonly></textarea>
                 </div>
             </div>
-
             <!-- hidden input -->
-            <input id="processId" name="processId" type="hidden"
-                   th:value="${status != 'new'} ? ${reviewData.processId} : ''">
+             <input id="processId" name="processId" type="hidden" th:value="${invoiceData.processId}">
 
             <!-- Action Buttons -->
             <div class="flex justify-end space-x-3 fade-in" style="animation-delay: 0.2s">
-                <button th:if="${status=='new'}" type="button" onclick="window.history.back()" class="btn-secondary flex items-center px-4 py-2 rounded-lg text-white font-medium">
+                <button type="button"
+                        hx-post="/invoice/invoice-review"
+                        hx-trigger="click"
+                        hx-disabled-elt="this"
+                        hx-include="#processId"
+                        hx-vals='{"status": "declined"}'
+                        hx-swap="outerHTML"
+                        hx-target="#mainBody"
+                        class="btn-danger flex items-center px-4 py-2 rounded-lg text-white font-medium">
                     <span class="material-icons mr-2">cancel</span>
-                    Cancel
+                    Decline
                 </button>
-                <button th:text="${status=='new'} ? 'Create Invoice' : 'Edit Invoice'" type="submit"
+                <button type="button"
+                        hx-post="/invoice/invoice-review"
+                        hx-trigger="click"
+                        hx-disabled-elt="this"
+                        hx-vals='{"status":"approved"}'
+                        hx-swap="outerHTML"
+                        hx-target="#mainBody"
                         class="btn-primary flex items-center px-4 py-2 rounded-lg text-white font-semibold">
                     <span class="material-icons mr-2">check_circle</span>
-                    Create Invoice
+                    Approve
                 </button>
             </div>
             </form>
