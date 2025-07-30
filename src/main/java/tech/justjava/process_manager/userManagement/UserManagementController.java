@@ -1,8 +1,6 @@
 package tech.justjava.process_manager.userManagement;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,35 +23,35 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserManagementController {
-
+    private final UserService userService;
     private final KeycloakService keycloakService;
     @GetMapping
     public String getUsers(Model model){
-        List<UserDTO> users = keycloakService.getUsers();
+        List<UserDTO> users = userService.getUsers();
         model.addAttribute("users", users);
 
       return "userManagement/list";
     }
     @GetMapping("/editUser/{id}")
     public String editUser(@PathVariable String id, Model model) {
-        List<UserGroup> userGroup = keycloakService.getUserGroups();
-        UserDTO user = keycloakService.getSingleUser(id);
+        List<UserGroup> userGroup = userService.getUserGroups();
+        UserDTO user = userService.getSingleUser(id);
         System.out.println(user);
-        model.addAttribute("user", user); // Contains group info
-        model.addAttribute("userGroups", userGroup); // All available groups
+        model.addAttribute("user", user);
+        model.addAttribute("userGroups", userGroup);
         return "/userManagement/editUser";
     }
 
     @GetMapping("/new")
     public String addUser(Model model) {
-        List<UserGroup> userGroup = keycloakService.getUserGroups();
+        List<UserGroup> userGroup = userService.getUserGroups();
         model.addAttribute("userGroups", userGroup);
         model.addAttribute("status","added");
         return "userManagement/create";
     }
     @GetMapping("/groups")
     public String manageGroups(Model model) {
-        List<UserGroup> userGroups = keycloakService.getUserGroups();
+        List<UserGroup> userGroups = userService.getUserGroups();
         model.addAttribute("userGroups", userGroups);
         return "userManagement/groupManagement";
     }
@@ -61,7 +59,7 @@ public class UserManagementController {
     public String editGroup(@PathVariable String id, Model model) {
 
         System.out.println(" The ID sent ==="+id);
-        UserGroup singleUser = keycloakService.getSingleGroup(id);
+        UserGroup singleUser = userService.getSingleGroup(id);
 
         System.out.println(" The singleUser===="+singleUser);
         model.addAttribute("singleGroup",singleUser);

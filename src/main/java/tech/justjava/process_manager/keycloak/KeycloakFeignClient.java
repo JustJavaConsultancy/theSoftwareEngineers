@@ -25,6 +25,10 @@ public interface KeycloakFeignClient {
     @GetMapping("/admin/realms/ProcessManagement/users")
     List<Map<String, Object>> getUsers(@RequestHeader(value = "Authorization") String authorizationHeader);
 
+    @GetMapping("/admin/realms/ProcessManagement/users/{userId}")
+    Map<String, Object> getUser(@RequestHeader(value = "Authorization") String authorizationHeader,
+                                       @PathVariable String userId);
+
     @GetMapping("/admin/realms/ProcessManagement/groups")
     List<Map<String, Object>> getRealmGroups(
             @RequestHeader(value = "Authorization") String authorizationHeader);

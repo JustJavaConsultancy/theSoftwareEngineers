@@ -135,10 +135,28 @@ public class ChatController {
 
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessage message) {
+        /***
+         *      ///SENDING
+         *      Create a Json of this, to this endpoint to send a message
+         *     { receiverId : {the recipient's userId},
+         *       content : {message to be sent}
+         *      }
+         *
+         *      ///RECEIVING
+         *      When receiving a message, a message of this type would be received
+         *      { senderId : {the sender's userId},
+         *        receiverId : {the Id of the user receiving the message},
+         *        content : {message}
+         *      }
+         *      All users will be subscribed to
+         *          stompClient.subscribe(`/topic/group/` + {their userId}, function (messageOutput) {
+         *
+         *    You can then append the message to the respective user on the frontend based on the sender's Id
+         */
         String userId = (String) authenticationManager.get("sub");
-        String destination = "/topic/group/" + "123";
+        String destination = "/topic/group/" + message.getReceiverId();
         message.setSenderId(userId);
-        chatService.newMessage(message);
+//        chatService.newMessage(message);
         messagingTemplate.convertAndSend(destination, message);
     }
 

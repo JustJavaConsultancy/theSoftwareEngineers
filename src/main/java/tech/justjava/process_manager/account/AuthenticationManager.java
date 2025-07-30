@@ -12,7 +12,7 @@ public class AuthenticationManager {
     public Object get(String fieldName){
         Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
         DefaultOidcUser defaultOidcUser = (DefaultOidcUser) authentication.getPrincipal();
-        System.out.println(" The token here =="+defaultOidcUser.getClaims());
+//        System.out.println(" The token here =="+defaultOidcUser.getClaims());
         return defaultOidcUser.getClaims().get(fieldName);
     }
 
