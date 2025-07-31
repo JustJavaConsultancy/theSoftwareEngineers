@@ -1,5 +1,6 @@
 package tech.justjava.process_manager.invoice.controller;
 
+import org.flowable.engine.RuntimeService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,42 +28,33 @@ public class InvoiceController {
         this.authenticationManager = authenticationManager;
         this.processService = processService;
         this.invoiceService = invoiceService;
-
     }
 
     @GetMapping
     public String getInvoices(Model model){
 
-        List<Map<String, Object>> invoices = Arrays.asList(
-                Map.of(
-                        "invoiceNumber", "INV-00123",
-                        "companyName", "Tech Solutions Inc.",
-                        "contactPerson", "John Doe",
-                        "location", "Silicon Valley, CA",
-                        "status", "PAID",
-                        "amount", new BigDecimal("2500.00"),
-                        "dueDate", LocalDate.of(2024, 8, 15)
-                ),
-                Map.of(
-                        "invoiceNumber", "INV-00122",
-                        "companyName", "Innovate Co.",
-                        "contactPerson", "Jane Smith",
-                        "location", "Boston, MA",
-                        "status", "PENDING",
-                        "amount", new BigDecimal("1200.00"),
-                        "dueDate", LocalDate.of(2024, 8, 10)
-                ),
-                Map.of(
-                        "invoiceNumber", "INV-00121",
-                        "companyName", "Digital Crafters",
-                        "contactPerson", "Sam Wilson",
-                        "location", "Austin, TX",
-                        "status", "OVERDUE",
-                        "amount", new BigDecimal("3750.00"),
-                        "dueDate", LocalDate.of(2024, 7, 25)
-                )
-        );
-        model.addAttribute("invoices", invoices);
+        List<ProcessInstance> allProcessInstance = processService.getAllProcessInstance("invoicing");
+        List<Map<String, Object>> allProcessVar = allProcessInstance.stream()
+                .map(processInstance -> {
+                    return processInstance.getProcessVariables();
+                }).toList();
+
+        Long allPendingInvoiceCount = allProcessVar.stream()
+                .filter(invoice -> "approved".equalsIgnoreCase((String) invoice.get("status")))
+                .count();
+
+        Long allPaidInvoiceCount = allProcessVar.stream()
+                .filter(invoice -> "paid".equalsIgnoreCase((String) invoice.get("status")))
+                .count();
+
+        BigDecimal totalInvoiceAmount = allProcessVar.stream()
+                .map(invoice -> new BigDecimal(String.valueOf(invoice.get("amount"))))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        model.addAttribute("paidInvoiceCount", allPaidInvoiceCount);
+        model.addAttribute("pendingInvoiceCount", allPendingInvoiceCount);
+        model.addAttribute("totalAmount", totalInvoiceAmount);
+        model.addAttribute("allInvoices", allProcessVar);
         return "invoice/invoice";
     }
 

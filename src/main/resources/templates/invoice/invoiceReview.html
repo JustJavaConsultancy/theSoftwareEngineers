@@ -85,14 +85,24 @@
                 </h3>
                 <div class="space-y-4">
                     <div>
+                        <label class="form-label block text-sm mb-1">Business Name</label>
+                        <input name="businessName" th:value="${invoiceData.businessName}" type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                               placeholder="Acme Corporation" required readonly>
+                    </div>
+                    <div>
                         <label class="form-label block text-sm mb-1">Client Name</label>
                         <input name="clientName" th:value="${invoiceData.clientName}" type="text" class="form-input w-full px-4 py-2 rounded-lg"
-                               placeholder="Acme Corporation" required readonly>
+                               placeholder="Jane Doe" required readonly>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Email</label>
                         <input  name="email" th:value="${invoiceData.email}" type="email" class="form-input w-full px-4 py-2 rounded-lg"
                                 placeholder="contact@acme.com" required readonly>
+                    </div>
+                    <div>
+                        <label class="form-label block text-sm mb-1">Address</label>
+                        <input  name="address" th:value="${invoiceData.address}" type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                                placeholder="Ikeja, Lagos" required readonly>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Phone (Optional)</label>

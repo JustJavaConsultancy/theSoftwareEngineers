@@ -77,16 +77,28 @@
                 </h3>
                 <div class="space-y-4">
                     <div>
+                        <label class="form-label block text-sm mb-1">Business Name</label>
+                        <input name="businessName" th:value="${status != 'new'} ? ${reviewData.businessName} : ''"
+                               type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                               placeholder="Acme Corporation" required>
+                    </div>
+                    <div>
                         <label class="form-label block text-sm mb-1">Client Name</label>
                         <input name="clientName" th:value="${status != 'new'} ? ${reviewData.clientName} : ''"
                                type="text" class="form-input w-full px-4 py-2 rounded-lg"
-                               placeholder="Acme Corporation" required>
+                               placeholder="Jane Doe" required>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Email</label>
                         <input  name="email" th:value="${status != 'new'} ? ${reviewData.email} : ''"
                                 type="email" class="form-input w-full px-4 py-2 rounded-lg"
                                 placeholder="contact@acme.com" required>
+                    </div>
+                    <div>
+                        <label class="form-label block text-sm mb-1">Address</label>
+                        <input  name="address" th:value="${status != 'new'} ? ${reviewData.address} : ''"
+                                type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                                placeholder="Ikeja, Lagos" required>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Phone (Optional)</label>
