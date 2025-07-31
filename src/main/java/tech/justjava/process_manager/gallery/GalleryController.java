@@ -260,7 +260,7 @@ public class GalleryController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            Optional<FileInfo> fileOptional = fileInfoRepository.findByMicroserviceFileId(fileId);
+            Optional<FileInfo> fileOptional = fileInfoRepository.findById(fileId);
 
             if (!fileOptional.isPresent()) {
                 response.put("status", "error");
