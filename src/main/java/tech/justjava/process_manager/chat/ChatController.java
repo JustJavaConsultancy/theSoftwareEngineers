@@ -159,7 +159,7 @@ public class ChatController {
         //String userId = (String) authenticationManager.get("sub");
         String destination = "/topic/group/" + message.getReceiverId();
         //message.setSenderId("449a5325-da3e-4692-93ea-ce8da8346e2f");
-//        chatService.newMessage(message);
+        chatService.newMessage(message);
         messagingTemplate.convertAndSend(destination, message);
     }
 

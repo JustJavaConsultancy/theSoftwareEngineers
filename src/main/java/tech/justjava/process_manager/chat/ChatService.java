@@ -51,10 +51,10 @@ public class ChatService {
     }
 
     @Transactional
-    public String createConversation(List<String> conversationIds) {
+    public Conversation createConversation(List<String> conversationIds) {
         Optional<Conversation> conversation1 = conversationRepository.findConversationByExactUserIds(conversationIds, conversationIds.size());
         if (conversation1.isPresent()) {
-            return conversation1.get().getId().toString();
+            return conversation1.get();
         }
         Set<User> users = userRepository.findAllByUserIdIn(conversationIds);
         Conversation conversation = new Conversation();
@@ -64,14 +64,17 @@ public class ChatService {
         conversation = conversationRepository.save(conversation);
         conversation.setMembers(users);
         conversation = conversationRepository.save(conversation);
-        return conversation.getId().toString();
+        return conversation;
     }
 
     @Transactional
     public void newMessage(ChatMessage chatMessage) {
-        Optional<Conversation> conversation = conversationRepository.findById(chatMessage.getConversationId());
-        User user = userRepository.findByUserId(chatMessage.getSenderId());
-        if (conversation.isPresent() && user != null) {
+//        Optional<Conversation> conversation = conversationRepository.findById(chatMessage.getConversationId());
+        List<String> userIds = List.of(chatMessage.getSenderId(),chatMessage.getReceiverId());
+        Optional<Conversation> conversation = conversationRepository
+                .findConversationByExactUserIds(userIds, 2);
+//        User user = userRepository.findByUserId(chatMessage.getSenderId());
+        if (conversation.isPresent()) {
             Message message = new Message();
             message.setConversation(conversation.get());
             message.setSenderId(chatMessage.getSenderId());
@@ -81,7 +84,13 @@ public class ChatService {
             messageRepository.save(message);
 
         }else {
-            throw new RuntimeException("User or Conversation not found");
+            Conversation newConversation = createConversation(userIds);
+            Message message = new Message();
+            message.setConversation(newConversation);
+            message.setSenderId(chatMessage.getSenderId());
+            message.setContent(chatMessage.getContent());
+            newConversation.getMessages().add(message);
+            messageRepository.save(message);
         }
     }
 
