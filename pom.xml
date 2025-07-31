@@ -112,6 +112,10 @@
             <artifactId>flowable-spring-boot-starter-rest</artifactId>
             <version>7.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-openai-spring-boot-starter -->
         <dependency>
             <groupId>org.springframework.ai</groupId>

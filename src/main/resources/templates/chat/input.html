@@ -1,13 +1,21 @@
-<form id="chat-form" class="p-4 border-t flex flex-col items-stretch space-y-2">
+<form id="chat-form" class="p-4 border-t flex flex-col items-stretch space-y-2" xmlns:th="http://www.w3.org/1999/xhtml">
     <!-- Recipients dropdown (positioned above input) -->
     <div class="relative">
-        <div id="recipients-dropdown" class="absolute bottom-full mb-2 right-0 w-64 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg shadow-lg z-10 hidden">
+        <div id="recipients-dropdown" style="background-color:#0F172A" class="absolute bottom-full mb-2 right-0 w-64 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg shadow-lg z-10 hidden">
             <div class="p-3">
                 <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-2">Send to multiple recipients</h4>
                 <div class="space-y-2 max-h-48 overflow-y-auto">
                     <!-- Users will be populated dynamically by JavaScript -->
                     <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Users</div>
-                    <!-- Dynamic user list populated by chat.js -->
+                    <div th:each="user : ${users}" class="recipient-option flex items-center p-2 hover:bg-slate-100 dark:hover:bg-slate-600">
+                        <input type="checkbox" class="recipient-checkbox mr-2">
+                        <span class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm mr-2 flex-shrink-0">
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-medium truncate" th:text="${user.firstName + '' + user.lastName}"></div>
+                            <div th:text="${user.email}" class="text-xs text-slate-500 truncate"></div>
+                        </div>
+                    </div>
                     
                     <!-- Groups section (if needed) -->
                     <div class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-3 pt-2 border-t border-slate-200 dark:border-slate-600">Groups</div>

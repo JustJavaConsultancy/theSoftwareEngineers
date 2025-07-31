@@ -3,6 +3,7 @@ package tech.justjava.process_manager.chat;
 import lombok.Getter;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.AbstractSubProtocolEvent;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
@@ -30,6 +31,7 @@ public class OnlineEventListener {
         String userId = getUserId(event);
         if (userId != null) {
             onlineUsers.add(userId);
+            System.out.println("User connected to Web Socket: " + getUserEmail(event));
             messagingTemplate.convertAndSend("/topic/online", getStatusPayload(userId, true));
         }
     }
@@ -39,6 +41,7 @@ public class OnlineEventListener {
         String userId = getUserId(event);
         if (userId != null) {
             onlineUsers.remove(userId);
+            System.out.println("User disconnected from Web Socket: " + getUserEmail(event));
             messagingTemplate.convertAndSend("/topic/online", getStatusPayload(userId, false));
         }
     }
@@ -46,6 +49,11 @@ public class OnlineEventListener {
     private String getUserId(AbstractSubProtocolEvent event) {
         return Optional.ofNullable(event.getUser()) //This gets the userId...same as "auth.get("sub")"
                 .map(Principal::getName).orElse(null);
+    }
+
+    private String getUserEmail(AbstractSubProtocolEvent event) {
+        OAuth2AuthenticationToken auth = (OAuth2AuthenticationToken) event.getUser();
+        return auth.getPrincipal().getAttributes().get("email").toString();
     }
 
     private Map<String, Object> getStatusPayload(String username, boolean online) {

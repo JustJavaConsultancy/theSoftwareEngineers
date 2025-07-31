@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import tech.justjava.process_manager.account.AuthenticationManager;
 import tech.justjava.process_manager.chat.domain.TestMessage;
 import tech.justjava.process_manager.chat.service.TestChatService;
+import tech.justjava.process_manager.keycloak.UserDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +34,13 @@ public class ChatController {
     private final AuthenticationManager authenticationManager;
 
     @GetMapping("/chat")
-    public String chatPage() {
-        return "chat";
+    public String chatPage(Model model)
+    {
+        List<UserDTO> users = chatService.getUsers();
+        System.out.println(users);
+        model.addAttribute("currentUser",authenticationManager.get("sub"));
+        model.addAttribute("users",users);
+        return "chat/chat";
     }
     
     // Video call endpoint
@@ -129,9 +136,29 @@ public class ChatController {
 
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessage message) {
-        String userId = (String) authenticationManager.get("sub");
-        String destination = "/topic/group/" + "123";
-        message.setSenderId(userId);
+        System.out.println(" I received ===="+message);
+        /***
+         *      ///SENDING
+         *      Create a Json of this, to this endpoint to send a message
+         *     { receiverId : {the recipient's userId},
+         *        senderId : {you the logged in user},
+         *       content : {message to be sent}
+         *      }
+         *
+         *      ///RECEIVING
+         *      When receiving a message, a message of this type would be received
+         *      { senderId : {the sender's userId},
+         *        receiverId : {the Id of the user receiving the message},
+         *        content : {message}
+         *      }
+         *      All users will be subscribed to
+         *          stompClient.subscribe(`/topic/group/` + {their userId}, function (messageOutput) {
+         *
+         *    You can then append the message to the respective user on the frontend based on the sender's Id
+         */
+        //String userId = (String) authenticationManager.get("sub");
+        String destination = "/topic/group/" + message.getReceiverId();
+        //message.setSenderId("449a5325-da3e-4692-93ea-ce8da8346e2f");
         chatService.newMessage(message);
         messagingTemplate.convertAndSend(destination, message);
     }

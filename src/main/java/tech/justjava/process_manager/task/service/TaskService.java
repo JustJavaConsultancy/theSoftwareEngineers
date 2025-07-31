@@ -62,6 +62,17 @@ public class TaskService {
                 .singleResult();
 
     }
+
+    //new addition
+    public org.flowable.task.api.Task getTaskByInstanceAndDefinitionKey(String processInstanceId, String taskDefinitionKey){
+        return flowableTaskService.
+                createTaskQuery()
+                .processInstanceId(processInstanceId)
+                .taskDefinitionKey(taskDefinitionKey)
+                .includeProcessVariables()
+                .singleResult();
+    }
+
     public String getTaskDocumentation(String taskId) {
         org.flowable.task.api.Task task=flowableTaskService.createTaskQuery().taskId(taskId).singleResult();
         if (task == null) {
