@@ -1,0 +1,87 @@
+<div class="modal-overlay" id="startChatModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="text-lg font-semibold">Start New Chat</h3>
+        </div>
+        <div class="modal-body">
+            <div class="search-container relative mb-4">
+                <span class="search-icon material-icons">search</span>
+                <input class="search-input w-full bg-gray-700 text-white placeholder-gray-400 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Search users..." type="text" id="userSearchStart"/>
+            </div>
+            <div class="user-list-start">
+                <div th:each="user : ${users}" class="user-item flex items-center p-3 cursor-pointer transition-colors select-user">
+                    <input type="hidden" class="user-id" th:value="${user.userId}" />
+                    <input type="hidden" class="user-firstname" th:value="${user.firstName}" />
+                    <input type="hidden" class="user-lastname" th:value="${user.lastName}" />
+                    <input type="hidden" class="user-online" th:value="${user.online}" />
+
+                    <div class="w-10 h-10 rounded-full mr-3 flex items-center justify-center bg-blue-500 text-white font-medium"
+                         th:text="${#strings.substring(user.firstName, 0, 1) + #strings.substring(user.lastName, 0, 1)}">
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-medium" th:text="${user.firstName + ' ' + user.lastName}"></div>
+                        <div class="text-sm text-gray-400" th:text="${user.email}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display: none;" class="modal-footer flex justify-end space-x-3">
+            <button class="px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors" id="cancelStartChat">
+                Cancel
+            </button>
+            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" id="confirmStartChat">
+                Start Chat
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Group Chat Modal -->
+<div class="modal-overlay" id="createGroupModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="text-lg font-semibold">Create Group Chat</h3>
+        </div>
+        <div class="modal-body">
+            <div class="mb-4">
+                <input class="w-full bg-gray-700 text-white placeholder-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                       placeholder="Group name (required)"
+                       type="text"
+                       id="groupName"
+                       required />
+                <div class="error-message" id="groupNameError">Group name is required</div>
+            </div>
+            <div class="search-container relative mb-4">
+                <span class="search-icon material-icons">search</span>
+                <input class="search-input w-full bg-gray-700 text-white placeholder-gray-400 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Search users..." type="text" id="userSearchGroup"/>
+            </div>
+            <div class="user-list-group">
+                <div th:each="user : ${users}" class="user-item flex items-center p-3 cursor-pointer transition-colors">
+                    <input type="hidden" class="user-id" th:value="${user.userId}" />
+                    <input type="hidden" class="user-firstname" th:value="${user.firstName}" />
+                    <input type="hidden" class="user-lastname" th:value="${user.lastName}" />
+
+                    <div class="w-10 h-10 rounded-full mr-3 flex items-center justify-center bg-blue-500 text-white font-medium"
+                         th:text="${#strings.substring(user.firstName, 0, 1) + #strings.substring(user.lastName, 0, 1)}">
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-medium" th:text="${user.firstName + ' ' + user.lastName}"></div>
+                        <div class="text-sm text-gray-400" th:text="${user.email}"></div>
+                    </div>
+                    <label class="checkbox-container">
+                        <input type="checkbox" class="user-checkbox" th:value="${user.userId}">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer flex justify-end space-x-3">
+            <button class="px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors" id="cancelCreateGroup">
+                Cancel
+            </button>
+            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg transition-colors btn-disabled" id="confirmCreateGroup" disabled>
+                Create Group
+            </button>
+        </div>
+    </div>
+</div>
