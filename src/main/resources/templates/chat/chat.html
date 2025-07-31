@@ -651,28 +651,23 @@
         // Connect to WebSocket
         stompClient.connect({}, function (frame) {
             console.log('Connected:', frame);
-
-            // Subscribe to user's personal queue
-            stompClient.subscribe(`/user/queue/messages`, function (message) {
-                handleIncomingMessage(message);
-            });
-
-            // Subscribe to group chat
             stompClient.subscribe(`/topic/group/${currentUser}`, function (message) {
                 handleIncomingMessage(message);
             });
         }, function (error) {
             console.error('WebSocket connection error:', error);
-            // Add reconnection logic here if needed
         });
 
         function handleIncomingMessage(message) {
             try {
                 const receivedMessage = JSON.parse(message.body);
                 console.log('Received message:', receivedMessage);
-
+                if(currentChat.id == receivedMessage.senderId ){
                 // Display the message in the UI (as incoming message)
                 displayMessage(receivedMessage.content, false);
+                }else{
+                alert('New message: ' + receivedMessage.content);
+                }
             } catch (error) {
                 console.error('Error parsing message:', error);
             }
