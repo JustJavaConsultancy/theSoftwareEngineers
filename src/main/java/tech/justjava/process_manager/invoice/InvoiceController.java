@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@Controller
-@RequestMapping("/invoice")
+//@Controller("KunmiCOtroller")
+//@RequestMapping("/invoice")
 public class InvoiceController {
     @GetMapping
     public String getInvoices(Model model){
