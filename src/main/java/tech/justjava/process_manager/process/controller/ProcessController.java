@@ -97,7 +97,7 @@ processInstances.forEach(processInstance -> {
     List<String> reasons= (List<String>) aiResponse.get("reason");
     reasons.forEach(reason->{
         System.out.println(" reason==="+reason);
-            }
+    }
     );
 
     List<String> clientDocuments = (List<String>) aiResponse.get("clientDocuments");

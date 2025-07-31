@@ -4,7 +4,7 @@ import org.flowable.bpmn.model.UserTask;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.flowable.engine.runtime.ProcessInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,8 +13,12 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import tech.justjava.process_manager.process.service.ProcessService;
 
 import tech.justjava.process_manager.process.service.ProcessServiceAI;
+import tech.justjava.process_manager.support.SupportFeignClient;
+import tech.justjava.process_manager.util.MarkdownService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -23,18 +27,24 @@ public class FormController {
 
     @Value("${app.processKey}")
     private String  processKey;
+
+
+    @Autowired
+    MarkdownService markdownService;
     private final FormService formService;
     private final ProcessServiceAI processServiceAI;
     private final RuntimeService runtimeService;
     private final RepositoryService repositoryService;
     private final ProcessService processService;
 
-    public FormController(FormService formService, ProcessServiceAI processServiceAI, RuntimeService runtimeService, RepositoryService repositoryService, ProcessService processService) {
+    private final SupportFeignClient supportFeignClient;
+    public FormController(FormService formService, ProcessServiceAI processServiceAI, RuntimeService runtimeService, RepositoryService repositoryService, ProcessService processService, SupportFeignClient supportFeignClient) {
         this.formService = formService;
         this.processServiceAI = processServiceAI;
         this.runtimeService = runtimeService;
         this.repositoryService = repositoryService;
         this.processService = processService;
+        this.supportFeignClient = supportFeignClient;
     }
 
     @GetMapping
@@ -141,7 +151,7 @@ public class FormController {
         form.setId(id);
         Optional<Form> savedForm=formService.findById(id);
         savedForm.ifPresent(form1 -> {
-            if(!form.getFormDetails().equalsIgnoreCase(form1.getFormDetails())){
+            if(form.getFormDetails()!=null && !form.getFormDetails().equalsIgnoreCase(form1.getFormDetails())){
                 String formInterface=processServiceAI
                         .generateTaskThymeleafForm(form.getFormDetails())
                                 .replace("```","")
@@ -174,8 +184,17 @@ public class FormController {
     @PostMapping("/generate-lawyer-doc")
     public String generateLawyerDoc(@RequestParam String docName, Model model) {
         // Just return the same template for all documents
-        model.addAttribute("docName", docName);
-        model.addAttribute("generatedContent", "Generated content for " + docName);
+
+        Map<String, String> legalRequest = new HashMap<>();
+        legalRequest.put("scenerio","I was forcefully evicted by the landlord who removed the roof without a court order. Rent was paid in full.");
+        legalRequest.put("documentType", "Statement of claim");
+        String response = supportFeignClient.generateLegalDocument(legalRequest);
+
+        System.out.println(" The Response===="+response);
+
+        //System.out.println(" Markdown version=="+markdownService.convertToHtml(response));
+        model.addAttribute("docName", "Statement of claim");
+        model.addAttribute("generatedContent", response);
         return "form/generated-lawyer-doc";
     }
 }
