@@ -54,6 +54,10 @@ public class HomeController {
             request.getSession(true).setAttribute("isAdmin", true);
         }
 
+        if(authenticationManager.isManager()){
+            request.getSession(true).setAttribute("isManager", true);
+        }
+
         return "redirect:/dashboard";
     }
 

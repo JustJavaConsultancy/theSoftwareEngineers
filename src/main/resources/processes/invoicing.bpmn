@@ -4,9 +4,9 @@
     <extensionElements>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
       <design:creationdate><![CDATA[2025-07-29T12:27:44.740Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-07-31T10:14:09.286Z]]></design:modificationdate>
+      <design:modificationdate><![CDATA[2025-07-31T12:11:04.447Z]]></design:modificationdate>
     </extensionElements>
-    <userTask id="FormTask_SeniorReview" name="Senior Review" flowable:formFieldValidation="false">
+    <userTask id="FormTask_SeniorReview" name="Senior Review" flowable:assignee="manager" flowable:formFieldValidation="false">
       <extensionElements>
         <design:stencilid><![CDATA[FormTask]]></design:stencilid>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>

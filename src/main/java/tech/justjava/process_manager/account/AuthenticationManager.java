@@ -27,4 +27,14 @@ public class AuthenticationManager {
                 .anyMatch(group->"/admin".equalsIgnoreCase(group));
     }
 
+    public Boolean isManager(){
+        List<String> groups = (List<String>) get("group");
+        if (groups == null)
+            return false;
+
+        return groups
+                .stream()
+                .anyMatch(group -> "/manager".equalsIgnoreCase(group));
+    }
+
 }

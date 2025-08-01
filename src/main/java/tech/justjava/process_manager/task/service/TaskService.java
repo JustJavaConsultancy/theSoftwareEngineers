@@ -6,7 +6,9 @@ import java.util.Map;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.FlowElement;
 import org.flowable.bpmn.model.UserTask;
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -27,12 +29,14 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final org.flowable.engine.TaskService flowableTaskService;
     private final ProcessInstanceRepository processInstanceRepository;
+    private final HistoryService historyService;
 
     public TaskService(final TaskRepository taskRepository,
-                       org.flowable.engine.TaskService taskService, org.flowable.engine.TaskService flowableTaskService, final ProcessInstanceRepository processInstanceRepository) {
+                       org.flowable.engine.TaskService taskService, org.flowable.engine.TaskService flowableTaskService, final ProcessInstanceRepository processInstanceRepository, HistoryService historyService) {
         this.taskRepository = taskRepository;
         this.flowableTaskService = flowableTaskService;
         this.processInstanceRepository = processInstanceRepository;
+        this.historyService = historyService;
     }
 
     public List<TaskDTO> findAll() {
@@ -72,6 +76,37 @@ public class TaskService {
                 .includeProcessVariables()
                 .singleResult();
     }
+
+    public List<org.flowable.task.api.Task> getTaskByAssigneeAndProcessDefinitionKey
+            (String assignee,String processDefinitionKey) {
+        return flowableTaskService
+                .createTaskQuery()
+                .taskAssignee(assignee)
+                .processDefinitionKey(processDefinitionKey)
+                .includeProcessVariables()
+                .list();
+    }
+
+    public List<HistoricTaskInstance> getCompletedTaskByAssigneeAndVariable(String assignee, String processKey,
+                                                                            String variableName, String variableValue){
+        return historyService
+                .createHistoricTaskInstanceQuery()
+                .processDefinitionKey(processKey)
+                .taskAssignee(assignee)
+                .processVariableValueEquals(variableName, variableValue)
+                .finished()
+                .list();
+    }
+
+    public List<HistoricTaskInstance> getCompletedTaskByAssignee(String assignee, String processKey){
+        return historyService
+                .createHistoricTaskInstanceQuery()
+                .processDefinitionKey(processKey)
+                .taskAssignee(assignee)
+                .finished()
+                .list();
+    }
+
 
     public String getTaskDocumentation(String taskId) {
         org.flowable.task.api.Task task=flowableTaskService.createTaskQuery().taskId(taskId).singleResult();

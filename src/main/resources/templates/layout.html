@@ -87,6 +87,14 @@
                 <span class="material-icons mr-3">receipt_long</span>
                 <span>Invoices</span>
             </a>
+
+            <a th:if="${session.isManager}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"
+               th:href="@{/invoice/invoice-review}"
+               th:classappend="${currentPath == '/invoice/invoice-review'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">receipt_long</span>
+                <span>Invoice Review</span>
+            </a>
+
             <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/chat}"
                th:classappend="${currentPath == '/chat'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">chat</span>
