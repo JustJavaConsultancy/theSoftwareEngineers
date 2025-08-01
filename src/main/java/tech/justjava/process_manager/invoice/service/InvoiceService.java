@@ -17,16 +17,16 @@ public class InvoiceService {
         this.taskService = taskService;
     }
 
-    public void seniorReviewTask(String processInstanceId, Map<String, Object> variables){
-        Task singleTask = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
-                "FormTask_SeniorReview");
+    public void seniorReviewTask(String taskId, Map<String, Object> variables){
+
+        Task singleTask = taskService.findTaskById(taskId);
         System.out.println("This is the senior review form with variables:::" + variables);
         taskService.completeTask(singleTask.getId(), variables);
     }
 
-    public void editInvoiceTask(String processInstanceId, Map<String, Object> variables){
-        Task singleTask = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
-                "FormTask_EditInvoice");
+    public void editInvoiceTask(String taskId, Map<String, Object> variables){
+
+        Task singleTask = taskService.findTaskById(taskId);
         System.out.println("This is the editInvoice task with variables:::" + variables);
         taskService.completeTask(singleTask.getId(), variables);
     }

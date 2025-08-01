@@ -62,12 +62,12 @@
                     <h2 th:text="${status=='new'} ? 'Create New Invoice' : 'Edit Invoice'" class="text-3xl font-bold text-white"></h2>
                     <p class="text-gray-400 mt-1">Enter client information, amount, and due date</p>
                 </div>
-                <button th:if="${status=='new'}" onclick="window.history.back()" class="btn-secondary flex items-center px-4 py-2 rounded-lg text-white font-medium">
+                <button onclick="window.history.back()" class="btn-secondary flex items-center px-4 py-2 rounded-lg text-white font-medium">
                     <span class="material-icons mr-2">arrow_back</span>
                     Back
                 </button>
             </div>
-            <form th:attr="action=${status == 'new'} ? '/invoice/create-invoice' : '/invoice/edit-invoice'" method="post">
+            <form th:attr="action=${status == 'new'} ? '/invoice/create-invoice' : '/invoice/submit-editInvoice'" method="post">
 
             <!-- Client Information Card -->
             <div class="card rounded-xl p-6 mb-6 fade-in">
@@ -77,16 +77,28 @@
                 </h3>
                 <div class="space-y-4">
                     <div>
+                        <label class="form-label block text-sm mb-1">Business Name</label>
+                        <input name="businessName" th:value="${status != 'new'} ? ${reviewData.businessName} : ''"
+                               type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                               placeholder="Acme Corporation" required>
+                    </div>
+                    <div>
                         <label class="form-label block text-sm mb-1">Client Name</label>
                         <input name="clientName" th:value="${status != 'new'} ? ${reviewData.clientName} : ''"
                                type="text" class="form-input w-full px-4 py-2 rounded-lg"
-                               placeholder="Acme Corporation" required>
+                               placeholder="Jane Doe" required>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Email</label>
                         <input  name="email" th:value="${status != 'new'} ? ${reviewData.email} : ''"
                                 type="email" class="form-input w-full px-4 py-2 rounded-lg"
                                 placeholder="contact@acme.com" required>
+                    </div>
+                    <div>
+                        <label class="form-label block text-sm mb-1">Address</label>
+                        <input  name="address" th:value="${status != 'new'} ? ${reviewData.address} : ''"
+                                type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                                placeholder="Ikeja, Lagos" required>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Phone (Optional)</label>
@@ -107,7 +119,7 @@
                     <div>
                         <label class="form-label block text-sm mb-1">Amount</label>
                         <div class="flex">
-                            <span class="inline-flex items-center px-3 rounded-l-lg bg-gray-700 text-gray-300 text-sm">$</span>
+                            <span class="inline-flex items-center px-3 rounded-l-lg bg-gray-700 text-gray-300 text-sm">₦</span>
                             <input name="amount" th:value="${status != 'new'} ? ${reviewData.amount} : ''"
                                    type="number" class="form-input flex-1 rounded-r-lg rounded-l-none"
                                    placeholder="0.00" step="0.01" min="0" required>
@@ -128,8 +140,8 @@
             </div>
 
             <!-- hidden input -->
-            <input id="processId" name="processId" type="hidden"
-                   th:value="${status != 'new'} ? ${reviewData.processId} : ''">
+            <input id="taskId" name="taskId" type="hidden"
+                   th:value="${status != 'new'} ? ${reviewData.taskId} : ''">
 
             <!-- Action Buttons -->
             <div class="flex justify-end space-x-3 fade-in" style="animation-delay: 0.2s">
