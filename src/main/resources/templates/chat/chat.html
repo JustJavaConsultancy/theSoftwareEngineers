@@ -156,6 +156,12 @@
             transform: translateY(20px);
             transition: transform 0.2s ease;
         }
+        
+        /* Theme-aware chat styles */
+        body.light-mode .modal-content {
+            background-color: #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
         .modal-overlay.active .modal-content {
             transform: translateY(0);
         }
@@ -419,6 +425,24 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script src="/js/chat.js"></script>
+    
+    <!-- Ensure chat theme is applied on page load -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Apply theme immediately for chat elements
+            const savedMode = localStorage.getItem('colorMode') || 'dark';
+            const body = document.body;
+            const html = document.documentElement;
+            
+            if (savedMode === 'light') {
+                body.classList.add('light-mode');
+                html.classList.remove('dark');
+            } else {
+                body.classList.remove('light-mode');
+                html.classList.add('dark');
+            }
+        });
+    </script>
 </main>
 </body>
 </html>

@@ -3,6 +3,20 @@
 @import 'components.css';
 @import 'utilities.css';
 
+/* Theme transition styles */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Ensure proper theme initialization */
+html.dark {
+  color-scheme: dark;
+}
+
+html:not(.dark) {
+  color-scheme: light;
+}
+
 /* Light Mode Overrides */
 body.light-mode {
     background-color: #f4f8fb;
@@ -264,4 +278,470 @@ body.light-mode #new-chat-modal input {
 body.light-mode #cancel-new-chat {
     background: #e2e8f0 !important;
     color: #0f172a !important;
+}
+
+/* Comprehensive Chat Theme Support */
+body.light-mode .chat-sidebar {
+    background-color: #fff !important;
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .chat-sidebar h2,
+body.light-mode .chat-sidebar .text-white {
+    color: #1E293B !important;
+}
+
+body.light-mode .chat-sidebar .search-input {
+    background-color: #f8fafc !important;
+    color: #1E293B !important;
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .chat-sidebar .search-input::placeholder {
+    color: #64748b !important;
+}
+
+body.light-mode .chat-sidebar .border-gray-700 {
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .chat-header {
+    background-color: #fff !important;
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .chat-header .text-white {
+    color: #1E293B !important;
+}
+
+body.light-mode .chat-header .text-gray-400 {
+    color: #64748b !important;
+}
+
+body.light-mode .chat-input-area {
+    background-color: #fff !important;
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .chat-input-area .text-white {
+    color: #1E293B !important;
+}
+
+body.light-mode .chat-input-area .text-gray-400 {
+    color: #64748b !important;
+}
+
+body.light-mode .chat-input-area input {
+    color: #1E293B !important;
+}
+
+body.light-mode .chat-input-area input::placeholder {
+    color: #64748b !important;
+}
+
+body.light-mode .chat-input-area .bg-gray-700 {
+    background-color: #f1f5f9 !important;
+}
+
+body.light-mode .chat-input-area .bg-gray-700 input {
+    background-color: transparent !important;
+}
+
+body.light-mode .message-in {
+    background-color: #f1f5f9 !important;
+    color: #1E293B !important;
+}
+
+body.light-mode .message-out {
+    background-color: #2563eb !important;
+    color: white !important;
+}
+
+body.light-mode .empty-chat-state {
+    color: #64748b !important;
+}
+
+body.light-mode .empty-chat-icon {
+    color: #94a3b8 !important;
+}
+
+body.light-mode .empty-chat-title {
+    color: #1E293B !important;
+}
+
+body.light-mode .empty-chat-subtitle {
+    color: #64748b !important;
+}
+
+body.light-mode .modal-content {
+    background-color: #fff !important;
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .modal-header {
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .modal-header .text-white {
+    color: #1E293B !important;
+}
+
+body.light-mode .modal-body .text-white {
+    color: #1E293B !important;
+}
+
+body.light-mode .modal-body .text-gray-400 {
+    color: #64748b !important;
+}
+
+body.light-mode .user-item:hover {
+    background-color: #f8fafc !important;
+}
+
+body.light-mode .user-item .text-white {
+    color: #1E293B !important;
+}
+
+body.light-mode .user-item .text-gray-400 {
+    color: #64748b !important;
+}
+
+body.light-mode .chat-item {
+    color: #1E293B !important;
+}
+
+body.light-mode .chat-item:hover {
+    background-color: #f8fafc !important;
+}
+
+body.light-mode .chat-item.active-chat {
+    background-color: #e0e7ff !important;
+}
+
+body.light-mode .no-conversations {
+    color: #64748b !important;
+}
+
+body.light-mode .no-conversations-icon {
+    color: #94a3b8 !important;
+}
+
+/* Chat scrollbar theme support */
+body.light-mode ::-webkit-scrollbar-track {
+    background: #f1f5f9 !important;
+}
+
+body.light-mode ::-webkit-scrollbar-thumb {
+    background: #cbd5e1 !important;
+}
+
+/* Chat modal theme support */
+body.light-mode .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Dark mode chat overrides to ensure consistency */
+html.dark .chat-sidebar {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+html.dark .chat-header {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+html.dark .chat-input-area {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+html.dark .message-in {
+    background-color: #374151 !important;
+    color: #f9fafb !important;
+}
+
+html.dark .message-out {
+    background-color: #2563eb !important;
+    color: white !important;
+}
+
+/* Additional chat theme support for dynamic elements */
+body.light-mode .messages-container {
+    background-color: #fff !important;
+}
+
+body.light-mode .messages-container .message-in {
+    background-color: #f1f5f9 !important;
+    color: #1E293B !important;
+}
+
+body.light-mode .messages-container .message-out {
+    background-color: #2563eb !important;
+    color: white !important;
+}
+
+/* Chat item hover states */
+body.light-mode .chat-item:hover {
+    background-color: #f8fafc !important;
+}
+
+body.light-mode .chat-item.active-chat {
+    background-color: #e0e7ff !important;
+    color: #1E293B !important;
+}
+
+/* Modal input fields */
+body.light-mode .modal-body input {
+    background-color: #f8fafc !important;
+    color: #1E293B !important;
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .modal-body input::placeholder {
+    color: #64748b !important;
+}
+
+/* Chat status indicators */
+body.light-mode .text-green-500 {
+    color: #10b981 !important;
+}
+
+body.light-mode .text-red-500 {
+    color: #ef4444 !important;
+}
+
+/* Chat avatar backgrounds */
+body.light-mode .bg-blue-500 {
+    background-color: #3b82f6 !important;
+}
+
+body.light-mode .bg-gray-600 {
+    background-color: #94a3b8 !important;
+}
+
+/* Gallery Theme Support */
+body.light-mode .bg-gray-800 {
+    background-color: #fff !important;
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .bg-gray-700 {
+    background-color: #f8fafc !important;
+}
+
+body.light-mode .text-gray-400 {
+    color: #64748b !important;
+}
+
+body.light-mode .text-gray-300 {
+    color: #475569 !important;
+}
+
+body.light-mode .text-gray-500 {
+    color: #6b7280 !important;
+}
+
+body.light-mode .text-white {
+    color: #1E293B !important;
+}
+
+/* Gallery search bar */
+body.light-mode .search-bar2 {
+    background-color: #f8fafc !important;
+    color: #1E293B !important;
+    border: 1px solid #e0e0e0 !important;
+}
+
+body.light-mode .search-bar2::placeholder {
+    color: #64748b !important;
+}
+
+/* Gallery file tabs */
+body.light-mode #file-tabs {
+    background-color: #f1f5f9 !important;
+}
+
+body.light-mode .file-tab {
+    color: #64748b !important;
+}
+
+body.light-mode .file-tab:hover {
+    background-color: #e2e8f0 !important;
+    color: #1E293B !important;
+}
+
+body.light-mode .file-tab.bg-blue-600 {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+/* Gallery table */
+body.light-mode .bg-gray-800.rounded-lg {
+    background-color: #fff !important;
+    border: 1px solid #e0e0e0 !important;
+}
+
+body.light-mode table thead {
+    background-color: #f8fafc !important;
+}
+
+body.light-mode table thead th {
+    color: #1E293B !important;
+}
+
+body.light-mode table tbody tr {
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode table tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+body.light-mode .file-row {
+    border-color: #e0e0e0 !important;
+}
+
+body.light-mode .file-row:hover {
+    background-color: #f8fafc !important;
+}
+
+body.light-mode .file-row td {
+    color: #1E293B !important;
+}
+
+/* Gallery pagination */
+body.light-mode #pagination-container .text-gray-400 {
+    color: #64748b !important;
+}
+
+body.light-mode #pagination-prev,
+body.light-mode #pagination-next {
+    background-color: #fff !important;
+    border-color: #e0e0e0 !important;
+    color: #64748b !important;
+}
+
+body.light-mode #pagination-prev:hover,
+body.light-mode #pagination-next:hover {
+    background-color: #f8fafc !important;
+    color: #1E293B !important;
+}
+
+/* Gallery modal */
+body.light-mode #deleteModal .bg-gray-800 {
+    background-color: #fff !important;
+}
+
+body.light-mode #deleteModal .text-white {
+    color: #1E293B !important;
+}
+
+body.light-mode #deleteModal .text-gray-300 {
+    color: #64748b !important;
+}
+
+body.light-mode #deleteModal .bg-gray-600 {
+    background-color: #e2e8f0 !important;
+    color: #1E293B !important;
+}
+
+body.light-mode #deleteModal .bg-gray-600:hover {
+    background-color: #cbd5e1 !important;
+}
+
+/* Gallery buttons */
+body.light-mode .btn-primary2 {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+body.light-mode .btn-primary2:hover {
+    background-color: #2563eb !important;
+}
+
+/* Gallery action buttons */
+body.light-mode .download-file-btn {
+    color: #3b82f6 !important;
+}
+
+body.light-mode .download-file-btn:hover {
+    color: #2563eb !important;
+    background-color: #f8fafc !important;
+}
+
+body.light-mode .delete-file-btn {
+    color: #ef4444 !important;
+}
+
+body.light-mode .delete-file-btn:hover {
+    color: #dc2626 !important;
+    background-color: #fef2f2 !important;
+}
+
+/* AddFile Theme Support */
+body.light-mode .upload-card {
+    background-color: #fff !important;
+    border: 1px solid #e0e0e0 !important;
+}
+
+body.light-mode .upload-area {
+    border-color: #e0e0e0 !important;
+    background-color: #f8fafc !important;
+}
+
+body.light-mode .upload-area:hover {
+    border-color: #3b82f6 !important;
+    background-color: #f1f5f9 !important;
+}
+
+body.light-mode .text-gray-500 {
+    color: #6b7280 !important;
+}
+
+body.light-mode .upload-btn-primary {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+body.light-mode .upload-btn-primary:hover {
+    background-color: #2563eb !important;
+}
+
+/* AddFile progress section */
+body.light-mode #uploadProgress .bg-gray-800 {
+    background-color: #fff !important;
+    border: 1px solid #e0e0e0 !important;
+}
+
+body.light-mode #uploadProgress .text-white {
+    color: #1E293B !important;
+}
+
+body.light-mode #uploadProgress .bg-gray-700 {
+    background-color: #f1f5f9 !important;
+}
+
+/* AddFile results section */
+body.light-mode #uploadResults .bg-gray-800 {
+    background-color: #fff !important;
+    border: 1px solid #e0e0e0 !important;
+}
+
+body.light-mode #uploadResults .text-white {
+    color: #1E293B !important;
+}
+
+/* AddFile error section */
+body.light-mode #uploadError .bg-red-900 {
+    background-color: #fef2f2 !important;
+    border-color: #fecaca !important;
+}
+
+body.light-mode #uploadError .text-white {
+    color: #1E293B !important;
+}
+
+body.light-mode #uploadError .text-red-200 {
+    color: #dc2626 !important;
 }

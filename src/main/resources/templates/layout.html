@@ -25,6 +25,23 @@
     <!-- Application CSS -->
     <link th:href="@{/css/app.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <!-- Theme initialization script to prevent flash of unstyled content -->
+    <script>
+      (function() {
+        const savedMode = localStorage.getItem('colorMode');
+        const html = document.documentElement;
+        const body = document.body;
+        
+        if (savedMode === 'light') {
+          body.classList.add('light-mode');
+          html.classList.remove('dark');
+        } else {
+          body.classList.remove('light-mode');
+          html.classList.add('dark');
+        }
+      })();
+    </script>
 <script>
     let stompClient = null
     function connectStomp() {
@@ -190,23 +207,7 @@
         </div>
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Layout debug: DOM loaded');
-        const modeToggle = document.getElementById('mode-toggle');
-        console.log('Mode toggle element:', modeToggle);
-        if (modeToggle) {
-            console.log('Mode toggle found, adding test click listener');
-            modeToggle.addEventListener('click', function() {
-                console.log('Mode toggle clicked - debug version!');
-                document.body.classList.toggle('light-mode');
-                document.documentElement.classList.toggle('dark');
-            });
-        } else {
-            console.error('Mode toggle not found in layout debug');
-        }
-    });
-</script>
+<!-- Theme toggle is handled by app.js -->
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/htmx.org@2.0.4"></script>
