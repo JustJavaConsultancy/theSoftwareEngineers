@@ -121,9 +121,6 @@
                     </div>
 <!--                    <span class="material-icons text-blue-300 text-3xl">attach_money</span>-->
                 </div>
-                <div class="mt-4 h-2 bg-blue-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-blue-400 rounded-full" style="width: 75%"></div>
-                </div>
             </div>
 
             <div class="bg-gradient-to-r from-green-900 to-green-700 p-6 rounded-xl shadow-lg transform transition hover:scale-105">
@@ -133,9 +130,6 @@
                         <p class="text-2xl font-bold text-white" th:text="${paidInvoiceCount}" >18</p>
                     </div>
                     <span class="material-icons text-green-300 text-3xl">check_circle</span>
-                </div>
-                <div class="mt-4 h-2 bg-green-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-green-400 rounded-full" style="width: 72%"></div>
                 </div>
             </div>
 
@@ -147,9 +141,6 @@
                     </div>
                     <span class="material-icons text-yellow-300 text-3xl">schedule</span>
                 </div>
-                <div class="mt-4 h-2 bg-yellow-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-yellow-400 rounded-full" style="width: 28%"></div>
-                </div>
             </div>
         </div>
 
@@ -159,16 +150,26 @@
                 <h3 class="text-xl font-semibold text-white">Recent Invoices</h3>
                 <p class="text-sm text-gray-400 mt-1">Your most recent invoice transactions</p>
             </div>
-            <div class="relative w-full md:w-72">
-                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-                <input class="bg-gray-800 w-full pl-10 pr-4 py-2 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search invoices..." type="text"/>
+
+            <div class="search-container relative">
+                <span class="material-icons search-icon">search</span>
+                <input class="search-input text-white rounded-lg pl-10 pr-4 py-2 w-40 md:w-64 lg:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search Invoices...." type="text"/>
             </div>
         </div>
-
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(allInvoices)}" class="processes-card text-center p-8" style="height: auto;">
+            <div class="mb-4">
+                <i class="fas fa-history text-4xl text-slate-500 opacity-50"></i>
+            </div>
+            <h3 class="text-xl font-medium text-slate-300 mb-2">No Invoice</h3>
+            <p class="text-slate-400 mb-6">No invoice has been created yet. Invoices will appear here once created.</p>
+        </div>
+        <div th:if="${!#lists.isEmpty(allInvoices)}">
         <!-- Invoice Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Invoice Cards - Dynamically generated from backend -->
-            <div th:if="${!allInvoices.isEmpty()}" th:each="invoice,iter : ${allInvoices}"
+
+            <div th:each="invoice,iter : ${allInvoices}"
                  class="card rounded-xl p-6 flex flex-col justify-between fade-in"
                  th:classappend="${invoice.status == 'PAID' ? 'card-paid' : (invoice.status == 'approved' ?
                  'card-pending' : (invoice.status == 'new') ? 'card-new' : (invoice.status == 'pending') ? 'card-new' :
@@ -262,6 +263,7 @@
                     <span class="material-icons">chevron_right</span>
                 </button>
             </div>
+        </div>
         </div>
     </main>
     <script>
