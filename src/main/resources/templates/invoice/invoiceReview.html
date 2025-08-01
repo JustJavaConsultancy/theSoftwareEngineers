@@ -68,12 +68,11 @@
             <div class="flex justify-between items-center mb-8 animate__animated animate__fadeIn">
                 <div>
                     <h2 class="text-3xl font-bold text-white">Review Invoice</h2>
-<!--                    <p class="text-gray-400 mt-1">Enter client information, amount, and due date</p>-->
                 </div>
-<!--                <button onclick="window.history.back()" class="btn-secondary flex items-center px-4 py-2 rounded-lg text-white font-medium">-->
-<!--                    <span class="material-icons mr-2">arrow_back</span>-->
-<!--                    Back-->
-<!--                </button>-->
+                <button onclick="window.history.back()" class="btn-secondary flex items-center px-4 py-2 rounded-lg text-white font-medium">
+                    <span class="material-icons mr-2">arrow_back</span>
+                    Back
+                </button>
             </div>
             <form>
 
@@ -85,14 +84,24 @@
                 </h3>
                 <div class="space-y-4">
                     <div>
+                        <label class="form-label block text-sm mb-1">Business Name</label>
+                        <input name="businessName" th:value="${invoiceData.businessName}" type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                               placeholder="Acme Corporation" required readonly>
+                    </div>
+                    <div>
                         <label class="form-label block text-sm mb-1">Client Name</label>
                         <input name="clientName" th:value="${invoiceData.clientName}" type="text" class="form-input w-full px-4 py-2 rounded-lg"
-                               placeholder="Acme Corporation" required readonly>
+                               placeholder="Jane Doe" required readonly>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Email</label>
                         <input  name="email" th:value="${invoiceData.email}" type="email" class="form-input w-full px-4 py-2 rounded-lg"
                                 placeholder="contact@acme.com" required readonly>
+                    </div>
+                    <div>
+                        <label class="form-label block text-sm mb-1">Address</label>
+                        <input  name="address" th:value="${invoiceData.address}" type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                                placeholder="Ikeja, Lagos" required readonly>
                     </div>
                     <div>
                         <label class="form-label block text-sm mb-1">Phone (Optional)</label>
@@ -112,7 +121,7 @@
                     <div>
                         <label class="form-label block text-sm mb-1">Amount</label>
                         <div class="flex">
-                            <span class="inline-flex items-center px-3 rounded-l-lg bg-gray-700 text-gray-300 text-sm">$</span>
+                            <span class="inline-flex items-center px-3 rounded-l-lg bg-gray-700 text-gray-300 text-sm">₦</span>
                             <input name="amount" th:value="${invoiceData.amount}"  type="number" class="form-input flex-1 rounded-r-lg rounded-l-none"
                                    placeholder="0.00" step="0.01" min="0" required readonly>
                         </div>
@@ -129,15 +138,14 @@
                 </div>
             </div>
             <!-- hidden input -->
-             <input id="processId" name="processId" type="hidden" th:value="${invoiceData.processId}">
+            <input type="hidden" name="taskId" th:value="${invoiceData.taskId}">
 
             <!-- Action Buttons -->
             <div class="flex justify-end space-x-3 fade-in" style="animation-delay: 0.2s">
                 <button type="button"
-                        hx-post="/invoice/invoice-review"
+                        hx-post="/invoice/submit-review"
                         hx-trigger="click"
                         hx-disabled-elt="this"
-                        hx-include="#processId"
                         hx-vals='{"status": "declined"}'
                         hx-swap="outerHTML"
                         hx-target="#mainBody"
@@ -146,7 +154,7 @@
                     Decline
                 </button>
                 <button type="button"
-                        hx-post="/invoice/invoice-review"
+                        hx-post="/invoice/submit-review"
                         hx-trigger="click"
                         hx-disabled-elt="this"
                         hx-vals='{"status":"approved"}'

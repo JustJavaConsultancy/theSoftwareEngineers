@@ -38,7 +38,9 @@ public class ChatController {
     {
         List<UserDTO> users = chatService.getUsers();
         System.out.println(users);
+        System.out.println(authenticationManager.get("name"));
         model.addAttribute("currentUser",authenticationManager.get("sub"));
+        model.addAttribute("currentUserName",authenticationManager.get("name"));
         model.addAttribute("users",users);
         return "chat/chat";
     }
@@ -158,9 +160,11 @@ public class ChatController {
          */
         //String userId = (String) authenticationManager.get("sub");
         String destination = "/topic/group/" + message.getReceiverId();
+        String notification= "/topic/notification/" + message.getSenderId();
         //message.setSenderId("449a5325-da3e-4692-93ea-ce8da8346e2f");
         chatService.newMessage(message);
         messagingTemplate.convertAndSend(destination, message);
+        messagingTemplate.convertAndSend(notification, message);
     }
 
     private String getCurrentUserName(Authentication authentication) {

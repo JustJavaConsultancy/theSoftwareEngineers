@@ -4,9 +4,9 @@
     <extensionElements>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
       <design:creationdate><![CDATA[2025-07-29T12:27:44.740Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-07-30T15:11:28.584Z]]></design:modificationdate>
+      <design:modificationdate><![CDATA[2025-07-31T12:11:04.447Z]]></design:modificationdate>
     </extensionElements>
-    <userTask id="FormTask_SeniorReview" name="Senior Review" flowable:formFieldValidation="false">
+    <userTask id="FormTask_SeniorReview" name="Senior Review" flowable:assignee="manager" flowable:formFieldValidation="false">
       <extensionElements>
         <design:stencilid><![CDATA[FormTask]]></design:stencilid>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
@@ -18,10 +18,8 @@
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
       <script><![CDATA[var invoiceLink = "localhost:9090/invoices/pay";
-var status = "new";
 print(invoiceLink);
-execution.setVariable("invoiceLink", invoiceLink);
-execution.setVariable("status", status);]]></script>
+execution.setVariable("invoiceLink", invoiceLink);]]></script>
     </scriptTask>
     <scriptTask id="ServiceTask_7" name="Email Task" scriptFormat="javascript" flowable:autoStoreVariables="false">
       <extensionElements>
@@ -30,7 +28,6 @@ execution.setVariable("status", status);]]></script>
       </extensionElements>
       <script><![CDATA[var email = "pelumi@justjava.com";
 print(email);
-execution.setVariable("email", email);
 ]]></script>
     </scriptTask>
     <userTask id="FormTask_ClientPayment" name="Client Payment" flowable:formFieldValidation="false">

@@ -606,16 +606,17 @@ function initializeGalleryFunctionality() {
   }
 
   function performSearch() {
-    const searchQuery = searchInput.value.toLowerCase().trim();
+      const searchQuery = searchInput.value.toLowerCase().trim();
 
-    filteredFiles = allFiles.filter(file => {
-      const matchesType = currentTab === 'all' || file.type === currentTab;
-      const matchesQuery = file.name.toLowerCase().includes(searchQuery) ||
-                          file.caseNumber.toLowerCase().includes(searchQuery);
-      return matchesType && matchesQuery;
-    });
+      filteredFiles = allFiles.filter(file => {
+        const matchesType = currentTab === 'all' || file.type === currentTab;
+        const matchesQuery = searchQuery === '' ||
+                           file.name.toLowerCase().includes(searchQuery) ||
+                           (file.caseNumber && file.caseNumber.toLowerCase().includes(searchQuery));
+        return matchesType && matchesQuery;
+      });
 
-    updateCurrentView();
+      updateCurrentView();
   }
 
   function updateCurrentView() {
@@ -654,6 +655,14 @@ function initializeGalleryFunctionality() {
         <td class="py-4 px-6">${file.size}</td>
         <td class="py-4 px-6">${file.dateAdded}</td>
         <td class="py-4 px-6 text-right">
+        <button
+                                                class="download-file-btn text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-gray-600 mr-1"
+                                                data-file-id="${file.id}"
+                                                data-file-name="${file.name}"
+                                                title="Download file"
+                                        >
+                                            <span class="material-icons">download</span>
+                                        </button>
           <button
             class="delete-file-btn text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-gray-600"
             data-file-id="${file.id}"
@@ -776,6 +785,49 @@ function initializeGalleryFunctionality() {
     }
   });
 
+  // Handle download button clicks
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.download-file-btn')) {
+      const downloadBtn = e.target.closest('.download-file-btn');
+      const fileId = downloadBtn.getAttribute('data-file-id');
+      const fileName = downloadBtn.getAttribute('data-file-name');
+
+      // Show loading state
+      const originalIcon = downloadBtn.querySelector('.material-icons').textContent;
+      downloadBtn.querySelector('.material-icons').textContent = 'downloading';
+      downloadBtn.disabled = true;
+
+      // Create a fetch request to download the file
+      fetch(`/api/files/download/${fileId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Download failed');
+          }
+          return response.blob();
+        })
+        .then(blob => {
+          // Create a temporary URL for the blob
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = fileName || 'download';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+          console.error('Download error:', error);
+          alert('Failed to download file: ' + error.message);
+        })
+        .finally(() => {
+          // Restore button state
+          downloadBtn.querySelector('.material-icons').textContent = originalIcon;
+          downloadBtn.disabled = false;
+        });
+    }
+  });
+
   // Cancel delete
   cancelDeleteBtn.addEventListener('click', function() {
     deleteModal.classList.add('hidden');
@@ -785,42 +837,51 @@ function initializeGalleryFunctionality() {
 
   // Confirm delete
   confirmDeleteBtn.addEventListener('click', function() {
-    if (fileToDelete) {
-      fetch(`/api/files/${fileToDelete.id}`, {
-        method: 'DELETE'
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          // Remove from allFiles array
-          allFiles = allFiles.filter(file => file.id !== fileToDelete.id);
+      if (fileToDelete) {
+        // Add loading state
+        const originalText = confirmDeleteBtn.innerHTML;
+        confirmDeleteBtn.disabled = true;
+        confirmDeleteBtn.innerHTML = '<span class="spinner">Deleting...</span>';
 
-          // Check if current page becomes empty after deletion
-          const totalPages = Math.ceil(filteredFiles.length / itemsPerPage);
-          if (currentPage > totalPages && totalPages > 0) {
-            currentPage = totalPages;
+        fetch(`/api/files/${fileToDelete.id}`, {
+          method: 'DELETE'
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to delete file');
           }
+          return response.json();
+        })
+        .then(data => {
+          if (data.status === 'success') {
+            // Update both file arrays
+            allFiles = allFiles.filter(file => file.id !== fileToDelete.id);
+            filteredFiles = filteredFiles.filter(file => file.id !== fileToDelete.id);
 
-          // Refresh the current view
-          if (isSearching) {
-            performSearch();
+            // Adjust pagination if needed
+            const totalPages = Math.ceil(filteredFiles.length / itemsPerPage);
+            if (currentPage > totalPages && totalPages > 0) {
+              currentPage = totalPages;
+            }
+
+            updateCurrentView();
           } else {
-            filterByTab();
+            throw new Error(data.message || 'Failed to delete file');
           }
-
+        })
+        .catch(error => {
+          console.error('Delete error:', error);
+          alert(error.message); // Simple alert instead of toast
+        })
+        .finally(() => {
           deleteModal.classList.add('hidden');
           deleteModal.classList.remove('flex');
+          confirmDeleteBtn.disabled = false;
+          confirmDeleteBtn.innerHTML = originalText;
           fileToDelete = null;
-        } else {
-          alert('Failed to delete file: ' + data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error deleting file:', error);
-        alert('Failed to delete file. Please try again.');
-      });
-    }
-  });
+        });
+      }
+    });
 
   // Close modal on escape key
   document.addEventListener('keydown', function(e) {
@@ -841,9 +902,9 @@ function initializeGalleryFunctionality() {
   });
 }
 
-// === FILE UPLOAD FUNCTIONALITY ===
+// FILE UPLOAD FUNCTIONALITY
 function initializeFileUploadFunctionality() {
-  const uploadForm = document.getElementById('uploadForm');
+  // Elements
   const uploadArea = document.getElementById('uploadArea');
   const fileInput = document.getElementById('file-upload');
   const uploadProgress = document.getElementById('uploadProgress');
@@ -857,160 +918,216 @@ function initializeFileUploadFunctionality() {
   const errorMessage = document.getElementById('errorMessage');
   const retryButton = document.getElementById('retryButton');
 
-  let tempUploadedFiles = [];
+  // State
+  let uploadedFiles = [];
+  let pendingFiles = [];
+  let uploadAborted = false;
 
-  // Drag and drop functionality
-  uploadArea.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    uploadArea.classList.add('border-blue-500', 'bg-blue-50', 'bg-opacity-10');
-  });
+  // Helper Functions
+  const hideAllSections = () => {
+    uploadProgress.classList.add('hidden');
+    uploadResults.classList.add('hidden');
+    uploadError.classList.add('hidden');
+  };
 
-  uploadArea.addEventListener('dragleave', function(e) {
-    e.preventDefault();
-    uploadArea.classList.remove('border-blue-500', 'bg-blue-50', 'bg-opacity-10');
-  });
+  const resetForm = () => {
+    fileInput.value = '';
+    uploadedFiles = [];
+    progressBar.style.width = '0%';
+    progressPercentage.textContent = '0%';
+    uploadStatus.textContent = '';
+    uploadedFilesList.innerHTML = '';
+  };
 
-  uploadArea.addEventListener('drop', function(e) {
-    e.preventDefault();
-    uploadArea.classList.remove('border-blue-500', 'bg-blue-50', 'bg-opacity-10');
+  const showUploadError = (msg) => {
+    errorMessage.textContent = msg;
+    uploadError.classList.remove('hidden');
+  };
 
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleFileUpload(files);
-    }
-  });
+  const showUploadResults = () => {
+    uploadStatus.textContent = 'Upload complete!';
+    uploadedFilesList.innerHTML = '';
 
-  // File input change
-  fileInput.addEventListener('change', function(e) {
-    const files = e.target.files;
-    if (files.length > 0) {
-      handleFileUpload(files);
-    }
-  });
+    uploadedFiles.forEach(file => {
+      const fileItem = document.createElement('div');
+      fileItem.className = 'flex items-center justify-between p-2 bg-gray-700 rounded mb-2';
+      fileItem.innerHTML = `
+        <div class="flex items-center">
+          <span class="material-icons text-green-500 mr-2">check_circle</span>
+          <span class="text-white">${file.name}</span>
+        </div>
+        <span class="text-gray-400 text-sm">${file.size}</span>
+      `;
+      uploadedFilesList.appendChild(fileItem);
+    });
 
-  // Done button functionality
-  doneButton.addEventListener('click', function() {
-    if (tempUploadedFiles.length > 0) {
-      // Finalize uploads on server
-      fetch('/api/files/finalize', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(tempUploadedFiles)
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          window.location.href = '/gallery';
-        } else {
-          alert('Failed to finalize uploads: ' + data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error finalizing uploads:', error);
-        alert('Failed to finalize uploads. Please try again.');
-      });
-    } else {
-      window.location.href = '/gallery';
-    }
-  });
+    uploadResults.classList.remove('hidden');
+  };
 
-  // Retry button functionality
-  retryButton.addEventListener('click', function() {
+  // Main Upload Handler
+  const handleFileUpload = (files) => {
+    // Reset upload state
+    uploadAborted = false;
+
     hideAllSections();
-    resetForm();
-  });
 
-  function handleFileUpload(files) {
-    hideAllSections();
+    // Validate file sizes before upload (10MB limit based on external service)
+    const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
+    const oversizedFiles = Array.from(files).filter(file => file.size > maxFileSize);
+
+    if (oversizedFiles.length > 0) {
+      const fileNames = oversizedFiles.map(f => f.name).join(', ');
+      showUploadError(`The following files are too large (max 10MB): ${fileNames}`);
+      return;
+    }
+
     uploadProgress.classList.remove('hidden');
+    uploadedFiles = [];
+    pendingFiles = Array.from(files);
 
-    tempUploadedFiles = [];
-    let completedUploads = 0;
-    const totalFiles = files.length;
+    // Reset progress bar
+    progressBar.style.width = '0%';
+    progressPercentage.textContent = '0%';
+    uploadStatus.textContent = 'Uploading... (0%)';
 
-    uploadStatus.textContent = `Uploading ${totalFiles} file(s)...`;
+    const totalFiles = pendingFiles.length;
+    let completedCount = 0;
 
-    Array.from(files).forEach((file, index) => {
-      uploadSingleFile(file, index, totalFiles, () => {
-        completedUploads++;
-        const progress = (completedUploads / totalFiles) * 100;
-        updateProgress(progress);
+    if (totalFiles === 0) {
+      showUploadError('No files selected');
+      return;
+    }
 
-        if (completedUploads === totalFiles) {
+    let completedFiles = 0;
+    let currentFileIndex = 0;
+
+    const updateProgress = () => {
+      const percent = Math.round((completedFiles / totalFiles) * 100);
+      progressBar.style.width = `${percent}%`;
+      progressPercentage.textContent = `${percent}%`;
+      uploadStatus.textContent = `Uploading... (${completedFiles}/${totalFiles} files)`;
+    };
+
+    // Upload files sequentially using fetch
+    const uploadNextFile = async () => {
+      if (currentFileIndex >= pendingFiles.length) {
+        // All files processed
+        progressBar.style.width = '100%';
+        progressPercentage.textContent = '100%';
+
+        if (uploadedFiles.length === 0) {
+          showUploadError('All uploads failed. Click Retry to try again.');
+        } else if (uploadedFiles.length < totalFiles) {
+          uploadStatus.textContent = `Upload completed with ${totalFiles - uploadedFiles.length} failed files`;
+          showUploadResults();
+        } else {
+          uploadStatus.textContent = 'All files uploaded successfully!';
           showUploadResults();
         }
-      });
-    });
-  }
+        return;
+      }
 
-  function uploadSingleFile(file, index, totalFiles, callback) {
-    const formData = new FormData();
-    formData.append('file', file);
+      const file = pendingFiles[currentFileIndex];
+      const formData = new FormData();
+      formData.append('file', file);
 
-    fetch('/api/files/upload', {
+      uploadStatus.textContent = `Uploading ${file.name}...`;
+
+      try {
+        const response = await fetch('/api/files/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === 'success') {
+          uploadedFiles.push(data.fileInfo);
+          completedFiles++;
+          updateProgress();
+        } else {
+          throw new Error(data.message || 'Upload failed');
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        completedFiles++; // Count failed uploads too for progress
+        updateProgress();
+
+        // Show specific error message for file size issues
+        if (error.message && error.message.includes('too large')) {
+          uploadStatus.textContent = `Upload failed: ${error.message}`;
+        }
+      }
+
+      currentFileIndex++;
+      completedCount++;
+
+      // Upload next file
+      setTimeout(uploadNextFile, 100); // Small delay between uploads
+    };
+
+    // Start uploading files
+    uploadNextFile();
+  };
+
+  // Event Listeners
+  doneButton.addEventListener('click', () => {
+    // Commit the uploaded files to the gallery
+    doneButton.disabled = true;
+    doneButton.textContent = 'Committing...';
+
+    fetch('/api/files/commit-uploads', {
       method: 'POST',
-      body: formData
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
     .then(response => response.json())
     .then(data => {
       if (data.status === 'success') {
-        tempUploadedFiles.push(data.fileInfo);
+        window.location.href = '/gallery';
+      } else {
+        throw new Error(data.message || 'Failed to commit uploads');
       }
-      callback();
     })
     .catch(error => {
-      console.error('Upload error:', error);
-      callback();
+      console.error('Commit error:', error);
+      alert('Failed to commit uploads: ' + error.message);
+      doneButton.disabled = false;
+      doneButton.textContent = 'Done';
     });
-  }
+  });
 
-  function updateProgress(percentage) {
-    progressBar.style.width = percentage + '%';
-    progressPercentage.textContent = Math.round(percentage) + '%';
-
-    if (percentage === 100) {
-      uploadStatus.textContent = 'Processing uploads...';
-    }
-  }
-
-  function showUploadResults() {
-    uploadProgress.classList.add('hidden');
-
-    if (tempUploadedFiles.length === 0) {
-      errorMessage.textContent = 'All uploads failed. Please try again.';
-      uploadError.classList.remove('hidden');
+  retryButton.addEventListener('click', () => {
+    if (pendingFiles.length > 0) {
+      uploadedFiles = [];
+      uploadAborted = false;
+      handleFileUpload([...pendingFiles]);
     } else {
-      uploadResults.classList.remove('hidden');
-
-      uploadedFilesList.innerHTML = '';
-      tempUploadedFiles.forEach(file => {
-        const fileItem = document.createElement('div');
-        fileItem.className = 'flex items-center justify-between p-2 bg-gray-700 rounded';
-        fileItem.innerHTML = `
-          <div class="flex items-center">
-            <span class="material-icons text-green-500 mr-2">check_circle</span>
-            <span class="text-white">${file.name}</span>
-          </div>
-          <span class="text-gray-400 text-sm">${file.size}</span>
-        `;
-        uploadedFilesList.appendChild(fileItem);
-      });
+      hideAllSections();
+      resetForm();
     }
-  }
+  });
 
-  function hideAllSections() {
-    uploadProgress.classList.add('hidden');
-    uploadResults.classList.add('hidden');
-    uploadError.classList.add('hidden');
-  }
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) handleFileUpload(e.target.files);
+  });
 
-  function resetForm() {
-    fileInput.value = '';
-    tempUploadedFiles = [];
-    progressBar.style.width = '0%';
-    progressPercentage.textContent = '0%';
-    uploadStatus.textContent = '';
-  }
+  // Drag and Drop Handlers
+  uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('border-blue-500', 'bg-blue-50');
+  });
+
+  uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+  });
+
+  uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+    if (e.dataTransfer.files.length > 0) {
+      handleFileUpload(e.dataTransfer.files);
+    }
+  });
 }

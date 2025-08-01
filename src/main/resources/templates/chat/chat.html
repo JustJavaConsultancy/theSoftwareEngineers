@@ -6,17 +6,20 @@
     <title>Chat App</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        #support-chat-btn{
-            display:none
+        #userOnlineStatus{
+          margin-right: 10px;
+        }
+        #support-chat-btn {
+            display: none
         }
         .hover\:bg-gray-700:hover {
             background-color: #374151;
         }
         .modal-footer {
-    padding: 1rem;
-    border-top: 1px solid #374151;
-    flex-shrink: 0;
-}
+            padding: 1rem;
+            border-top: 1px solid #374151;
+            flex-shrink: 0;
+        }
         .border-gray-700 {
             border-color: #374151;
         }
@@ -32,8 +35,12 @@
         .text-blue-200 {
             color: #bfdbfe;
         }
-
-        /* Message display styles */
+        .bg-green-600 {
+            background-color: #16a34a;
+        }
+        .hover\:bg-green-700:hover {
+            background-color: #15803d;
+        }
         .messages-container {
             flex: 1;
             padding: 1rem;
@@ -41,7 +48,6 @@
             display: flex;
             flex-direction: column;
         }
-
         .message {
             max-width: 70%;
             margin-bottom: 1rem;
@@ -49,20 +55,17 @@
             border-radius: 1rem;
             word-wrap: break-word;
         }
-
         .message-out {
             align-self: flex-end;
             background-color: #2563eb;
             color: white;
             border-radius: 1rem 1rem 0 1rem;
         }
-
         .message-in {
             align-self: flex-start;
             background-color: #374151;
             border-radius: 1rem 1rem 1rem 0;
         }
-
         .empty-chat-state {
             display: flex;
             flex-direction: column;
@@ -73,75 +76,55 @@
             padding: 2rem;
             color: #9ca3af;
         }
-
         .empty-chat-state.hidden {
             display: none;
         }
-
-        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .message-in {
             animation: fadeIn 0.3s ease-out;
         }
-
         .message-out {
             animation: fadeIn 0.3s ease-out;
         }
-
         .chat-item:hover {
             transform: translateX(5px);
             transition: transform 0.2s ease;
         }
-
         .chat-item {
             transition: all 0.2s ease;
         }
-
-        /* Modal animations */
         @keyframes modalFadeIn {
             from { opacity: 0; transform: translateY(20px) scale(0.95); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
-
         .modal-enter {
             animation: modalFadeIn 0.2s ease-out forwards;
         }
-
-        /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 6px;
         }
-
         ::-webkit-scrollbar-track {
             background: #1f2937;
         }
-
         ::-webkit-scrollbar-thumb {
             background: #4b5563;
             border-radius: 4px;
         }
-
-        /* Message bubbles */
         .message-bubble-in {
             background: #374151;
             border-radius: 1rem 1rem 1rem 0;
         }
-
         .message-bubble-out {
             background: #2563eb;
             border-radius: 1rem 1rem 0 1rem;
             color: white;
         }
-        /* Mobile menu toggle */
         .mobile-menu-button {
             display: none;
         }
-
-        /* Modal styling */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -157,12 +140,10 @@
             pointer-events: none;
             transition: opacity 0.2s ease;
         }
-
         .modal-overlay.active {
             opacity: 1;
             pointer-events: all;
         }
-
         .modal-content {
             background-color: #1f2937;
             border-radius: 0.5rem;
@@ -175,27 +156,22 @@
             transform: translateY(20px);
             transition: transform 0.2s ease;
         }
-
         .modal-overlay.active .modal-content {
             transform: translateY(0);
         }
-
         .modal-header {
             padding: 1rem;
             border-bottom: 1px solid #374151;
             flex-shrink: 0;
         }
-
         .modal-body {
             padding: 1rem;
             overflow-y: auto;
             flex-grow: 1;
         }
-
         .user-item:hover {
             background-color: #374151;
         }
-
         .checkbox-container {
             display: inline-block;
             position: relative;
@@ -203,7 +179,6 @@
             cursor: pointer;
             user-select: none;
         }
-
         .checkbox-container input {
             position: absolute;
             opacity: 0;
@@ -221,13 +196,11 @@
             padding: 2rem;
             color: #9ca3af;
         }
-
         .no-conversations-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
             color: #4b5563;
         }
-
         .checkmark {
             position: absolute;
             top: 0;
@@ -239,26 +212,21 @@
             border: 1px solid #4b5563;
             transition: all 0.2s ease;
         }
-
         .checkbox-container:hover input ~ .checkmark {
             background-color: #4b5563;
         }
-
         .checkbox-container input:checked ~ .checkmark {
             background-color: #2563eb;
             border-color: #2563eb;
         }
-
         .checkmark:after {
             content: "";
             position: absolute;
             display: none;
         }
-
         .checkbox-container input:checked ~ .checkmark:after {
             display: block;
         }
-
         .checkbox-container .checkmark:after {
             left: 7px;
             top: 3px;
@@ -268,13 +236,10 @@
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
         }
-
         .btn-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-
-        /* Empty chat state */
         .empty-chat-state {
             display: flex;
             flex-direction: column;
@@ -285,29 +250,24 @@
             padding: 2rem;
             color: #9ca3af;
         }
-
         .empty-chat-icon {
             font-size: 4rem;
             margin-bottom: 1.5rem;
             color: #4b5563;
             opacity: 0.7;
         }
-
         .empty-chat-title {
             font-size: 1.5rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
             color: #d1d5db;
         }
-
         .empty-chat-subtitle {
             font-size: 1rem;
             max-width: 400px;
             line-height: 1.5;
             margin-bottom: 1.5rem;
         }
-
-        /* Group avatar styling */
         .group-name-avatar {
             width: 40px;
             height: 40px;
@@ -320,7 +280,6 @@
             font-weight: bold;
             margin-right: 1rem;
         }
-
         .group-avatar {
             display: flex;
             flex-wrap: wrap;
@@ -328,7 +287,6 @@
             height: 40px;
             position: relative;
         }
-
         .group-avatar-part {
             width: 20px;
             height: 20px;
@@ -342,46 +300,69 @@
             font-size: 0.6rem;
             font-weight: bold;
         }
-
         .group-avatar-part:nth-child(1) {
             top: 0;
             left: 0;
             z-index: 2;
         }
-
         .group-avatar-part:nth-child(2) {
             top: 0;
             right: 0;
             z-index: 2;
         }
-
         .group-avatar-part:nth-child(3) {
             bottom: 0;
             left: 0;
             z-index: 2;
         }
-
         .group-avatar-part:nth-child(4) {
             bottom: 0;
             right: 0;
             z-index: 2;
         }
-
         .hidden-input {
             display: none;
         }
-
         .required-field {
             border: 1px solid #ef4444;
         }
-
         .error-message {
             color: #ef4444;
             font-size: 0.75rem;
             margin-top: 0.25rem;
             display: none;
         }
-
+        .conversations-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .slide-up {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .conversation-item {
+            transition: all 0.3s ease;
+        }
+        .new-conversation {
+            animation: highlight 1.5s ease-out;
+        }
+        @keyframes highlight {
+            from {
+                background-color: rgba(37, 99, 235, 0.3);
+            }
+            to {
+                background-color: transparent;
+            }
+        }
         @media (max-width: 1024px) {
             .mobile-menu-button {
                 display: block;
@@ -418,602 +399,26 @@
 <body>
 <main layout:fragment="content" class="flex-1 flex flex-col overflow-hidden">
     <input id="currentUserId" th:value="${currentUser}" type="hidden">
+    <input id="currentUserName" th:value="${currentUserName}" type="hidden">
     <!-- Start New Chat Modal -->
-    <div class="modal-overlay" id="startChatModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="text-lg font-semibold">Start New Chat</h3>
-            </div>
-            <div class="modal-body">
-                <div class="search-container relative mb-4">
-                    <span class="search-icon material-icons">search</span>
-                    <input class="search-input w-full bg-gray-700 text-white placeholder-gray-400 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Search users..." type="text" id="userSearchStart"/>
-                </div>
-                <div class="user-list-start">
-                    <div th:each="user : ${users}" class="user-item flex items-center p-3 cursor-pointer transition-colors select-user">
-                        <input type="hidden" class="user-id" th:value="${user.userId}" />
-                        <input type="hidden" class="user-firstname" th:value="${user.firstName}" />
-                        <input type="hidden" class="user-lastname" th:value="${user.lastName}" />
-                        <input type="hidden" class="user-online" th:value="${user.online}" />
-
-                        <div class="w-10 h-10 rounded-full mr-3 flex items-center justify-center bg-blue-500 text-white font-medium"
-                             th:text="${#strings.substring(user.firstName, 0, 1) + #strings.substring(user.lastName, 0, 1)}">
-                        </div>
-                        <div class="flex-1">
-                            <div class="font-medium" th:text="${user.firstName + ' ' + user.lastName}"></div>
-                            <div class="text-sm text-gray-400" th:text="${user.email}"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div style="display: none;" class="modal-footer flex justify-end space-x-3">
-                <button class="px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors" id="cancelStartChat">
-                    Cancel
-                </button>
-                <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors" id="confirmStartChat">
-                    Start Chat
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Create Group Chat Modal -->
-    <div class="modal-overlay" id="createGroupModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="text-lg font-semibold">Create Group Chat</h3>
-            </div>
-            <div class="modal-body">
-                <div class="mb-4">
-                    <input class="w-full bg-gray-700 text-white placeholder-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                           placeholder="Group name (required)"
-                           type="text"
-                           id="groupName"
-                           required />
-                    <div class="error-message" id="groupNameError">Group name is required</div>
-                </div>
-                <div class="search-container relative mb-4">
-                    <span class="search-icon material-icons">search</span>
-                    <input class="search-input w-full bg-gray-700 text-white placeholder-gray-400 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Search users..." type="text" id="userSearchGroup"/>
-                </div>
-                <div class="user-list-group">
-                    <div th:each="user : ${users}" class="user-item flex items-center p-3 cursor-pointer transition-colors">
-                        <input type="hidden" class="user-id" th:value="${user.userId}" />
-                        <input type="hidden" class="user-firstname" th:value="${user.firstName}" />
-                        <input type="hidden" class="user-lastname" th:value="${user.lastName}" />
-
-                        <div class="w-10 h-10 rounded-full mr-3 flex items-center justify-center bg-blue-500 text-white font-medium"
-                             th:text="${#strings.substring(user.firstName, 0, 1) + #strings.substring(user.lastName, 0, 1)}">
-                        </div>
-                        <div class="flex-1">
-                            <div class="font-medium" th:text="${user.firstName + ' ' + user.lastName}"></div>
-                            <div class="text-sm text-gray-400" th:text="${user.email}"></div>
-                        </div>
-                        <label class="checkbox-container">
-                            <input type="checkbox" class="user-checkbox" th:value="${user.userId}">
-                            <span class="checkmark"></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer flex justify-end space-x-3">
-                <button class="px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors" id="cancelCreateGroup">
-                    Cancel
-                </button>
-                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg transition-colors btn-disabled" id="confirmCreateGroup" disabled>
-                    Create Group
-                </button>
-            </div>
-        </div>
-    </div>
-
+    <div th:replace="~{chat/startChatModal.html}"></div>
     <div class="flex flex-1 overflow-hidden">
         <!-- Chat sidebar -->
-        <div class="chat-sidebar bg-gray-800 border-r border-gray-700 flex flex-col w-full lg:w-1/4">
-            <div class="p-4 border-b border-gray-700">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-white">Chats</h2>
-                    <button class="p-2 rounded-full hover:bg-gray-700 transition-colors" id="startChatButton">
-                        <span class="material-icons">add</span>
-                    </button>
-                </div>
-                <div class="search-container relative">
-                    <span class="search-icon material-icons">search</span>
-                    <input class="search-input w-full bg-gray-700 text-white placeholder-gray-400 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Search chats..." type="text"/>
-                </div>
-            </div>
-            <div class="no-conversations">
-                <span class="no-conversations-icon material-icons">forum</span>
-                <h3 class="text-xl font-medium mb-2">No conversations yet</h3>
-                <p class="text-gray-400 mb-4">Start a new conversation by clicking the + button above</p>
-            </div>
-            <div class="p-4 border-t border-gray-700">
-                <button class="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all text-sm md:text-base" id="createGroupButton">
-                    <span class="material-icons mr-2">group_add</span>
-                    <span class="hidden sm:inline">Create Group Chat</span>
-                    <span class="sm:hidden">New Group</span>
-                </button>
-            </div>
-        </div>
-
+        <div th:replace="~{chat/sidebar.html}"></div>
         <!-- Chat content -->
         <div class="flex-1 flex flex-col bg-gray-900 w-full">
             <!-- Default header state (no chat selected) -->
-            <div class="flex items-center justify-between p-3 md:p-4 bg-gray-800 border-b border-gray-700" id="chatHeaderDefault">
-                <div class="flex items-center">
-                    <div class="relative">
-                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-2 md:mr-4 bg-gray-600 flex items-center justify-center">
-                            <span class="material-icons text-gray-400">chat</span>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-white text-sm md:text-base">Select a chat</h3>
-                    </div>
-                </div>
-            </div>
-
-            <!-- User chat header (hidden by default) -->
-            <div class="flex items-center justify-between p-3 md:p-4 bg-gray-800 border-b border-gray-700 hidden" id="chatHeaderUser">
-                <div class="flex items-center">
-                    <div class="relative">
-                        <div id="userAvatarContainer" class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-2 md:mr-4 bg-blue-500 flex items-center justify-center text-white">
-                            <!-- Initials will be placed here -->
-                        </div>
-                        <span class="absolute bottom-0 right-0 w-2 h-2 md:w-3 md:h-3 bg-green-500 rounded-full border-2 border-gray-800 hidden" id="userOnlineStatus"></span>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-white text-sm md:text-base" id="userChatName">User Name</h3>
-                        <p class="text-xs md:text-sm text-gray-400" id="userChatStatus">Offline</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-2 md:space-x-4">
-                    <button class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
-                        <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">videocam</span>
-                    </button>
-                    <button class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
-                        <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">call</span>
-                    </button>
-                    <button class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
-                        <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">more_vert</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Group chat header (hidden by default) -->
-            <div class="flex items-center justify-between p-3 md:p-4 bg-gray-800 border-b border-gray-700 hidden" id="chatHeaderGroup">
-                <div class="flex items-center">
-                    <div class="relative">
-                        <div class="group-name-avatar" id="groupNameAvatar">
-                            <!-- Group name initials will be placed here -->
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-white text-sm md:text-base" id="groupChatName">Group Name</h3>
-                        <p class="text-xs md:text-sm text-gray-400" id="groupMembersCount">3 members</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-2 md:space-x-4">
-                    <button class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
-                        <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">videocam</span>
-                    </button>
-                    <button class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
-                        <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">call</span>
-                    </button>
-                    <button class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
-                        <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">more_vert</span>
-                    </button>
-                </div>
-            </div>
-
+            <div th:replace="~{chat/header.html}"></div>
             <!-- Messages container -->
-            <div class="messages-container" id="messagesContainer">
-                <div class="empty-chat-state">
-                    <span class="empty-chat-icon material-icons">sentiment_satisfied_alt</span>
-                    <h3 class="empty-chat-title">No messages yet</h3>
-                    <p class="empty-chat-subtitle">Select a chat to start messaging or create a new conversation</p>
-                </div>
-            </div>
-
+            <div th:replace="~{chat/messages.html}"></div>
             <!-- Message input -->
-            <div class="p-3 md:p-4 bg-gray-800 border-t border-gray-700">
-                <div class="flex items-center bg-gray-700 rounded-full p-1 transition-all focus-within:ring-2 focus-within:ring-blue-500">
-                    <button class="p-1 md:p-2 text-gray-400 hover:text-white transition-colors">
-                        <span class="material-icons text-lg md:text-xl">add_reaction</span>
-                    </button>
-                    <button class="p-1 md:p-2 text-gray-400 hover:text-white transition-colors">
-                        <span class="material-icons text-lg md:text-xl">attach_file</span>
-                    </button>
-                    <input id="messageInput" class="flex-1 bg-transparent px-2 md:px-4 py-1 md:py-2 text-white placeholder-gray-400 focus:outline-none text-sm md:text-base" placeholder="Type a message..." type="text"/>
-                    <button onclick="sendMessageOverWebSocket()" class="bg-blue-600 hover:bg-blue-700 text-white p-1 md:p-2 rounded-full transition-colors">
-                        <span class="material-icons text-lg md:text-xl">send</span>
-                    </button>
-                </div>
-            </div>
+            <div th:replace="~{chat/input.html}"></div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-    <script>
-        const currentUser= document.getElementById('currentUserId').value
-        let stompClient = null;
-        const socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-
-        // Variables to store current chat info
-        let currentChat = {
-            type: null, // 'user' or 'group'
-            id: null,   // user ID or group ID
-            name: null, // user name or group name
-            userIds: [] // array of user IDs (for groups)
-        };
-
-        // Connect to WebSocket
-        stompClient.connect({}, function (frame) {
-            console.log('Connected:', frame);
-            stompClient.subscribe(`/topic/group/${currentUser}`, function (message) {
-                handleIncomingMessage(message);
-            });
-        }, function (error) {
-            console.error('WebSocket connection error:', error);
-        });
-
-        function handleIncomingMessage(message) {
-            try {
-                const receivedMessage = JSON.parse(message.body);
-                console.log('Received message:', receivedMessage);
-                if(currentChat.id == receivedMessage.senderId ){
-                // Display the message in the UI (as incoming message)
-                displayMessage(receivedMessage.content, false);
-                }else{
-                alert('New message: ' + receivedMessage.content);
-                }
-            } catch (error) {
-                console.error('Error parsing message:', error);
-            }
-        }
-
-        function clearChatDisplay() {
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.innerHTML = `
-                <div class="empty-chat-state">
-                    <span class="empty-chat-icon material-icons">sentiment_satisfied_alt</span>
-                    <h3 class="empty-chat-title">No messages yet</h3>
-                    <p class="empty-chat-subtitle">Select a chat to start messaging or create a new conversation</p>
-                </div>
-            `;
-        }
-
-        function displayMessage(message, isOutgoing = true) {
-            const messagesContainer = document.getElementById('messagesContainer');
-            const emptyState = messagesContainer.querySelector('.empty-chat-state');
-
-            // Hide empty state if it exists and isn't already hidden
-            if (emptyState && !emptyState.classList.contains('hidden')) {
-                emptyState.classList.add('hidden');
-            }
-
-            // Create message element
-            const messageElement = document.createElement('div');
-            messageElement.className = `message ${isOutgoing ? 'message-out' : 'message-in'}`;
-            messageElement.textContent = message;
-
-            // Add timestamp
-            const timestamp = document.createElement('div');
-            timestamp.className = 'text-xs mt-1 text-right text-gray-400';
-            timestamp.textContent = new Date().toLocaleTimeString();
-            messageElement.appendChild(timestamp);
-
-            // Add to container
-            messagesContainer.appendChild(messageElement);
-
-            // Scroll to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        function sendMessageOverWebSocket() {
-            const messageInput = document.getElementById('messageInput');
-            const messageContent = messageInput.value.trim();
-
-            if (!messageContent) {
-                console.warn('Message cannot be empty');
-                return;
-            }
-
-            if (!currentChat.type) {
-                console.warn('No chat selected to send message to');
-                return;
-            }
-
-            // Display message immediately in UI
-            displayMessage(messageContent, true);
-
-            if (stompClient && stompClient.connected) {
-                // Prepare message data
-                const messageData = {
-                    senderId: currentUser,
-                    receiverId: currentChat.id,
-                    content: messageContent,
-                    timestamp: new Date().toISOString()
-                };
-
-                console.log('Sending message:', messageData);
-
-                // Send via WebSocket
-                if (currentChat.type === 'user') {
-                    stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(messageData));
-                } else if (currentChat.type === 'group') {
-                    stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({
-                        ...messageData,
-                        groupId: currentChat.id
-                    }));
-                }
-            } else {
-                console.warn('WebSocket is not connected.');
-            }
-
-            // Clear input after sending
-            messageInput.value = '';
-        }
-
-        // Helper function to get initials from group name
-        function getGroupInitials(name) {
-            // Remove special characters and split into words
-            const words = name.replace(/[^\w\s]/g, '').split(/\s+/);
-
-            if (words.length === 0) return '';
-            if (words.length === 1) return words[0].charAt(0).toUpperCase();
-
-            // Get first letters of first two words
-            return words[0].charAt(0).toUpperCase() +
-                   words[words.length - 1].charAt(0).toUpperCase();
-        }
-
-        // Modal elements
-        const startChatModal = document.getElementById('startChatModal');
-        const startChatButton = document.getElementById('startChatButton');
-        const cancelStartChat = document.getElementById('cancelStartChat');
-        const confirmStartChat = document.getElementById('confirmStartChat');
-        const userSearchStart = document.getElementById('userSearchStart');
-
-        const createGroupModal = document.getElementById('createGroupModal');
-        const createGroupButton = document.getElementById('createGroupButton');
-        const cancelCreateGroup = document.getElementById('cancelCreateGroup');
-        const confirmCreateGroup = document.getElementById('confirmCreateGroup');
-        const userSearchGroup = document.getElementById('userSearchGroup');
-        const groupName = document.getElementById('groupName');
-        const groupNameError = document.getElementById('groupNameError');
-        const userCheckboxes = document.querySelectorAll('.user-checkbox');
-
-        // Header elements
-        const chatHeaderDefault = document.getElementById('chatHeaderDefault');
-        const chatHeaderUser = document.getElementById('chatHeaderUser');
-        const chatHeaderGroup = document.getElementById('chatHeaderGroup');
-        const userChatName = document.getElementById('userChatName');
-        const userChatStatus = document.getElementById('userChatStatus');
-        const userOnlineStatus = document.getElementById('userOnlineStatus');
-        const userAvatarContainer = document.getElementById('userAvatarContainer');
-        const groupChatName = document.getElementById('groupChatName');
-        const groupMembersCount = document.getElementById('groupMembersCount');
-        const groupNameAvatar = document.getElementById('groupNameAvatar');
-
-        // Start Chat Modal functionality
-        startChatButton.addEventListener('click', function() {
-            startChatModal.classList.add('active');
-        });
-
-        cancelStartChat.addEventListener('click', function() {
-            startChatModal.classList.remove('active');
-        });
-
-        confirmStartChat.addEventListener('click', function() {
-            startChatModal.classList.remove('active');
-        });
-
-        // User search functionality for start chat
-        userSearchStart.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const userItems = document.querySelectorAll('.user-list-start .user-item');
-
-            userItems.forEach(item => {
-                const userName = item.querySelector('.font-medium').textContent.toLowerCase();
-                if (userName.includes(searchTerm)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
-
-        // Create Group Modal functionality
-        createGroupButton.addEventListener('click', function() {
-            createGroupModal.classList.add('active');
-        });
-
-        cancelCreateGroup.addEventListener('click', function() {
-            createGroupModal.classList.remove('active');
-            resetGroupForm();
-        });
-
-        // Validate group name on input
-        groupName.addEventListener('input', function() {
-            validateGroupForm();
-        });
-
-        // Update Create Group button state based on selections
-        function updateCreateGroupButton() {
-            const checkedBoxes = document.querySelectorAll('.user-checkbox:checked');
-            const isGroupNameValid = groupName.value.trim() !== '';
-
-            if (checkedBoxes.length >= 2 && isGroupNameValid) {
-                confirmCreateGroup.disabled = false;
-                confirmCreateGroup.classList.remove('btn-disabled');
-                confirmCreateGroup.classList.add('hover:bg-blue-700');
-            } else {
-                confirmCreateGroup.disabled = true;
-                confirmCreateGroup.classList.add('btn-disabled');
-                confirmCreateGroup.classList.remove('hover:bg-blue-700');
-            }
-        }
-
-        // Validate group form
-        function validateGroupForm() {
-            if (groupName.value.trim() === '') {
-                groupName.classList.add('required-field');
-                groupNameError.style.display = 'block';
-            } else {
-                groupName.classList.remove('required-field');
-                groupNameError.style.display = 'none';
-            }
-            updateCreateGroupButton();
-        }
-
-        // Reset group form
-        function resetGroupForm() {
-            groupName.value = '';
-            groupName.classList.remove('required-field');
-            groupNameError.style.display = 'none';
-            userCheckboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            updateCreateGroupButton();
-        }
-
-        // Add event listeners to checkboxes
-        userCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateCreateGroupButton);
-        });
-
-        confirmCreateGroup.addEventListener('click', function() {
-            // Validate form before proceeding
-            if (groupName.value.trim() === '') {
-                groupName.classList.add('required-field');
-                groupNameError.style.display = 'block';
-                return;
-            }
-
-            const name = groupName.value.trim();
-            const checkedBoxes = document.querySelectorAll('.user-checkbox:checked');
-            const selectedUserIds = Array.from(checkedBoxes).map(cb => cb.value);
-
-            // Get selected users from the DOM
-            const selectedUsers = Array.from(document.querySelectorAll('.user-list-group .user-item'))
-                .filter(item => {
-                    const checkbox = item.querySelector('.user-checkbox');
-                    return checkbox.checked;
-                })
-                .map(item => {
-                    return {
-                        id: item.querySelector('.user-id').value,
-                        firstName: item.querySelector('.user-firstname').value,
-                        lastName: item.querySelector('.user-lastname').value,
-                        initials: item.querySelector('.rounded-full').textContent
-                    };
-                });
-
-            // Clear previous chat display
-            clearChatDisplay();
-
-            // Generate a simple group ID (in a real app, this would come from the server)
-            const groupId = 'group-' + Math.random().toString(36).substr(2, 9);
-
-            // Update current chat info
-            currentChat = {
-                type: 'group',
-                id: groupId,
-                name: name,
-                userIds: selectedUserIds
-            };
-
-            // Update the group chat header
-            chatHeaderDefault.classList.add('hidden');
-            chatHeaderUser.classList.add('hidden');
-            chatHeaderGroup.classList.remove('hidden');
-
-            groupChatName.textContent = name;
-            groupMembersCount.textContent = `${selectedUserIds.length} members`;
-
-            // Set group name avatar with initials
-            groupNameAvatar.textContent = getGroupInitials(name);
-
-            createGroupModal.classList.remove('active');
-            resetGroupForm();
-        });
-
-        // User search functionality for group chat
-        userSearchGroup.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const userItems = document.querySelectorAll('.user-list-group .user-item');
-
-            userItems.forEach(item => {
-                const userName = item.querySelector('.font-medium').textContent.toLowerCase();
-                if (userName.includes(searchTerm)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
-
-        // Close modals when clicking outside
-        startChatModal.addEventListener('click', function(e) {
-            if (e.target === startChatModal) {
-                startChatModal.classList.remove('active');
-            }
-        });
-
-        createGroupModal.addEventListener('click', function(e) {
-            if (e.target === createGroupModal) {
-                createGroupModal.classList.remove('active');
-                resetGroupForm();
-            }
-        });
-
-        // User selection in start chat modal
-        document.querySelectorAll('.select-user').forEach(user => {
-            user.addEventListener('click', function() {
-                const userId = this.querySelector('.user-id').value;
-                const firstName = this.querySelector('.user-firstname').value;
-                const lastName = this.querySelector('.user-lastname').value;
-                const online = this.querySelector('.user-online').value === 'true';
-                const initials = this.querySelector('.rounded-full').textContent;
-
-                // Clear previous chat display
-                clearChatDisplay();
-
-                // Update current chat info
-                currentChat = {
-                    type: 'user',
-                    id: userId,
-                    name: `${firstName} ${lastName}`,
-                    userIds: [userId] // Single user array
-                };
-
-                // Update the user chat header
-                chatHeaderDefault.classList.add('hidden');
-                chatHeaderGroup.classList.add('hidden');
-                chatHeaderUser.classList.remove('hidden');
-
-                userChatName.textContent = currentChat.name;
-                userAvatarContainer.textContent = initials;
-
-                // Update online status
-                if (online) {
-                    userChatStatus.textContent = "Online";
-                    userChatStatus.classList.remove('text-gray-400');
-                    userChatStatus.classList.add('text-green-400');
-                    userOnlineStatus.classList.remove('hidden');
-                } else {
-                    userChatStatus.textContent = "Offline";
-                    userChatStatus.classList.remove('text-green-400');
-                    userChatStatus.classList.add('text-gray-400');
-                    userOnlineStatus.classList.add('hidden');
-                }
-
-                startChatModal.classList.remove('active');
-            });
-        });
-    </script>
+    <script src="/js/chat.js"></script>
 </main>
 </body>
 </html>

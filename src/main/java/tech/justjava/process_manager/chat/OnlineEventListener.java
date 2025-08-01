@@ -31,7 +31,7 @@ public class OnlineEventListener {
         String userId = getUserId(event);
         if (userId != null) {
             onlineUsers.add(userId);
-            System.out.println("User connected to Web Socket: " + getUserEmail(event));
+            System.out.println("User connected to Web Socket: " + getUserId(event));
             messagingTemplate.convertAndSend("/topic/online", getStatusPayload(userId, true));
         }
     }
@@ -41,7 +41,7 @@ public class OnlineEventListener {
         String userId = getUserId(event);
         if (userId != null) {
             onlineUsers.remove(userId);
-            System.out.println("User disconnected from Web Socket: " + getUserEmail(event));
+            System.out.println("User disconnected from Web Socket: " + getUserFullName(event));
             messagingTemplate.convertAndSend("/topic/online", getStatusPayload(userId, false));
         }
     }
@@ -51,6 +51,10 @@ public class OnlineEventListener {
                 .map(Principal::getName).orElse(null);
     }
 
+    private String getUserFullName(AbstractSubProtocolEvent event) {
+        OAuth2AuthenticationToken auth = (OAuth2AuthenticationToken) event.getUser();
+        return auth.getPrincipal().getAttributes().get("name").toString();
+    }
     private String getUserEmail(AbstractSubProtocolEvent event) {
         OAuth2AuthenticationToken auth = (OAuth2AuthenticationToken) event.getUser();
         return auth.getPrincipal().getAttributes().get("email").toString();
