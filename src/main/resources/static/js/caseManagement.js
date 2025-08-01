@@ -377,47 +377,70 @@ const DocumentController = {
         this.hideModal(this.editorModal);
     },
 
-    // HTMX integration
+    // HTMX integration for lawyer document generation
     setupHTMXHandlers() {
-            document.body.addEventListener('htmx:afterRequest', (evt) => {
-                if (evt.detail.successful && evt.detail.requestConfig.path === '/forms/generate-lawyer-doc') {
-                    const button = evt.detail.elt;
-                    if (!button) return;
+        document.body.addEventListener('htmx:afterRequest', (evt) => {
+            if (evt.detail.successful && evt.detail.requestConfig.path.includes('/forms/generate-lawyer-doc/')) {
+                const button = evt.detail.elt;
+                if (!button) return;
 
-                    const card = button.closest('.case-document-card');
-                    if (!card) return;
+                const card = button.closest('.case-document-card');
+                if (!card) return;
 
-                    const status = card.querySelector('.case-status-badge');
-                    const generateBtn = card.querySelector('.generate-btn');
-                    const editBtn = card.querySelector('.edit-btn');
-                    const downloadBtn = card.querySelector('.download-btn');
-                    const displayDiv = card.querySelector('.case-generated-content-display');
-                    const editTextarea = card.querySelector('.case-generated-content-edit');
+                // Extract the index from the button ID
+                const index = button.id.split('-')[2];
 
-                    if (status && generateBtn && editBtn && downloadBtn && displayDiv) {
-                        // Get the raw text content from the response and trim whitespace
-                        let generatedContent = evt.detail.xhr.responseText.trim();
+                const status = document.getElementById('status-' + index);
+                const generateBtn = document.getElementById('generate-btn-' + index);
+                const editBtn = document.getElementById('edit-btn-' + index);
+                const downloadBtn = document.getElementById('download-btn-' + index);
+                const displayDiv = document.getElementById('display-content-' + index);
+                const editTextarea = document.getElementById('edit-content-' + index);
 
-                        // Strip any HTML tags if present
-                        generatedContent = generatedContent.replace(/<[^>]*>/g, '');
+                if (status && generateBtn && editBtn && downloadBtn && displayDiv) {
+                    // Get the raw text content from the response and trim whitespace
+                    let generatedContent = evt.detail.xhr.responseText.trim();
 
-                        // Update the display div with the clean content
-                        displayDiv.textContent = generatedContent;
-                        displayDiv.style.display = 'block';
+                    // Update the display div with the clean content
+                    displayDiv.textContent = generatedContent;
+                    displayDiv.style.display = 'block';
 
-                        // Update status
-                        status.textContent = 'Generated';
-                        status.classList.add('generated');
+                    // Update status
+                    status.textContent = 'Generated';
+                    status.style.backgroundColor = 'var(--success)';
 
-                        // Transform buttons
-                        generateBtn.style.display = 'none';
-                        editBtn.style.display = 'inline-flex';
-                        downloadBtn.style.display = 'inline-flex';
-                    }
+                    // Show action buttons
+                    generateBtn.style.display = 'none';
+                    editBtn.style.display = 'inline-flex';
+                    downloadBtn.style.display = 'inline-flex';
                 }
-            });
-        }
-    };
+            }
+        });
+
+        // Handle HTMX afterSwap event for content updates
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            if (evt.detail.target.id.startsWith('display-content-')) {
+                const index = evt.detail.target.id.split('-')[2];
+                const statusBadge = document.getElementById(`status-${index}`);
+                const editBtn = document.getElementById(`edit-btn-${index}`);
+                const downloadBtn = document.getElementById(`download-btn-${index}`);
+
+                if (statusBadge) {
+                    statusBadge.textContent = 'Generated';
+                    statusBadge.style.backgroundColor = 'var(--success)';
+                }
+
+                if (editBtn) {
+                    editBtn.style.display = 'inline-flex';
+                }
+
+                if (downloadBtn) {
+                    downloadBtn.style.display = 'inline-flex';
+                }
+            }
+        });
+    }
+};
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

@@ -61,6 +61,7 @@
                 </div>
 
                 <!-- Lawyer Documents Tab -->
+                <!-- Lawyer Documents Tab -->
                 <div id="lawyer-documents" class="case-tab-content">
                     <div style="display: flex; flex-direction: column; gap: 1rem;">
                         <div th:each="doc, iter : ${aiResponse.lawyerDocuments}" class="case-document-card">
@@ -84,9 +85,10 @@
                             <div class="case-action-buttons">
                                 <input type="hidden" th:name="docName" th:value="${doc}" th:id="'doc-' + ${iter.index}" />
                                 <button
-                                        hx-post="/forms/generate-lawyer-doc"
-                                        th:attr="hx-include='#doc-' + ${iter.index}"
-                                        hx-swap="none"
+                                        hx-post="/forms/generate-lawyer-doc/{docName}"
+                                        th:attr="hx-post='/forms/generate-lawyer-doc/' + ${doc},
+                                 hx-target='#display-content-' + ${iter.index},
+                                 hx-swap='innerHTML'"
                                         hx-disabled-elt="this"
                                         class="case-btn case-btn-primary generate-btn"
                                         th:id="'generate-btn-' + ${iter.index}"
@@ -113,7 +115,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Court Documents Tab -->
                 <div id="court-documents" class="case-tab-content">
                     <form>

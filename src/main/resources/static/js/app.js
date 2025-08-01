@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Dark mode toggle
+  // Theme toggle functionality
   const modeToggleBtn = document.getElementById('mode-toggle');
   const body = document.body;
   const html = document.documentElement;
@@ -454,6 +454,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const ICON_SUN = 'wb_sunny';
 
   function setMode(mode) {
+    // Remove all theme classes first
+    body.classList.remove('light-mode');
+    html.classList.remove('dark');
+    
+    // Apply the new theme
     if (mode === 'light') {
       body.classList.add('light-mode');
       html.classList.remove('dark');
@@ -462,27 +467,48 @@ document.addEventListener('DOMContentLoaded', function () {
       html.classList.add('dark');
     }
 
+    // Update the icon
     if (modeToggleBtn) {
       const icon = modeToggleBtn.querySelector('.material-icons');
       if (icon) {
         icon.textContent = mode === 'light' ? ICON_SUN : ICON_MOON;
       }
     }
+
+    // Trigger a custom event for other components that might need to react to theme changes
+    document.dispatchEvent(new CustomEvent('themeChanged', { detail: { mode } }));
   }
 
-  const savedMode = localStorage.getItem(MODE_KEY);
-  if (savedMode === 'light' || savedMode === 'dark') {
-    setMode(savedMode);
-  } else {
-    setMode('dark');
+  // Initialize theme on page load
+  function initializeTheme() {
+    const savedMode = localStorage.getItem(MODE_KEY);
+    if (savedMode === 'light' || savedMode === 'dark') {
+      setMode(savedMode);
+    } else {
+      // Default to dark mode if no preference is saved
+      setMode('dark');
+    }
   }
 
+  // Initialize theme immediately
+  initializeTheme();
+
+  // Add click event listener for theme toggle
   if (modeToggleBtn) {
-    modeToggleBtn.addEventListener('click', function () {
+    modeToggleBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
       const isCurrentlyLight = body.classList.contains('light-mode');
       const newMode = isCurrentlyLight ? 'dark' : 'light';
+      
+      // Save to localStorage
       localStorage.setItem(MODE_KEY, newMode);
+      
+      // Apply the new theme
       setMode(newMode);
+      
+      console.log('Theme changed to:', newMode);
     });
   }
 });

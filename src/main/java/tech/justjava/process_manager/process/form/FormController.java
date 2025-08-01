@@ -6,6 +6,7 @@ import org.flowable.engine.RuntimeService;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -181,20 +182,19 @@ public class FormController {
         return "form/caseManagement";
     }
 
-    @PostMapping("/generate-lawyer-doc")
-    public String generateLawyerDoc(@RequestParam String docName, Model model) {
+    @PostMapping("/generate-lawyer-doc/{docName}")
+    public ResponseEntity<String> generateLawyerDoc(@PathVariable String docName) {
         // Just return the same template for all documents
 
         Map<String, String> legalRequest = new HashMap<>();
         legalRequest.put("scenerio","I was forcefully evicted by the landlord who removed the roof without a court order. Rent was paid in full.");
-        legalRequest.put("documentType", "Statement of claim");
+        legalRequest.put("documentType", docName);
         String response = supportFeignClient.generateLegalDocument(legalRequest);
+        response = response.replace("```plaintext\n", "").replace("```", "");
 
         System.out.println(" The Response===="+response);
 
         //System.out.println(" Markdown version=="+markdownService.convertToHtml(response));
-        model.addAttribute("docName", "Statement of claim");
-        model.addAttribute("generatedContent", response);
-        return "form/generated-lawyer-doc";
+        return ResponseEntity.ok(response);
     }
 }
