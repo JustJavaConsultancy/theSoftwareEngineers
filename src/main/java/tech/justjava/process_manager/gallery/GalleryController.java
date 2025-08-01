@@ -55,8 +55,142 @@ public class GalleryController {
     }
 
     @GetMapping("/addFile")
-    public String uploadFile() {
+    public String uploadFile(Model model) {
+        // Add case tag options to the model
+        List<CaseTagOption> caseTagOptions = getCaseTagOptions();
+        model.addAttribute("caseTagOptions", caseTagOptions);
         return "addFile";
+    }
+
+    @PostMapping("/addFile")
+    public String handleFileUpload(@RequestParam("files") MultipartFile[] files,
+                                   @RequestParam(value = "caseTags", required = false) List<String> caseTags,
+                                   @RequestParam(value = "caseValues", required = false) List<String> caseValues,
+                                   Model model) {
+
+        List<String> uploadResults = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+
+        // Build case tags JSON from form data
+        String caseTagsJson = buildCaseTagsJson(caseTags, caseValues);
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                try {
+                    String result = uploadSingleFile(file, caseTagsJson);
+                    uploadResults.add("Successfully uploaded: " + file.getOriginalFilename());
+                } catch (Exception e) {
+                    errors.add("Failed to upload " + file.getOriginalFilename() + ": " + e.getMessage());
+                }
+            }
+        }
+
+        model.addAttribute("uploadResults", uploadResults);
+        model.addAttribute("errors", errors);
+        model.addAttribute("caseTagOptions", getCaseTagOptions());
+
+        if (errors.isEmpty()) {
+            return "redirect:/gallery";
+        } else {
+            return "addFile";
+        }
+    }
+
+    private String uploadSingleFile(MultipartFile file, String caseTagsJson) throws Exception {
+        String originalFilename = file.getOriginalFilename();
+        String fileExtension = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        // Generate case number for committed files
+        long committedCount = fileInfoRepository.countByStatus("COMMITTED");
+        String caseNumber = "CASE-" + String.format("%04d", committedCount + 1);
+
+        // Create metadata map - only fileName and caseTags
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("fileName", originalFilename);
+        if (caseTagsJson != null && !caseTagsJson.trim().isEmpty()) {
+            metadata.put("caseTags", caseTagsJson);
+        }
+
+        // Upload file with metadata to microservice
+        String uploadResponse;
+        try {
+            // Convert metadata map to JSON string
+            String metadataJson = objectMapper.writeValueAsString(metadata);
+            uploadResponse = fileFeignClient.uploadWithMetaData(file, metadataJson);
+
+            if (uploadResponse == null || uploadResponse.trim().isEmpty()) {
+                throw new RuntimeException("Failed to upload file to storage service - no response");
+            }
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("413")) {
+                throw new RuntimeException("File is too large");
+            }
+            throw new RuntimeException("Failed to upload file to microservice: " + e.getMessage());
+        }
+
+        // Extract ID from response
+        String fileId = uploadResponse;
+        if (uploadResponse != null && uploadResponse.startsWith("File stored with ID: ")) {
+            fileId = uploadResponse.substring("File stored with ID: ".length()).trim();
+        }
+
+        // Create file info entity
+        FileInfo fileInfo = new FileInfo();
+        fileInfo.setId(UUID.randomUUID().toString());
+        fileInfo.setName(originalFilename);
+        fileInfo.setMicroserviceFileId(fileId);
+        fileInfo.setType(getFileType(fileExtension));
+        fileInfo.setSize(formatFileSize(file.getSize()));
+        fileInfo.setCaseNumber(caseNumber);
+        fileInfo.setDateAdded(LocalDateTime.now());
+        fileInfo.setStatus("COMMITTED");
+        fileInfo.setSessionId(null);
+
+        // Save to database
+        fileInfoRepository.save(fileInfo);
+
+        return fileId;
+    }
+
+    private String buildCaseTagsJson(List<String> caseTags, List<String> caseValues) {
+        if (caseTags == null || caseValues == null) {
+            return null;
+        }
+
+        List<Map<String, Object>> caseTagsList = new ArrayList<>();
+        for (int i = 0; i < Math.min(caseTags.size(), caseValues.size()); i++) {
+            if (caseTags.get(i) != null && !caseTags.get(i).trim().isEmpty()) {
+                Map<String, Object> caseTag = new HashMap<>();
+                caseTag.put("tag", caseTags.get(i));
+                caseTag.put("value", caseValues.get(i) != null ? caseValues.get(i) : "");
+                caseTag.put("index", i);
+                caseTagsList.add(caseTag);
+            }
+        }
+
+        try {
+            return objectMapper.writeValueAsString(caseTagsList);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private List<CaseTagOption> getCaseTagOptions() {
+        List<CaseTagOption> options = new ArrayList<>();
+        options.add(new CaseTagOption("evidence", "Evidence"));
+        options.add(new CaseTagOption("witness-statement", "Witness Statement"));
+        options.add(new CaseTagOption("forensic-report", "Forensic Report"));
+        options.add(new CaseTagOption("legal-document", "Legal Document"));
+        options.add(new CaseTagOption("investigation-notes", "Investigation Notes"));
+        options.add(new CaseTagOption("surveillance", "Surveillance"));
+        options.add(new CaseTagOption("interview-recording", "Interview Recording"));
+        options.add(new CaseTagOption("crime-scene-photo", "Crime Scene Photo"));
+        options.add(new CaseTagOption("expert-testimony", "Expert Testimony"));
+        options.add(new CaseTagOption("case-summary", "Case Summary"));
+        return options;
     }
 
     @PostMapping("/api/files/uploadWithMetaData")
@@ -449,5 +583,22 @@ public class GalleryController {
 
         public String getFilename() { return microserviceFileId; }
         public void setFilename(String filename) { this.microserviceFileId = filename; }
+    }
+
+    // Case tag option class for the view
+    public static class CaseTagOption {
+        private String value;
+        private String label;
+
+        public CaseTagOption(String value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+
+        public String getValue() { return value; }
+        public void setValue(String value) { this.value = value; }
+
+        public String getLabel() { return label; }
+        public void setLabel(String label) { this.label = label; }
     }
 }
