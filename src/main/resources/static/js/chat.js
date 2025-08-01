@@ -1,4 +1,5 @@
 const currentUser = document.getElementById('currentUserId').value;
+let isUserOnline = true
        const currentUserName = document.getElementById('currentUserName').value;
        let stompClient = null;
        const socket = new SockJS('/ws');
@@ -27,6 +28,10 @@ const currentUser = document.getElementById('currentUserId').value;
            // Subscribe to group messages
            stompClient.subscribe(`/topic/group/${currentUser}`, function (message) {
                handleIncomingMessage(message);
+           });
+           //Subscribe to user online status
+           stompClient.subscribe(`/topic/online/`, function (message) {
+                alert(message);
            });
 
        }, function (error) {
