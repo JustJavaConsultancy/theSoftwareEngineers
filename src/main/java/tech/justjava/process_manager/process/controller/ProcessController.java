@@ -180,7 +180,7 @@ processInstances.forEach(processInstance -> {
         System.out.println(" process name===="+process.getName());
         System.out.println(" process id===="+process.getId());
         String userPrompt= process.getDocumentation();
-        System.out.println(" process documentation ===="+userPrompt);
+        //System.out.println(" process documentation ===="+userPrompt);
         String formThymeleaf=null;
         Optional<Form> form=formService.findByFormCode(processKey);
         if(form.isPresent()){
@@ -216,14 +216,17 @@ processInstances.forEach(processInstance -> {
     }
     @PostMapping("/start")
     public String handleFormSubmit(@RequestParam Map<String,Object> formData) {
-        System.out.println(" The Form Data==="+formData);
+        //System.out.println(" The Form Data==="+formData);
 
         String hashCode= String.valueOf((String.valueOf(authenticationManager.get("preferred_username"))+String.valueOf(System.currentTimeMillis())).hashCode());
 
         ProcessInstance processInstance=
                 runtimeService.startProcessInstanceById(formData.get("id").toString(),hashCode,formData);
 
-        System.out.println("  The Process Instance Variables ==="+processInstance.getProcessVariables());
+        Map<String,Object> processVariable=processInstance.getProcessVariables();
+
+        //System.out.println("  The Process Instance Variables ==="+processVariable);
+        //System.out.println("  The aiBriefAnalysis ==="+processVariable);
         return "process/success";
     }
     @GetMapping("/startProcess")

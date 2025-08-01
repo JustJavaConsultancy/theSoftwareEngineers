@@ -21,7 +21,12 @@ public class StringToMapConverter implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) {
-        Map<String, Object> payload = new HashMap<>();
+
+        System.out.println(" The Execution Variables===="+execution.getVariables());
+
+        System.out.println(" The variableToConvertToMap.getExpressionText()===="+variableToConvertToMap.getExpressionText());
+
+        //Map<String, Object> payload = new HashMap<>();
         String variableName= (String) execution.getVariable(variableToConvertToMap.getExpressionText());
 
         //variableName = variableName.replace("```json","").replace("```","");

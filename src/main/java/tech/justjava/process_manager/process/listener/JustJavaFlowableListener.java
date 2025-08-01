@@ -11,6 +11,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import tech.justjava.process_manager.account.AuthenticationManager;
 
+import java.util.Map;
+
 @Component
 public class JustJavaFlowableListener implements FlowableEventListener {
 
@@ -38,8 +40,20 @@ public class JustJavaFlowableListener implements FlowableEventListener {
 
                 if (event.getType() == FlowableEngineEventType.TASK_CREATED) {
 
+                    System.out.println(" The Task Name Around Here===="+task.getName());
                     runtimeService.setVariable(task.getProcessInstanceId(), "currentTask", task.getName());
                     String setAssignee= (String) runtimeService.getVariable(task.getProcessInstanceId(),"initiator");
+                    Map<String,Object> processVariables=runtimeService.getVariables(task.getProcessInstanceId());
+
+                    System.out.println(" The processVariables inside here ==="+processVariables);
+
+
+                    Map<String,Object> aiBriefAnalysis= (Map<String, Object>) processVariables.get("aiBriefAnalysis");
+
+                    Boolean isComplete = (Boolean) aiBriefAnalysis.get("isComplete");
+
+                    System.out.println(" The aiBriefAnalysis inside here ==="+aiBriefAnalysis);
+                    System.out.println(" The isComplete inside here ==="+isComplete);
                     System.out.println(" The set assignee==="+setAssignee);
 
                     task.getProcessVariables().put("currentTask",task.getName());
