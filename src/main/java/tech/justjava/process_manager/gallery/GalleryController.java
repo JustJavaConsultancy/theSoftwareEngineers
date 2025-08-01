@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping
@@ -21,11 +22,13 @@ public class GalleryController {
 
     private final FileFeignClient fileFeignClient;
     private final FileInfoRepository fileInfoRepository;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public GalleryController(FileFeignClient fileFeignClient, FileInfoRepository fileInfoRepository) {
+    public GalleryController(FileFeignClient fileFeignClient, FileInfoRepository fileInfoRepository, ObjectMapper objectMapper) {
         this.fileFeignClient = fileFeignClient;
         this.fileInfoRepository = fileInfoRepository;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping("/gallery")
@@ -56,58 +59,95 @@ public class GalleryController {
         return "addFile";
     }
 
-    @PostMapping("/api/files/upload")
+    @PostMapping("/api/files/uploadWithMetaData")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> uploadFile(@RequestParam("file") MultipartFile file,
-                                                          HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> uploadFileWithMetadata(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "caseTags", required = false) String caseTagsJson,
+            HttpServletRequest request) {
+
         Map<String, Object> response = new HashMap<>();
         String sessionId = request.getSession().getId();
 
+        System.out.println("=== uploadWithMetaData endpoint called ===");
+        System.out.println("File name: " + (file != null ? file.getOriginalFilename() : "null"));
+        System.out.println("File size: " + (file != null ? file.getSize() : "null"));
+        System.out.println("Case tags: " + caseTagsJson);
+
         try {
-            if (file.isEmpty()) {
+            if (file == null || file.isEmpty()) {
+                System.out.println("ERROR: File is empty or null");
                 response.put("status", "error");
                 response.put("message", "File is empty");
                 return ResponseEntity.badRequest().body(response);
             }
-
-            // Upload file to microservice
-            ResponseEntity<String> uploadResponse;
-            try {
-                uploadResponse = fileFeignClient.uploadFile(file);
-                if (!uploadResponse.getStatusCode().is2xxSuccessful() || uploadResponse.getBody() == null) {
-                    String errorMessage = "Failed to upload file. ";
-                    if (uploadResponse.getStatusCode().value() == 413) {
-                        errorMessage = "File is too large";
-                    }
-                    response.put("status", "error");
-                    response.put("message", errorMessage);
-                    return ResponseEntity.status(uploadResponse.getStatusCode().value()).body(response);
-                }
-            } catch (Exception e) {
-                String errorMessage = "Failed to upload file. ";
-                if (e.getMessage() != null && e.getMessage().contains("413")) {
-                    errorMessage = "File is too large";
-                }
-                response.put("status", "error");
-                response.put("message", errorMessage);
-                return ResponseEntity.status(500).body(response);
-            }
-
-            String responseBody = uploadResponse.getBody();
-            System.out.println("Upload response: " + responseBody);
-
-            // Extract ID from response like "File stored with ID: abc123"
-            String fileId = responseBody;
-            if (responseBody != null && responseBody.startsWith("File stored with ID: ")) {
-                fileId = responseBody.substring("File stored with ID: ".length()).trim();
-            }
-            System.out.println("Extracted file ID: " + fileId);
 
             String originalFilename = file.getOriginalFilename();
             String fileExtension = "";
             if (originalFilename != null && originalFilename.contains(".")) {
                 fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
             }
+
+            System.out.println("Processing file: " + originalFilename + " with extension: " + fileExtension);
+
+            // Generate case number for committed files
+            long committedCount = fileInfoRepository.countByStatus("COMMITTED");
+            String caseNumber = "CASE-" + String.format("%04d", committedCount + 1);
+
+            System.out.println("Generated case number: " + caseNumber);
+
+            // Create metadata map - only fileName and caseTags
+            Map<String, String> metadata = new HashMap<>();
+            metadata.put("fileName", originalFilename);
+            if (caseTagsJson != null && !caseTagsJson.trim().isEmpty()) {
+                metadata.put("caseTags", caseTagsJson);
+            }
+
+            System.out.println("=== Metadata created ===");
+            for (Map.Entry<String, String> entry : metadata.entrySet()) {
+                System.out.println(entry.getKey() + ": " + entry.getValue());
+            }
+
+            // Upload file with metadata to microservice
+            String uploadResponse;
+            try {
+                System.out.println("=== Calling microservice uploadWithMetaData ===");
+                // Convert metadata map to JSON string
+                String metadataJson = objectMapper.writeValueAsString(metadata);
+                System.out.println("Metadata JSON: " + metadataJson);
+
+                uploadResponse = fileFeignClient.uploadWithMetaData(file, metadataJson);
+                System.out.println("Microservice upload response: " + uploadResponse);
+
+                if (uploadResponse == null || uploadResponse.trim().isEmpty()) {
+                    System.out.println("ERROR: Microservice returned null or empty response");
+                    response.put("status", "error");
+                    response.put("message", "Failed to upload file to storage service - no response");
+                    return ResponseEntity.status(500).body(response);
+                }
+            } catch (Exception e) {
+                System.out.println("=== Microservice call FAILED ===");
+                System.out.println("Exception type: " + e.getClass().getSimpleName());
+                System.out.println("Exception message: " + e.getMessage());
+                e.printStackTrace();
+
+                String errorMessage = "Failed to upload file to microservice. ";
+                if (e.getMessage() != null && e.getMessage().contains("413")) {
+                    errorMessage = "File is too large";
+                } else if (e.getMessage() != null) {
+                    errorMessage += "Error: " + e.getMessage();
+                }
+                response.put("status", "error");
+                response.put("message", errorMessage);
+                return ResponseEntity.status(500).body(response);
+            }
+
+            // Extract ID from response like "File stored with ID: abc123"
+            String fileId = uploadResponse;
+            if (uploadResponse != null && uploadResponse.startsWith("File stored with ID: ")) {
+                fileId = uploadResponse.substring("File stored with ID: ".length()).trim();
+            }
+            System.out.println("Extracted file ID: " + fileId);
 
             // Create file info entity
             FileInfo fileInfo = new FileInfo();
@@ -116,22 +156,37 @@ public class GalleryController {
             fileInfo.setMicroserviceFileId(fileId);
             fileInfo.setType(getFileType(fileExtension));
             fileInfo.setSize(formatFileSize(file.getSize()));
-            fileInfo.setCaseNumber(""); // Will be set when committed
+            fileInfo.setCaseNumber(caseNumber);
             fileInfo.setDateAdded(LocalDateTime.now());
-            fileInfo.setStatus("TEMPORARY");
-            fileInfo.setSessionId(sessionId);
+            fileInfo.setStatus("COMMITTED"); // All files are committed immediately
+            fileInfo.setSessionId(null); // No session tracking needed
 
-            // Save to database as temporary file
-            fileInfo = fileInfoRepository.save(fileInfo);
+            System.out.println("=== Saving to database ===");
+            // Save to database
+            try {
+                fileInfo = fileInfoRepository.save(fileInfo);
+                System.out.println("File info saved with ID: " + fileInfo.getId());
+            } catch (Exception e) {
+                System.out.println("ERROR: Failed to save to database");
+                e.printStackTrace();
+                response.put("status", "error");
+                response.put("message", "Failed to save file info to database: " + e.getMessage());
+                return ResponseEntity.status(500).body(response);
+            }
 
             response.put("status", "success");
             response.put("message", "File uploaded successfully");
             response.put("fileInfo", convertToDTO(fileInfo));
 
+            System.out.println("=== Upload completed successfully ===");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            System.out.println("=== UNEXPECTED ERROR in uploadWithMetaData ===");
+            System.out.println("Exception type: " + e.getClass().getSimpleName());
+            System.out.println("Exception message: " + e.getMessage());
             e.printStackTrace();
+
             response.put("status", "error");
             response.put("message", "Failed to upload file: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
@@ -143,6 +198,7 @@ public class GalleryController {
     @Transactional
     public ResponseEntity<Map<String, Object>> uploadMultipleFiles(
             @RequestParam("files") MultipartFile[] files,
+            @RequestParam(value = "caseTags", required = false) String caseTagsJson,
             HttpServletRequest request) {
 
         Map<String, Object> response = new HashMap<>();
@@ -152,42 +208,54 @@ public class GalleryController {
             List<FileInfo> uploadedFiles = new ArrayList<>();
 
             for (MultipartFile file : files) {
-                // 1. Upload to microservice
-                ResponseEntity<String> uploadResponse;
+                String originalFilename = file.getOriginalFilename();
+                String fileExtension = "";
+                if (originalFilename != null && originalFilename.contains(".")) {
+                    fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                }
+
+                // Generate case number for committed files
+                long committedCount = fileInfoRepository.countByStatus("COMMITTED");
+                String caseNumber = "CASE-" + String.format("%04d", committedCount + uploadedFiles.size() + 1);
+
+                // Create metadata map - only fileName and caseTags
+                Map<String, String> metadata = new HashMap<>();
+                metadata.put("fileName", originalFilename);
+                if (caseTagsJson != null && !caseTagsJson.trim().isEmpty()) {
+                    metadata.put("caseTags", caseTagsJson);
+                }
+
+                // Upload to microservice with metadata
+                String uploadResponse;
                 try {
-                    uploadResponse = fileFeignClient.uploadFile(file);
-                    if (!uploadResponse.getStatusCode().is2xxSuccessful()) {
-                        if (uploadResponse.getStatusCode().value() == 413) {
-                            throw new RuntimeException("File '" + file.getOriginalFilename() + "' is too large for the storage service (max 10MB recommended)");
-                        }
-                        throw new RuntimeException("Microservice upload failed for: " + file.getOriginalFilename());
+                    // Convert metadata map to JSON string
+                    String metadataJson = objectMapper.writeValueAsString(metadata);
+                    uploadResponse = fileFeignClient.uploadWithMetaData(file, metadataJson);
+                    if (uploadResponse == null) {
+                        throw new RuntimeException("Microservice upload failed for: " + originalFilename);
                     }
                 } catch (Exception e) {
                     if (e.getMessage() != null && e.getMessage().contains("413")) {
-                        throw new RuntimeException("File '" + file.getOriginalFilename() + "' is too large for the storage service (max 10MB recommended)");
+                        throw new RuntimeException("File '" + originalFilename + "' is too large for the storage service (max 10MB recommended)");
                     }
-                    throw new RuntimeException("Microservice upload failed for: " + file.getOriginalFilename() + " - " + e.getMessage());
+                    throw new RuntimeException("Microservice upload failed for: " + originalFilename + " - " + e.getMessage());
                 }
 
-                // 2. Create and store file info
-                String responseBody = uploadResponse.getBody();
-                String fileId = responseBody;
-                if (responseBody != null && responseBody.startsWith("File stored with ID: ")) {
-                    fileId = responseBody.substring("File stored with ID: ".length()).trim();
+                // Extract file ID from response
+                String fileId = uploadResponse;
+                if (uploadResponse != null && uploadResponse.startsWith("File stored with ID: ")) {
+                    fileId = uploadResponse.substring("File stored with ID: ".length()).trim();
                 }
 
                 FileInfo fileInfo = new FileInfo();
                 fileInfo.setId(UUID.randomUUID().toString());
-                fileInfo.setName(file.getOriginalFilename());
+                fileInfo.setName(originalFilename);
                 fileInfo.setMicroserviceFileId(fileId);
-                fileInfo.setType(getFileType(file.getContentType()));
+                fileInfo.setType(getFileType(fileExtension));
                 fileInfo.setSize(formatFileSize(file.getSize()));
                 fileInfo.setDateAdded(LocalDateTime.now());
                 fileInfo.setStatus("COMMITTED"); // Multiple upload commits immediately
-
-                // Generate case number for committed files
-                long committedCount = fileInfoRepository.countByStatus("COMMITTED");
-                fileInfo.setCaseNumber("CASE-" + String.format("%04d", committedCount + uploadedFiles.size() + 1));
+                fileInfo.setCaseNumber(caseNumber);
 
                 fileInfo = fileInfoRepository.save(fileInfo);
                 uploadedFiles.add(fileInfo);
@@ -238,13 +306,9 @@ public class GalleryController {
                 files = fileInfoRepository.findByStatusAndTypeOrderByDateAddedDesc("COMMITTED", type);
             }
         } else {
-            if ("all".equals(type)) {
-                files = fileInfoRepository.searchCommittedFiles(query);
-            } else {
-                files = fileInfoRepository.searchCommittedFilesByType(query, type);
-            }
+            String actualType = "all".equalsIgnoreCase(type) ? null : type;
+            files = fileInfoRepository.searchCommittedFiles(query, actualType);
         }
-
         List<FileInfoDTO> fileDTOs = files.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -313,50 +377,6 @@ public class GalleryController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Failed to download file: " + e.getMessage());
-        }
-    }
-
-    @PostMapping("/api/files/commit-uploads")
-    @ResponseBody
-    @Transactional
-    public ResponseEntity<Map<String, Object>> commitUploads(HttpServletRequest request) {
-        Map<String, Object> response = new HashMap<>();
-        String sessionId = request.getSession().getId();
-
-        try {
-            // Find temporary files for this session
-            List<FileInfo> tempFiles = fileInfoRepository.findByStatusAndSessionIdOrderByDateAddedDesc("TEMPORARY", sessionId);
-
-            if (tempFiles.isEmpty()) {
-                response.put("status", "success");
-                response.put("message", "No files to commit");
-                response.put("filesCommitted", 0);
-                return ResponseEntity.ok(response);
-            }
-
-            // Get current count of committed files for case number generation
-            long currentCount = fileInfoRepository.countByStatus("COMMITTED");
-
-            // Update temporary files to committed status and assign case numbers
-            for (int i = 0; i < tempFiles.size(); i++) {
-                FileInfo tempFile = tempFiles.get(i);
-                tempFile.setStatus("COMMITTED");
-                tempFile.setCaseNumber("CASE-" + String.format("%04d", currentCount + i + 1));
-                tempFile.setSessionId(null); // Clear session ID for committed files
-                fileInfoRepository.save(tempFile);
-            }
-
-            response.put("status", "success");
-            response.put("message", tempFiles.size() + " files committed to gallery");
-            response.put("filesCommitted", tempFiles.size());
-
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.put("status", "error");
-            response.put("message", "Failed to commit uploads: " + e.getMessage());
-            return ResponseEntity.status(500).body(response);
         }
     }
 

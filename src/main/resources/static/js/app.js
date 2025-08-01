@@ -964,6 +964,27 @@ function initializeFileUploadFunctionality() {
     uploadResults.classList.remove('hidden');
   };
 
+  // Helper function to collect case tags data
+  const collectCaseTagsData = () => {
+    const caseTagItems = document.querySelectorAll('.case-tag-item');
+    const caseTags = [];
+
+    caseTagItems.forEach((item, index) => {
+      const tagSelect = item.querySelector('.case-tag-select');
+      const titleInput = item.querySelector('.case-title-input');
+
+      if (tagSelect.value) {
+        caseTags.push({
+          tag: tagSelect.value,
+          value: titleInput.value || '',
+          index: index
+        });
+      }
+    });
+
+    return caseTags;
+  };
+
   // Main Upload Handler
   const handleFileUpload = (files) => {
     // Reset upload state
@@ -1031,10 +1052,18 @@ function initializeFileUploadFunctionality() {
       const formData = new FormData();
       formData.append('file', file);
 
+      // Collect case tags data for this upload
+      const caseTags = collectCaseTagsData();
+
+      // Add case tags to form data if available
+      if (caseTags.length > 0) {
+        formData.append('caseTags', JSON.stringify(caseTags));
+      }
+
       uploadStatus.textContent = `Uploading ${file.name}...`;
 
       try {
-        const response = await fetch('/api/files/upload', {
+        const response = await fetch('/api/files/uploadWithMetaData', {
           method: 'POST',
           body: formData
         });
@@ -1072,30 +1101,8 @@ function initializeFileUploadFunctionality() {
 
   // Event Listeners
   doneButton.addEventListener('click', () => {
-    // Commit the uploaded files to the gallery
-    doneButton.disabled = true;
-    doneButton.textContent = 'Committing...';
-
-    fetch('/api/files/commit-uploads', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === 'success') {
-        window.location.href = '/gallery';
-      } else {
-        throw new Error(data.message || 'Failed to commit uploads');
-      }
-    })
-    .catch(error => {
-      console.error('Commit error:', error);
-      alert('Failed to commit uploads: ' + error.message);
-      doneButton.disabled = false;
-      doneButton.textContent = 'Done';
-    });
+    // Simply redirect to gallery since files are committed immediately
+    window.location.href = '/gallery';
   });
 
   retryButton.addEventListener('click', () => {
@@ -1130,4 +1137,51 @@ function initializeFileUploadFunctionality() {
       handleFileUpload(e.dataTransfer.files);
     }
   });
+
+  // Add More button functionality
+  const addMoreButton = document.getElementById('addMoreCaseTag');
+  if (addMoreButton) {
+    addMoreButton.addEventListener('click', () => {
+      const caseTagsList = document.getElementById('caseTagsList');
+      const newCaseTagItem = document.createElement('div');
+      newCaseTagItem.className = 'case-tag-item bg-gray-800 p-4 rounded-lg mb-4';
+      newCaseTagItem.innerHTML = `
+        <div class="flex gap-4 mb-3">
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-300 mb-2">Case Tags</label>
+            <select class="case-tag-select w-full p-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Select a case tag</option>
+              <option value="evidence">Evidence</option>
+              <option value="witness-statement">Witness Statement</option>
+              <option value="forensic-report">Forensic Report</option>
+              <option value="legal-document">Legal Document</option>
+              <option value="investigation-notes">Investigation Notes</option>
+              <option value="surveillance">Surveillance</option>
+              <option value="interview-recording">Interview Recording</option>
+              <option value="crime-scene-photo">Crime Scene Photo</option>
+              <option value="expert-testimony">Expert Testimony</option>
+              <option value="case-summary">Case Summary</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-300 mb-2">Value</label>
+            <input type="text" class="case-title-input w-full p-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter case title">
+          </div>
+          <div class="flex items-end">
+            <button type="button" class="remove-case-tag bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition-colors duration-200">
+              <span class="material-icons">remove</span>
+            </button>
+          </div>
+        </div>
+      `;
+
+      caseTagsList.appendChild(newCaseTagItem);
+
+      // Add remove functionality to the new item
+      const removeButton = newCaseTagItem.querySelector('.remove-case-tag');
+      removeButton.addEventListener('click', () => {
+        newCaseTagItem.remove();
+      });
+    });
+  }
 }

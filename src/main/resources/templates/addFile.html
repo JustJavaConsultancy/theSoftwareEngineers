@@ -20,6 +20,41 @@
                 </div>
 
                 <form id="uploadForm" enctype="multipart/form-data">
+                    <!-- Case Tags and Metadata Section -->
+                    <div id="caseTagsContainer" class="mb-6">
+                        <h3 class="text-xl font-semibold mb-4 text-white">Case Information</h3>
+                        <div id="caseTagsList">
+                            <div class="case-tag-item bg-gray-800 p-4 rounded-lg mb-4">
+                                <div class="flex gap-4 mb-3">
+                                    <div class="flex-1">
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Case Tags</label>
+                                        <select class="case-tag-select w-full p-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option value="">Select a case tag</option>
+                                            <option value="evidence">Evidence</option>
+                                            <option value="witness-statement">Witness Statement</option>
+                                            <option value="forensic-report">Forensic Report</option>
+                                            <option value="legal-document">Legal Document</option>
+                                            <option value="investigation-notes">Investigation Notes</option>
+                                            <option value="surveillance">Surveillance</option>
+                                            <option value="interview-recording">Interview Recording</option>
+                                            <option value="crime-scene-photo">Crime Scene Photo</option>
+                                            <option value="expert-testimony">Expert Testimony</option>
+                                            <option value="case-summary">Case Summary</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex-1">
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Value </label>
+                                        <input type="text" class="case-title-input w-full p-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter case title">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="addMoreCaseTag" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+                            <span class="material-icons mr-1">add</span>
+                            Add More
+                        </button>
+                    </div>
+
                     <div
                             id="uploadArea"
                             class="upload-area border-2 border-dashed rounded-lg p-12 text-center mb-6 transition-colors duration-200"
@@ -74,7 +109,7 @@
                                     id="doneButton"
                                     class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200"
                             >
-                                Done
+                                Go to Gallery
                             </button>
                         </div>
                     </div>
