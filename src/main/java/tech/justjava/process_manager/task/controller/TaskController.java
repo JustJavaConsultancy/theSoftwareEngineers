@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -79,7 +80,7 @@ public class TaskController {
     public String add(@PathVariable("taskId") final String taskId, Model model) {
 
         Task  task=taskService.findTaskById(taskId);
-        //System.out.println(" Process Variable =="+task.getProcessVariables());
+        System.out.println(" Process Variable =="+task.getProcessVariables());
         String formThymeleaf=null;
         Optional<Form> form=formService.findByFormCode(task.getTaskDefinitionKey());
         //System.out.println(" The form code==="+task.getTaskDefinitionKey()+"");
@@ -98,21 +99,21 @@ public class TaskController {
         }
 
         Map<String,Object> formData= task.getProcessVariables();
-        //System.out.println(" The FormData Here ===="+formData);
+        System.out.println(" The FormData Here ===="+formData);
 
 
         formData.put("id", task.getId());
 
-        List<String> lawyerDocuments = List.of(
+/*        List<String> lawyerDocuments = List.of(
                 "Letter of Demand",
                 "Statement of Claim",
                 "Affidavit of Evidence",
                 "Preliminary Objections"
         );
-        formData.put("lawyerDocuments",lawyerDocuments);
+        formData.put("lawyerDocuments",lawyerDocuments);*/
         String formHtml=templateRenderer.render(formThymeleaf,formData);
 
-        model.addAttribute("lawyerDocuments", lawyerDocuments);
+        //model.addAttribute("lawyerDocuments", lawyerDocuments);
 
         model.addAttribute("formHtml",formHtml);
         model.addAttribute("name",task.getName());
@@ -120,15 +121,27 @@ public class TaskController {
     }
 
     @PostMapping("/complete")
-    public String add(@RequestParam Map<String,Object> formData) {
+    public ResponseEntity<Void> add(@RequestParam Map<String,Object> formData) {
         //formData.put("shortRoute",true);
         System.out.println("1 Here is the Submitted Data Here==="+formData);
-
+        String nextPage = "/tasks";
         String taskId = (String) formData.get("id");
-
         System.out.println("2 Here is the Submitted Data Here==="+formData);
+        Task task = taskService.findTaskById(taskId);
         taskService.completeTask(taskId,formData);
-        return "task/successTask";
+        if(task.getProcessVariables().get("nextPage")!=null){
+            Task nextTask =taskService.getTaskByInstanceAndDefinitionKey(task.getProcessInstanceId(),
+                    (String) task.getProcessVariables().get("nextPage"));
+            nextPage ="/tasks/add/"+nextTask.getId();
+
+            System.out.println(" Is this next task actually active?==="+nextTask.getState());
+            task.getProcessVariables().remove("nextPage");
+        }
+
+        return ResponseEntity
+                .status(200)
+                .header("HX-Redirect", nextPage)
+                .build();
     }
 
     @GetMapping("/edit/{id}")

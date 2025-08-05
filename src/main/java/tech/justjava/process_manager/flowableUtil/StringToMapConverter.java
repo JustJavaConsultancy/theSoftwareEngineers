@@ -16,6 +16,7 @@ public class StringToMapConverter implements JavaDelegate {
     private FixedValue variableToConvertToMap;
 
     public StringToMapConverter(ObjectMapper objectMapper) {
+
         this.objectMapper = objectMapper;
     }
 
