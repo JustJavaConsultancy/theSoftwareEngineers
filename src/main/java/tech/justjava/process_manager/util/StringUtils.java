@@ -35,4 +35,25 @@ public class StringUtils {
             return dateTime.format(fullFormatter);
         }
     }
+    public static String formatCamelCaseText(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return input;
+        }
+        if (input.matches("([A-Z][a-z]+\\s)+[A-Z][a-z]+")) {
+            return input;
+        }
+        String spaced = input.replaceAll("([a-z])([A-Z])", "$1 $2");
+
+        String[] words = spaced.split("\\s+");
+        StringBuilder formatted = new StringBuilder();
+
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                formatted.append(Character.toUpperCase(word.charAt(0)))
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+        return formatted.toString().trim();
+    }
 }

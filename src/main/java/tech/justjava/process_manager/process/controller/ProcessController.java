@@ -111,6 +111,43 @@ processInstances.forEach(processInstance -> {
         return "process/processInstance";
     }
 
+    @GetMapping("/{processKey}")
+    public String processList(final Model model, @PathVariable String processKey) {
+
+
+        System.out.println(" The Sub in the Process==...."+authenticationManager.get("sub"));
+        List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery()
+                .processDefinitionKey(processKey)
+                .includeProcessVariables()
+                .active()
+                .list();
+processInstances.forEach(processInstance -> {
+    System.out.println(" The Process variable here==="+processInstance.getProcessVariables());
+    Map<String,Object> aiResponse = (Map<String,Object>) processInstance.getProcessVariables().get("aiResponse");
+
+    //System.out.println(" AiResponse==="+aiResponse);
+    //System.out.println(" reason==="+aiResponse.get("reason"));
+    List<String> reasons= (List<String>) aiResponse.get("reason");
+    reasons.forEach(reason->{
+        System.out.println(" reason==="+reason);
+            }
+    );
+
+    List<String> clientDocuments = (List<String>) aiResponse.get("clientDocuments");
+    clientDocuments.forEach(clientDocument->{
+        System.out.println(" clientDocument==="+clientDocument);
+    });
+    //System.out.println(" clientDocuments==="+aiResponse.get("clientDocuments"));
+});
+        List<Map<String, String>> processName = processService.getProcessDefinitionNames();
+        Map<String, String> processNames = processName.stream().filter(p -> p.get("processKey").equals(processKey)).findFirst().orElse(null);
+
+        model.addAttribute("processKey", processNames.get("processKey"));
+        model.addAttribute("processes", processInstances);
+
+        return "process/processInstance";
+    }
+
     @GetMapping("/add")
     public String add(@ModelAttribute("process") final ProcessDTO processDTO) {
         return "process/add";
@@ -166,8 +203,8 @@ processInstances.forEach(processInstance -> {
         final ProcessDTO processDTO = processService.get(id);
         return fileDataService.provideDownload(processDTO.getDiagram());
     }
-    @GetMapping("/newProcess")
-    public String startForm(Model model) {
+    @GetMapping("/newProcess/{processKey}")
+    public String startForm(Model model, @PathVariable String processKey) {
         ProcessDefinition processDefinition = repositoryService
                 .createProcessDefinitionQuery()
                 .processDefinitionKey(processKey)
