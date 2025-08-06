@@ -50,6 +50,8 @@ class VideoCallManager {
         // Minimize/Maximize buttons
         const minimizeBtn = document.getElementById('minimize-video-call');
         const maximizeBtn = document.getElementById('maximize-video-call');
+        const restoreBtn = document.getElementById('restore-video-call');
+        const endMinimizedBtn = document.getElementById('end-minimized-call');
         
         if (minimizeBtn) {
             minimizeBtn.addEventListener('click', () => {
@@ -60,6 +62,18 @@ class VideoCallManager {
         if (maximizeBtn) {
             maximizeBtn.addEventListener('click', () => {
                 this.maximizeModal();
+            });
+        }
+        
+        if (restoreBtn) {
+            restoreBtn.addEventListener('click', () => {
+                this.maximizeModal();
+            });
+        }
+        
+        if (endMinimizedBtn) {
+            endMinimizedBtn.addEventListener('click', () => {
+                this.endVideoCall();
             });
         }
         
@@ -248,10 +262,16 @@ class VideoCallManager {
     
     closeVideoCallModal() {
         const modal = document.getElementById('video-call-modal');
+        const minimizedWindow = document.getElementById('minimized-video-call');
         const statusElement = document.getElementById('video-call-status');
         
         if (modal) {
             modal.classList.add('hidden');
+            
+            // Also hide minimized window if it's visible
+            if (minimizedWindow) {
+                minimizedWindow.classList.add('hidden');
+            }
             
             // Hide status
             if (statusElement) {
@@ -555,8 +575,19 @@ class VideoCallManager {
             const deltaX = e.clientX - startX;
             const deltaY = e.clientY - startY;
             
-            modalContent.style.left = (startLeft + deltaX) + 'px';
-            modalContent.style.top = (startTop + deltaY) + 'px';
+            // Calculate new position with boundary constraints
+            const newLeft = startLeft + deltaX;
+            const newTop = startTop + deltaY;
+            
+            // Keep modal within viewport bounds
+            const maxLeft = window.innerWidth - modalContent.offsetWidth;
+            const maxTop = window.innerHeight - modalContent.offsetHeight;
+            
+            const constrainedLeft = Math.max(0, Math.min(maxLeft, newLeft));
+            const constrainedTop = Math.max(0, Math.min(maxTop, newTop));
+            
+            modalContent.style.left = constrainedLeft + 'px';
+            modalContent.style.top = constrainedTop + 'px';
             modalContent.style.transform = 'none';
         };
         
@@ -604,8 +635,14 @@ class VideoCallManager {
             const deltaX = e.clientX - startX;
             const deltaY = e.clientY - startY;
             
-            const newWidth = Math.max(400, startWidth + deltaX);
-            const newHeight = Math.max(300, startHeight + deltaY);
+            // Responsive sizing with better constraints
+            const maxWidth = Math.min(window.innerWidth * 0.9, 1200);
+            const maxHeight = Math.min(window.innerHeight * 0.8, 800);
+            const minWidth = Math.max(400, window.innerWidth * 0.3);
+            const minHeight = Math.max(300, window.innerHeight * 0.4);
+            
+            const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidth + deltaX));
+            const newHeight = Math.max(minHeight, Math.min(maxHeight, startHeight + deltaY));
             
             modalContent.style.width = newWidth + 'px';
             modalContent.style.height = newHeight + 'px';
@@ -626,11 +663,13 @@ class VideoCallManager {
     
     // Minimize functionality
     minimizeModal() {
+        const modal = document.getElementById('video-call-modal');
         const modalContent = document.getElementById('video-call-modal-content');
+        const minimizedWindow = document.getElementById('minimized-video-call');
         const minimizeBtn = document.getElementById('minimize-video-call');
         const maximizeBtn = document.getElementById('maximize-video-call');
         
-        if (!modalContent) return;
+        if (!modalContent || !minimizedWindow) return;
         
         // Store current position and size
         this.originalPosition = {
@@ -640,25 +679,35 @@ class VideoCallManager {
             height: modalContent.style.height
         };
         
-        // Minimize to bottom-right corner
-        modalContent.style.left = 'calc(100vw - 320px)';
-        modalContent.style.top = 'calc(100vh - 240px)';
-        modalContent.style.width = '300px';
-        modalContent.style.height = '200px';
-        modalContent.style.transform = 'none';
+        // Hide the main modal and overlay
+        modal.classList.add('hidden');
+        
+        // Show the minimized window
+        minimizedWindow.classList.remove('hidden');
         
         // Update buttons
         if (minimizeBtn) minimizeBtn.classList.add('hidden');
         if (maximizeBtn) maximizeBtn.classList.remove('hidden');
+        
+        // Re-enable body scroll so user can interact with the app
+        document.body.style.overflow = 'auto';
     }
     
     // Maximize functionality
     maximizeModal() {
+        const modal = document.getElementById('video-call-modal');
         const modalContent = document.getElementById('video-call-modal-content');
+        const minimizedWindow = document.getElementById('minimized-video-call');
         const minimizeBtn = document.getElementById('minimize-video-call');
         const maximizeBtn = document.getElementById('maximize-video-call');
         
-        if (!modalContent) return;
+        if (!modalContent || !minimizedWindow) return;
+        
+        // Hide the minimized window
+        minimizedWindow.classList.add('hidden');
+        
+        // Show the main modal
+        modal.classList.remove('hidden');
         
         // Restore original position and size
         if (this.originalPosition) {
@@ -674,6 +723,9 @@ class VideoCallManager {
         // Update buttons
         if (minimizeBtn) minimizeBtn.classList.remove('hidden');
         if (maximizeBtn) maximizeBtn.classList.add('hidden');
+        
+        // Disable body scroll again
+        document.body.style.overflow = 'hidden';
     }
     
     // Reset modal position to center

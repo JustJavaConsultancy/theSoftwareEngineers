@@ -477,6 +477,30 @@
             </div>
         </div>
     </div>
+    
+    <!-- Minimized Video Call Window (Floating) -->
+    <div id="minimized-video-call" class="fixed bottom-4 right-4 bg-gray-800 rounded-lg shadow-lg z-40 hidden" style="width: 280px; height: 180px;">
+        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-700 bg-gray-900 rounded-t-lg">
+            <div class="flex items-center gap-2">
+                <span class="material-icons text-blue-500 text-sm">videocam</span>
+                <span class="font-semibold text-white text-sm">Video Call</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <button id="restore-video-call" class="bg-gray-600 hover:bg-gray-700 text-white rounded-full p-1 transition-colors" title="Restore">
+                    <span class="material-icons text-xs">crop_square</span>
+                </button>
+                <button id="end-minimized-call" class="bg-red-600 hover:bg-red-700 text-white rounded-full p-1 transition-colors" title="End Call">
+                    <span class="material-icons text-xs">call_end</span>
+                </button>
+            </div>
+        </div>
+        <div id="minimized-video-container" class="w-full h-full bg-black rounded-b-lg flex items-center justify-center">
+            <div class="text-white text-center">
+                <span class="material-icons text-2xl mb-2">videocam</span>
+                <p class="text-xs">Call Active</p>
+            </div>
+        </div>
+    </div>
     <!-- End Video Call Modal -->
     <script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
     <script src="/js/videocall.js"></script>
