@@ -25,20 +25,20 @@
     <!-- Application CSS -->
     <link th:href="@{/css/app.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-<script>
-    let stompClient = null
-    function connectStomp() {
-    const socket = new SockJS('/ws');
-      stompClient = Stomp.over(socket);
+    <script>
+        let stompClient = null
+        function connectStomp() {
+        const socket = new SockJS('/ws');
+          stompClient = Stomp.over(socket);
 
-      stompClient.connect({}, function (frame) {
-        console.log('Connected:', frame);
+          stompClient.connect({}, function (frame) {
+            console.log('Connected:', frame);
 
-        stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function () {
-          console.log('connection is ready');
-        });
-    }
-</script>
+            stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function () {
+              console.log('connection is ready');
+            });
+        }
+    </script>
 </head>
 
 <body class="flex h-screen">
@@ -93,8 +93,8 @@
                 <span>Chat</span>
             </a>
             <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/gallery}"
-               th:classappend="${currentPath == '/gallery' or currentPath == '/addFile'} ? ' bg-blue-600'">
-            <span class="material-icons mr-3">collections</span>
+               th:classappend="${currentPath == '/gallery' or currentPath == '/addFile' or currentPath == '/case-tags' or currentPath == `/case-tags/${caseNumber}`} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">collections</span>
                 <span>Gallery</span>
             </a>
         </nav>

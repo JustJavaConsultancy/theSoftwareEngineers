@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}"
+>
+<head>
+    <meta charset="UTF-8" />
+    <title>Case Details</title>
+</head>
+<body>
+<div layout:fragment="content" class="flex h-screen">
+    <main class="main-content flex-1 p-8 overflow-y-auto">
+        <section>
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <div class="flex items-center mb-2">
+                        <span class="material-icons text-blue-400 mr-2">folder_open</span>
+                        <h2 class="text-3xl font-bold" th:text="${caseNumber}"></h2>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-gray-400">
+                            <span th:text="${totalFiles}"></span>
+                            <span th:text="${totalFiles == 1 ? 'file' : 'files'}"></span>
+                            in this case.
+                        </p>
+                        <p class="text-sm text-blue-300">
+                            Case Files
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a th:href="@{/case-tags}">
+                        <button
+                                class="bg-gray-600 hover:bg-gray-700 flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-200"
+                        >
+                            <span class="material-icons">arrow_back</span>
+                            Back to Summary
+                        </button>
+                    </a>
+                    <a th:href="@{/gallery}">
+                        <button
+                                class="bg-gray-600 hover:bg-gray-700 flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-200"
+                        >
+                            <span class="material-icons">view_module</span>
+                            Gallery
+                        </button>
+                    </a>
+                    <a th:href="@{/addFile}">
+                        <button
+                                class="btn-primary2 flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold"
+                        >
+                            <span class="material-icons">add</span>
+                            Add File
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Case Info Card -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                <div class="grid gap-6 md:grid-cols-3">
+                    <div class="flex items-center">
+                        <span class="material-icons text-blue-400 mr-3">folder_open</span>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white">Case Number</h3>
+                            <p class="text-gray-400" th:text="${caseNumber}"></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="material-icons text-green-400 mr-3">description</span>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white">Total Files</h3>
+                            <p class="text-gray-400" th:text="${totalFiles}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Files Grouped by Case Tags -->
+            <div th:if="${#lists.isEmpty(caseTagGroups)}" class="bg-gray-800 rounded-lg p-12 text-center">
+                <span class="material-icons text-6xl text-gray-500 mb-4">folder_open</span>
+                <h3 class="text-xl font-semibold text-gray-300 mb-2">No Files Found</h3>
+                <p class="text-gray-400">No files are associated with this case number.</p>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(caseTagGroups)}" class="space-y-6">
+                <div th:each="group : ${caseTagGroups}" class="bg-gray-800 rounded-lg overflow-hidden">
+                    <!-- Case Tag Header -->
+                    <div class="bg-gray-700 px-6 py-4 border-b border-gray-600">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <span class="material-icons text-blue-400 mr-3" th:switch="${group.tagType}">
+                                    <span th:case="'evidence'">gavel</span>
+                                    <span th:case="'witness-statement'">record_voice_over</span>
+                                    <span th:case="'forensic-report'">science</span>
+                                    <span th:case="'legal-document'">description</span>
+                                    <span th:case="'investigation-notes'">note</span>
+                                    <span th:case="'surveillance'">videocam</span>
+                                    <span th:case="'interview-recording'">mic</span>
+                                    <span th:case="'crime-scene-photo'">photo_camera</span>
+                                    <span th:case="'expert-testimony'">school</span>
+                                    <span th:case="'case-summary'">summarize</span>
+                                    <span th:case="*">label</span>
+                                </span>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white" th:text="${group.tagLabel}"></h3>
+                                    <p class="text-sm text-gray-400">
+                                        <span th:text="${group.fileCount}"></span>
+                                        <span th:text="${group.fileCount == 1 ? 'file' : 'files'}"></span>
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="bg-primary text-white text-xs px-2 py-1 rounded-full" th:text="${group.fileCount}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Files List -->
+                    <div class="p-6">
+                        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            <div th:each="file : ${group.files}"
+                                 class="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors duration-200 transform hover:scale-105">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex items-center flex-1 min-w-0">
+                                        <span class="material-icons text-gray-400 mr-3 flex-shrink-0" th:switch="${file.type}">
+                                            <span th:case="'images'">image</span>
+                                            <span th:case="'videos'">videocam</span>
+                                            <span th:case="'audio'">audiotrack</span>
+                                            <span th:case="*">description</span>
+                                        </span>
+                                        <div class="min-w-0 flex-1">
+                                            <h4 class="text-white font-medium truncate" th:text="${file.name}" th:title="${file.name}"></h4>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-sm text-gray-400 space-y-1 mb-4">
+                                    <div class="flex items-center">
+                                        <span class="material-icons text-xs mr-1">storage</span>
+                                        <span th:text="${file.size}"></span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="material-icons text-xs mr-1">schedule</span>
+                                        <span th:text="${file.dateAdded}"></span>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end">
+                                    <a th:href="@{/api/files/download/{fileId}(fileId=${file.id})}"
+                                       class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2"
+                                       title="Download file">
+                                        <span class="material-icons text-sm">download</span>
+                                        Download
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

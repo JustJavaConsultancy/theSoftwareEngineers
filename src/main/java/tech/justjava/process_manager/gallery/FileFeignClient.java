@@ -8,13 +8,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
-@FeignClient (name = "file-service", url = "https://genaiandrag.onrender.com")
+@FeignClient (name = "file-service", url = "https://genaiandrag.onrender.com", configuration = FeignConfig.class)
 public interface FileFeignClient {
         @GetMapping("/download/{id}")
         ResponseEntity<Resource > downloadFile(@PathVariable("id") String id);
         @DeleteMapping("/delete/{id}")
         ResponseEntity<String> deleteFile(@PathVariable("id") String id);
         @PostMapping(value = "/uploadWithMetaData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-        String uploadWithMetaData(@RequestPart("file") MultipartFile file, @RequestPart("metadata") String metadata);
+        String uploadWithMetaData(@RequestPart("file") MultipartFile file, @RequestPart("metadata") Map<String,String> metadata);
 
 }

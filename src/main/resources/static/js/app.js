@@ -1079,3 +1079,107 @@ function initializeFormUploadFunctionality() {
     }
 }
 
+// CASE TAG SUMMARY
+      // Accordion functionality with smooth animations
+      const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+      accordionHeaders.forEach(header => {
+          header.addEventListener('click', function() {
+              const target = this.getAttribute('data-target');
+              const content = document.getElementById(target);
+              const icon = this.querySelector('.accordion-icon');
+              const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+
+              // Close all other accordions
+              accordionHeaders.forEach(otherHeader => {
+                  if (otherHeader !== this) {
+                      const otherTarget = otherHeader.getAttribute('data-target');
+                      const otherContent = document.getElementById(otherTarget);
+                      const otherIcon = otherHeader.querySelector('.accordion-icon');
+
+                      otherContent.style.maxHeight = '0px';
+                      otherIcon.style.transform = 'rotate(0deg)';
+                      otherHeader.classList.remove('bg-gray-600');
+                      otherHeader.classList.add('bg-gray-700');
+                  }
+              });
+
+              // Toggle current accordion
+              if (isOpen) {
+                  // Close current accordion
+                  content.style.maxHeight = '0px';
+                  icon.style.transform = 'rotate(0deg)';
+                  this.classList.remove('bg-gray-600');
+                  this.classList.add('bg-gray-700');
+              } else {
+                  // Open current accordion
+                  content.style.maxHeight = content.scrollHeight + 'px';
+                  icon.style.transform = 'rotate(180deg)';
+                  this.classList.remove('bg-gray-700');
+                  this.classList.add('bg-gray-600');
+              }
+          });
+      });
+
+  // CASE TAG DETAILS
+   // Reuse the same delete functionality from gallery.html
+      document.addEventListener('DOMContentLoaded', function() {
+          const deleteModal = document.getElementById('deleteModal');
+          const deleteFileName = document.getElementById('deleteFileName');
+          const cancelDelete = document.getElementById('cancelDelete');
+          const confirmDelete = document.getElementById('confirmDelete');
+          let fileToDelete = null;
+
+          // Add event listeners to delete buttons
+          document.querySelectorAll('.delete-file-btn').forEach(button => {
+              button.addEventListener('click', function() {
+                  fileToDelete = {
+                      id: this.getAttribute('data-file-id'),
+                      name: this.getAttribute('data-file-name')
+                  };
+                  deleteFileName.textContent = fileToDelete.name;
+                  deleteModal.classList.remove('hidden');
+                  deleteModal.classList.add('flex');
+              });
+          });
+
+          // Cancel delete
+          cancelDelete.addEventListener('click', function() {
+              deleteModal.classList.add('hidden');
+              deleteModal.classList.remove('flex');
+              fileToDelete = null;
+          });
+
+          // Confirm delete
+          confirmDelete.addEventListener('click', function() {
+              if (fileToDelete) {
+                  fetch(`/api/files/${fileToDelete.id}`, {
+                      method: 'DELETE'
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.status === 'success') {
+                          location.reload();
+                      } else {
+                          alert('Failed to delete file: ' + data.message);
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      alert('Failed to delete file');
+                  });
+              }
+              deleteModal.classList.add('hidden');
+              deleteModal.classList.remove('flex');
+          });
+
+          // Add event listeners to download buttons
+          document.querySelectorAll('.download-file-btn').forEach(button => {
+              button.addEventListener('click', function() {
+                  const fileId = this.getAttribute('data-file-id');
+                  const fileName = this.getAttribute('data-file-name');
+
+                  window.location.href = `/api/files/download/${fileId}`;
+              });
+          });
+      });

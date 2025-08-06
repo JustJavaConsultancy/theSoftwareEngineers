@@ -265,3 +265,19 @@ body.light-mode #cancel-new-chat {
     background: #e2e8f0 !important;
     color: #0f172a !important;
 }
+
+ .bg-gray-750 {
+      background-color: #374151;
+  }
+
+  .accordion-content {
+      transition: max-height 0.3s ease-in-out;
+  }
+
+  .accordion-icon {
+      transition: transform 0.3s ease-in-out;
+  }
+
+  .accordion-header {
+      transition: background-color 0.3s ease-in-out;
+  }

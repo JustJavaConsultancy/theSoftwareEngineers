@@ -17,6 +17,9 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, String> {
     // Find committed files by type
     List<FileInfo> findByStatusAndTypeOrderByDateAddedDesc(String status, String type);
 
+    // Find committed files by case number
+    List<FileInfo> findByStatusAndCaseNumberOrderByDateAddedDesc(String status, String caseNumber);
+
     // Find temporary files by session ID
     List<FileInfo> findByStatusAndSessionIdOrderByDateAddedDesc(String status, String sessionId);
 
