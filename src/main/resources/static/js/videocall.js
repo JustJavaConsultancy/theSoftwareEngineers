@@ -47,6 +47,22 @@ class VideoCallManager {
             }
         });
         
+        // Minimize/Maximize buttons
+        const minimizeBtn = document.getElementById('minimize-video-call');
+        const maximizeBtn = document.getElementById('maximize-video-call');
+        
+        if (minimizeBtn) {
+            minimizeBtn.addEventListener('click', () => {
+                this.minimizeModal();
+            });
+        }
+        
+        if (maximizeBtn) {
+            maximizeBtn.addEventListener('click', () => {
+                this.maximizeModal();
+            });
+        }
+        
         // Close modal when clicking outside
         document.addEventListener('click', (e) => {
             const modal = document.getElementById('video-call-modal');
@@ -61,11 +77,15 @@ class VideoCallManager {
                 this.closeVideoCallModal();
             }
         });
+        
+        // Initialize draggable and resizable functionality
+        this.initializeDraggable();
+        this.initializeResizable();
     }
     
     async startVideoCall() {
-        // Check if we have a current conversation
-        if (!currentConversation) {
+        // Check if we have a current chat (from chat.js)
+        if (typeof currentChat === 'undefined' || !currentChat || !currentChat.id) {
             this.showError('Please select a conversation to start a video call');
             return;
         }
@@ -75,12 +95,12 @@ class VideoCallManager {
             await this.loadUserInfo();
         }
         
-        if (currentConversation.group) {
+        if (currentChat.type === 'group') {
             // For group calls, include all members
-            this.initiateCall(currentConversation.id, currentConversation.name, true);
+            this.initiateCall(currentChat.id, currentChat.name, true);
         } else {
             // For individual calls
-            this.initiateCall(currentConversation.id, currentConversation.name, false);
+            this.initiateCall(currentChat.id, currentChat.name, false);
         }
     }
     
@@ -133,7 +153,7 @@ class VideoCallManager {
     
     getCallConfiguration(isGroup) {
         const baseUrl = window.location.protocol + '//' + window.location.host;
-        const roomId = this.generateRoomId(currentConversation.id);
+        const roomId = this.generateRoomId(currentChat.id);
         
         return {
             sharedLinks: [{
@@ -220,6 +240,9 @@ class VideoCallManager {
             
             // Disable body scroll
             document.body.style.overflow = 'hidden';
+            
+            // Reset modal position and size to center
+            this.resetModalPosition();
         }
     }
     
@@ -237,6 +260,9 @@ class VideoCallManager {
             
             // Re-enable body scroll
             document.body.style.overflow = 'auto';
+            
+            // Reset modal position for next use
+            this.resetModalPosition();
         }
     }
     
@@ -494,6 +520,172 @@ class VideoCallManager {
                 document.body.removeChild(successDiv);
             }
         }, 3000);
+    }
+    
+    // Draggable functionality
+    initializeDraggable() {
+        const modalContent = document.getElementById('video-call-modal-content');
+        const header = document.getElementById('video-call-header');
+        
+        if (!modalContent || !header) return;
+        
+        let isDragging = false;
+        let startX, startY, startLeft, startTop;
+        
+        const startDrag = (e) => {
+            if (e.target.closest('button')) return; // Don't drag when clicking buttons
+            
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            
+            const rect = modalContent.getBoundingClientRect();
+            startLeft = rect.left;
+            startTop = rect.top;
+            
+            modalContent.style.transition = 'none';
+            document.body.style.cursor = 'grabbing';
+            
+            e.preventDefault();
+        };
+        
+        const drag = (e) => {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+            
+            modalContent.style.left = (startLeft + deltaX) + 'px';
+            modalContent.style.top = (startTop + deltaY) + 'px';
+            modalContent.style.transform = 'none';
+        };
+        
+        const stopDrag = () => {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            modalContent.style.transition = 'all 0.2s ease';
+            document.body.style.cursor = 'default';
+        };
+        
+        header.addEventListener('mousedown', startDrag);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', stopDrag);
+    }
+    
+    // Resizable functionality
+    initializeResizable() {
+        const modalContent = document.getElementById('video-call-modal-content');
+        const resizeHandle = document.getElementById('video-call-resize-handle');
+        
+        if (!modalContent || !resizeHandle) return;
+        
+        let isResizing = false;
+        let startX, startY, startWidth, startHeight;
+        
+        const startResize = (e) => {
+            isResizing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            
+            const rect = modalContent.getBoundingClientRect();
+            startWidth = rect.width;
+            startHeight = rect.height;
+            
+            modalContent.style.transition = 'none';
+            document.body.style.cursor = 'se-resize';
+            
+            e.preventDefault();
+        };
+        
+        const resize = (e) => {
+            if (!isResizing) return;
+            
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+            
+            const newWidth = Math.max(400, startWidth + deltaX);
+            const newHeight = Math.max(300, startHeight + deltaY);
+            
+            modalContent.style.width = newWidth + 'px';
+            modalContent.style.height = newHeight + 'px';
+        };
+        
+        const stopResize = () => {
+            if (!isResizing) return;
+            
+            isResizing = false;
+            modalContent.style.transition = 'all 0.2s ease';
+            document.body.style.cursor = 'default';
+        };
+        
+        resizeHandle.addEventListener('mousedown', startResize);
+        document.addEventListener('mousemove', resize);
+        document.addEventListener('mouseup', stopResize);
+    }
+    
+    // Minimize functionality
+    minimizeModal() {
+        const modalContent = document.getElementById('video-call-modal-content');
+        const minimizeBtn = document.getElementById('minimize-video-call');
+        const maximizeBtn = document.getElementById('maximize-video-call');
+        
+        if (!modalContent) return;
+        
+        // Store current position and size
+        this.originalPosition = {
+            left: modalContent.style.left,
+            top: modalContent.style.top,
+            width: modalContent.style.width,
+            height: modalContent.style.height
+        };
+        
+        // Minimize to bottom-right corner
+        modalContent.style.left = 'calc(100vw - 320px)';
+        modalContent.style.top = 'calc(100vh - 240px)';
+        modalContent.style.width = '300px';
+        modalContent.style.height = '200px';
+        modalContent.style.transform = 'none';
+        
+        // Update buttons
+        if (minimizeBtn) minimizeBtn.classList.add('hidden');
+        if (maximizeBtn) maximizeBtn.classList.remove('hidden');
+    }
+    
+    // Maximize functionality
+    maximizeModal() {
+        const modalContent = document.getElementById('video-call-modal-content');
+        const minimizeBtn = document.getElementById('minimize-video-call');
+        const maximizeBtn = document.getElementById('maximize-video-call');
+        
+        if (!modalContent) return;
+        
+        // Restore original position and size
+        if (this.originalPosition) {
+            modalContent.style.left = this.originalPosition.left;
+            modalContent.style.top = this.originalPosition.top;
+            modalContent.style.width = this.originalPosition.width;
+            modalContent.style.height = this.originalPosition.height;
+        } else {
+            // Default to center if no original position
+            this.resetModalPosition();
+        }
+        
+        // Update buttons
+        if (minimizeBtn) minimizeBtn.classList.remove('hidden');
+        if (maximizeBtn) maximizeBtn.classList.add('hidden');
+    }
+    
+    // Reset modal position to center
+    resetModalPosition() {
+        const modalContent = document.getElementById('video-call-modal-content');
+        if (!modalContent) return;
+        
+        modalContent.style.left = '';
+        modalContent.style.top = '';
+        modalContent.style.width = '';
+        modalContent.style.height = '';
+        modalContent.style.transform = '';
     }
     
     // Method to join a call from a room ID (for when someone clicks a call link)

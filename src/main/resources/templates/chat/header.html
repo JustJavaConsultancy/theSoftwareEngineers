@@ -26,9 +26,21 @@
         </div>
     </div>
     <div class="flex items-center space-x-2 md:space-x-4">
-        <button class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
-            <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">videocam</span>
-        </button>
+        <!-- Video Call Dropdown -->
+        <div class="relative" id="videoCallDropdownUser">
+            <button id="video-call-dropdown-btn-user" class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors focus:outline-none">
+                <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">videocam</span>
+            </button>
+            <div id="video-call-dropdown-menu-user" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+                <button id="start-video-call-user" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-white flex items-center">
+                    <span class="material-icons mr-2">play_circle</span> Start Video Call
+                </button>
+                <button id="copy-meeting-link-user" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-white flex items-center">
+                    <span class="material-icons mr-2">link</span> Copy Meeting Link
+                </button>
+            </div>
+        </div>
+        <!-- End Video Call Dropdown -->
         <button class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
             <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">call</span>
         </button>
@@ -52,9 +64,21 @@
         </div>
     </div>
     <div class="flex items-center space-x-2 md:space-x-4">
-        <button class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
-            <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">videocam</span>
-        </button>
+        <!-- Video Call Dropdown -->
+        <div class="relative" id="videoCallDropdownGroup">
+            <button id="video-call-dropdown-btn-group" class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors focus:outline-none">
+                <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">videocam</span>
+            </button>
+            <div id="video-call-dropdown-menu-group" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+                <button id="start-video-call-group" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-white flex items-center">
+                    <span class="material-icons mr-2">play_circle</span> Start Video Call
+                </button>
+                <button id="copy-meeting-link-group" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-white flex items-center">
+                    <span class="material-icons mr-2">link</span> Copy Meeting Link
+                </button>
+            </div>
+        </div>
+        <!-- End Video Call Dropdown -->
         <button class="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
             <span class="material-icons text-gray-400 hover:text-white text-lg md:text-xl">call</span>
         </button>

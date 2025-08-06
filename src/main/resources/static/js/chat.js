@@ -382,6 +382,74 @@
            });
        }
 
+       // === Video Call Dropdown Logic ===
+       function setupVideoCallDropdown(dropdownBtnId, dropdownMenuId, startBtnId, copyBtnId, chatType) {
+           const dropdownBtn = document.getElementById(dropdownBtnId);
+           const dropdownMenu = document.getElementById(dropdownMenuId);
+           const startBtn = document.getElementById(startBtnId);
+           const copyBtn = document.getElementById(copyBtnId);
+
+           if (!dropdownBtn || !dropdownMenu || !startBtn || !copyBtn) return;
+
+           // Toggle dropdown
+           dropdownBtn.addEventListener('click', function(e) {
+               e.stopPropagation();
+               dropdownMenu.classList.toggle('hidden');
+           });
+
+           // Start Video Call
+           startBtn.addEventListener('click', function(e) {
+               e.preventDefault();
+               dropdownMenu.classList.add('hidden');
+               if (window.videoCallManager && typeof window.videoCallManager.startVideoCall === 'function') {
+                   window.videoCallManager.startVideoCall();
+               } else {
+                   alert('Video call manager not loaded.');
+               }
+           });
+
+           // Copy Meeting Link
+           copyBtn.addEventListener('click', function(e) {
+               e.preventDefault();
+               dropdownMenu.classList.add('hidden');
+               let roomId = '';
+               let name = '';
+               if (currentChat && currentChat.id) {
+                   roomId = `room_${currentChat.id}`.replace(/[^a-zA-Z0-9_]/g, '_');
+                   name = currentChat.name || '';
+               } else {
+                   alert('No chat selected.');
+                   return;
+               }
+               const baseUrl = window.location.protocol + '//' + window.location.host;
+               const link = `${baseUrl}/chat?roomID=${roomId}`;
+               navigator.clipboard.writeText(link).then(() => {
+                   showToast('Meeting link copied!');
+               }, () => {
+                   alert('Failed to copy link.');
+               });
+           });
+
+           // Hide dropdown on outside click
+           document.addEventListener('click', function(e) {
+               if (!dropdownMenu.classList.contains('hidden')) {
+                   dropdownMenu.classList.add('hidden');
+               }
+           });
+       }
+
+       function showToast(message) {
+           const toast = document.createElement('div');
+           toast.className = 'fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+           toast.innerHTML = `<div class="flex items-center"><span class="material-icons mr-2 text-sm">link</span><span class="text-sm">${message}</span></div>`;
+           document.body.appendChild(toast);
+           setTimeout(() => {
+               if (document.body.contains(toast)) {
+                   document.body.removeChild(toast);
+               }
+           }, 2000);
+       }
+
        // Initialize the page
        document.addEventListener('DOMContentLoaded', function() {
            // Hide the "no conversations" message initially
@@ -404,6 +472,9 @@
                    sendMessageOverWebSocket();
                }
            });
+
+           setupVideoCallDropdown('video-call-dropdown-btn-user', 'video-call-dropdown-menu-user', 'start-video-call-user', 'copy-meeting-link-user', 'user');
+           setupVideoCallDropdown('video-call-dropdown-btn-group', 'video-call-dropdown-menu-group', 'start-video-call-group', 'copy-meeting-link-group', 'group');
        });
 
 
