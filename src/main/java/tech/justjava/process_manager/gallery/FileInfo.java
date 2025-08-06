@@ -42,6 +42,9 @@ public class FileInfo {
     @Column(name = "session_id")
     private String sessionId; // For temporary files, track which session they belong to
 
+    @Column(name = "case_tags", columnDefinition = "TEXT")
+    private String caseTags; // Store case tags JSON
+
     // Default constructor
     public FileInfo() {
         LocalDateTime now = LocalDateTime.now();
@@ -169,6 +172,14 @@ public class FileInfo {
         this.sessionId = sessionId;
     }
 
+    public String getCaseTags() {
+        return caseTags;
+    }
+
+    public void setCaseTags(String caseTags) {
+        this.caseTags = caseTags;
+    }
+
     // Helper method for backward compatibility with the frontend
     public String getDateAddedFormatted() {
         if (dateAdded != null) {
@@ -223,6 +234,7 @@ public class FileInfo {
                 ", updatedAt=" + updatedAt +
                 ", status='" + status + '\'' +
                 ", sessionId='" + sessionId + '\'' +
+                ", caseTags='" + caseTags + '\'' +
                 '}';
     }
 }

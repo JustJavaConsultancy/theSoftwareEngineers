@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}"
+>
+<head>
+  <meta charset="UTF-8" />
+  <title>Case Tags Summary</title>
+</head>
+<body>
+<div layout:fragment="content" class="flex h-screen">
+  <main class="main-content flex-1 p-8 overflow-y-auto">
+    <section>
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="text-3xl font-bold">Case Numbers Summary</h2>
+          <p class="text-gray-400">Overview of all case numbers and their associated files.</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <a th:href="@{/gallery}">
+            <button
+                    class="bg-gray-600 hover:bg-gray-700 flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-200"
+            >
+              <span class="material-icons">arrow_back</span>
+              Back to Gallery
+            </button>
+          </a>
+          <a th:href="@{/addFile}">
+            <button
+                    class="btn-primary2 flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold"
+            >
+              <span class="material-icons">add</span>
+              Add File
+            </button>
+          </a>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 rounded-lg p-6">
+        <div th:if="${#lists.isEmpty(caseTagSummaries)}" class="text-center py-12">
+          <span class="material-icons text-6xl text-gray-500 mb-4">folder_off</span>
+          <h3 class="text-xl font-semibold text-gray-300 mb-2">No Cases Found</h3>
+          <p class="text-gray-400 mb-6">Upload some files to see case numbers here.</p>
+          <a th:href="@{/addFile}">
+            <button class="btn-primary2 flex items-center gap-2 px-6 py-3 rounded-lg text-white font-semibold mx-auto">
+              <span class="material-icons">add</span>
+              Add Files
+            </button>
+          </a>
+        </div>
+
+        <!-- Accordions for Case Numbers -->
+        <div th:if="${!#lists.isEmpty(caseTagSummaries)}" class="space-y-4">
+          <div th:each="caseTag, iterStat : ${caseTagSummaries}" class="accordion-item border border-gray-600 rounded-lg overflow-hidden">
+            <!-- Accordion Header -->
+            <button
+                    class="accordion-header w-full px-6 py-4 bg-gray-700 hover:bg-gray-600 flex items-center justify-between text-left transition-all duration-300 ease-in-out"
+                    th:attr="data-target='accordion-' + ${iterStat.index}"
+                    type="button"
+            >
+              <div class="flex items-center flex-1">
+                <span class="material-icons text-blue-400 mr-3">folder</span>
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-white" th:text="${caseTag.displayName}"></h3>
+                  <p class="text-sm text-gray-400">
+                    <span th:text="${caseTag.fileCount}"></span>
+                    <span th:text="${caseTag.fileCount == 1 ? 'file' : 'files'}"></span>
+                    uploaded
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="bg-primary text-white text-xs px-2 py-1 rounded-full" th:text="${caseTag.fileCount}"></span>
+                <span class="material-icons accordion-icon text-gray-400 transform transition-transform duration-300 ease-in-out">expand_more</span>
+              </div>
+            </button>
+
+            <!-- Accordion Content -->
+            <div
+                    class="accordion-content overflow-hidden transition-all duration-300 ease-in-out bg-gray-750 border-t border-gray-600"
+                    th:attr="id='accordion-' + ${iterStat.index}"
+                    style="max-height: 0;"
+            >
+              <div class="p-6">
+                <!-- File Summary Section -->
+                <div class="mb-6">
+                  <h4 class="text-md font-semibold text-white mb-3 flex items-center">
+                    <span class="material-icons text-green-400 mr-2">summarize</span>
+                    Case Summary
+                  </h4>
+                  <div class="bg-gray-800 rounded-lg p-4">
+                    <p class="text-gray-300 mb-3" th:text="${caseTag.summary}">
+                      Case summary will be loaded from the backend.
+                    </p>
+
+                    <div class="text-sm text-gray-400 space-y-2">
+                      <p th:each="bulletPoint : ${caseTag.bulletPoints}" th:text="'• ' + ${bulletPoint}">
+                        • Dynamic bullet point from backend
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <!-- View Details Button -->
+                <div class="flex justify-end">
+                  <a th:href="@{/case-tags/{caseNumber}(caseNumber=${caseTag.label})}">
+                    <button class="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 flex items-center gap-2 transform hover:scale-105">
+                      View Details
+                    </button>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics Section -->
+      <div th:if="${!#lists.isEmpty(caseTagSummaries)}" class="mt-8 grid gap-6 md:grid-cols-3">
+        <div class="bg-gray-800 rounded-lg p-6 transform transition-transform duration-200 hover:scale-105">
+          <div class="flex items-center">
+            <span class="material-icons text-blue-400 mr-3">folder</span>
+            <div>
+              <h3 class="text-2xl font-bold text-white" th:text="${#lists.size(caseTagSummaries)}"></h3>
+              <p class="text-gray-400">Total Cases</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

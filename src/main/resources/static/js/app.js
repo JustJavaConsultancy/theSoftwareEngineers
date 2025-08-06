@@ -80,11 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeGalleryFunctionality();
   }
 
-  // === ADD FILE PAGE FUNCTIONALITY ===
-  if (window.location.pathname.includes('/addFile')) {
-    initializeFileUploadFunctionality();
-  }
-
   // === SUPPORT CHAT FUNCTIONALITY ===
   if (!window.location.pathname.includes('/chat')) {
     const supportBtn = document.getElementById('support-chat-btn');
@@ -929,231 +924,288 @@ function initializeGalleryFunctionality() {
 }
 
 // FILE UPLOAD FUNCTIONALITY
-function initializeFileUploadFunctionality() {
-  // Elements
-  const uploadArea = document.getElementById('uploadArea');
-  const fileInput = document.getElementById('file-upload');
-  const uploadProgress = document.getElementById('uploadProgress');
-  const progressBar = document.getElementById('progressBar');
-  const progressPercentage = document.getElementById('progressPercentage');
-  const uploadStatus = document.getElementById('uploadStatus');
-  const uploadResults = document.getElementById('uploadResults');
-  const uploadedFilesList = document.getElementById('uploadedFilesList');
-  const doneButton = document.getElementById('doneButton');
-  const uploadError = document.getElementById('uploadError');
-  const errorMessage = document.getElementById('errorMessage');
-  const retryButton = document.getElementById('retryButton');
+// Form-based file upload functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializeFormUploadFunctionality();
+});
 
-  // State
-  let uploadedFiles = [];
-  let pendingFiles = [];
-  let uploadAborted = false;
+function initializeFormUploadFunctionality() {
+    // Elements
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('file-upload');
+    const addMoreButton = document.getElementById('addMoreCaseTag');
+    const caseTagsList = document.getElementById('caseTagsList');
+    const uploadForm = document.getElementById('uploadForm');
 
-  // Helper Functions
-  const hideAllSections = () => {
-    uploadProgress.classList.add('hidden');
-    uploadResults.classList.add('hidden');
-    uploadError.classList.add('hidden');
-  };
+    // Add More Case Tag functionality
+    if (addMoreButton) {
+        addMoreButton.addEventListener('click', () => {
+            const newCaseTagItem = document.createElement('div');
+            newCaseTagItem.className = 'case-tag-item bg-gray-800 p-4 rounded-lg mb-4';
 
-  const resetForm = () => {
-    fileInput.value = '';
-    uploadedFiles = [];
-    progressBar.style.width = '0%';
-    progressPercentage.textContent = '0%';
-    uploadStatus.textContent = '';
-    uploadedFilesList.innerHTML = '';
-  };
+            // Get the case tag options from the first existing select element
+            const existingSelect = document.querySelector('.case-tag-select');
+            const optionsHTML = existingSelect ? existingSelect.innerHTML : `
+                <option value="">Select a case tag</option>
+                <option value="evidence">Evidence</option>
+                <option value="witness-statement">Witness Statement</option>
+                <option value="forensic-report">Forensic Report</option>
+                <option value="legal-document">Legal Document</option>
+                <option value="investigation-notes">Investigation Notes</option>
+                <option value="surveillance">Surveillance</option>
+                <option value="interview-recording">Interview Recording</option>
+                <option value="crime-scene-photo">Crime Scene Photo</option>
+                <option value="expert-testimony">Expert Testimony</option>
+                <option value="case-summary">Case Summary</option>
+            `;
 
-  const showUploadError = (msg) => {
-    errorMessage.textContent = msg;
-    uploadError.classList.remove('hidden');
-  };
+            newCaseTagItem.innerHTML = `
+                <div class="flex gap-4 mb-3">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Case Tags</label>
+                        <select name="caseTags" class="case-tag-select w-full p-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            ${optionsHTML}
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Value</label>
+                        <input type="text" name="caseValues" class="case-title-input w-full p-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter case title">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="button" class="remove-case-tag bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition-colors duration-200">
+                            <span class="material-icons">remove</span>
+                        </button>
+                    </div>
+                </div>
+            `;
 
-  const showUploadResults = () => {
-    uploadStatus.textContent = 'Upload complete!';
-    uploadedFilesList.innerHTML = '';
+            caseTagsList.appendChild(newCaseTagItem);
+        });
+    }
 
-    uploadedFiles.forEach(file => {
-      const fileItem = document.createElement('div');
-      fileItem.className = 'flex items-center justify-between p-2 bg-gray-700 rounded mb-2';
-      fileItem.innerHTML = `
-        <div class="flex items-center">
-          <span class="material-icons text-green-500 mr-2">check_circle</span>
-          <span class="text-white">${file.name}</span>
-        </div>
-        <span class="text-gray-400 text-sm">${file.size}</span>
-      `;
-      uploadedFilesList.appendChild(fileItem);
+    // Remove case tag functionality (using event delegation)
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-case-tag') || e.target.closest('.remove-case-tag')) {
+            const caseTagItem = e.target.closest('.case-tag-item');
+            if (caseTagItem) {
+                caseTagItem.remove();
+            }
+        }
     });
 
-    uploadResults.classList.remove('hidden');
-  };
-
-  // Main Upload Handler
-  const handleFileUpload = (files) => {
-    // Reset upload state
-    uploadAborted = false;
-
-    hideAllSections();
-
-    // Validate file sizes before upload (10MB limit based on external service)
-    const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
-    const oversizedFiles = Array.from(files).filter(file => file.size > maxFileSize);
-
-    if (oversizedFiles.length > 0) {
-      const fileNames = oversizedFiles.map(f => f.name).join(', ');
-      showUploadError(`The following files are too large (max 10MB): ${fileNames}`);
-      return;
-    }
-
-    uploadProgress.classList.remove('hidden');
-    uploadedFiles = [];
-    pendingFiles = Array.from(files);
-
-    // Reset progress bar
-    progressBar.style.width = '0%';
-    progressPercentage.textContent = '0%';
-    uploadStatus.textContent = 'Uploading... (0%)';
-
-    const totalFiles = pendingFiles.length;
-    let completedCount = 0;
-
-    if (totalFiles === 0) {
-      showUploadError('No files selected');
-      return;
-    }
-
-    let completedFiles = 0;
-    let currentFileIndex = 0;
-
-    const updateProgress = () => {
-      const percent = Math.round((completedFiles / totalFiles) * 100);
-      progressBar.style.width = `${percent}%`;
-      progressPercentage.textContent = `${percent}%`;
-      uploadStatus.textContent = `Uploading... (${completedFiles}/${totalFiles} files)`;
-    };
-
-    // Upload files sequentially using fetch
-    const uploadNextFile = async () => {
-      if (currentFileIndex >= pendingFiles.length) {
-        // All files processed
-        progressBar.style.width = '100%';
-        progressPercentage.textContent = '100%';
-
-        if (uploadedFiles.length === 0) {
-          showUploadError('All uploads failed. Click Retry to try again.');
-        } else if (uploadedFiles.length < totalFiles) {
-          uploadStatus.textContent = `Upload completed with ${totalFiles - uploadedFiles.length} failed files`;
-          showUploadResults();
-        } else {
-          uploadStatus.textContent = 'All files uploaded successfully!';
-          showUploadResults();
-        }
-        return;
-      }
-
-      const file = pendingFiles[currentFileIndex];
-      const formData = new FormData();
-      formData.append('file', file);
-
-      uploadStatus.textContent = `Uploading ${file.name}...`;
-
-      try {
-        const response = await fetch('/api/files/upload', {
-          method: 'POST',
-          body: formData
+    // Drag and Drop functionality for the upload area
+    if (uploadArea && fileInput) {
+        // Drag and Drop Handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('border-blue-500', 'bg-blue-50');
         });
 
-        const data = await response.json();
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+        });
 
-        if (response.ok && data.status === 'success') {
-          uploadedFiles.push(data.fileInfo);
-          completedFiles++;
-          updateProgress();
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+
+            if (e.dataTransfer.files.length > 0) {
+                // Set the files to the file input
+                fileInput.files = e.dataTransfer.files;
+
+                // Update the upload area to show selected files
+                updateUploadAreaDisplay(e.dataTransfer.files);
+            }
+        });
+
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                updateUploadAreaDisplay(e.target.files);
+            }
+        });
+
+        // Click handler for upload area - removed to prevent double triggering
+        // The label already handles the click to open file picker
+    }
+
+    // Form validation before submission
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('file-upload');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one file to upload.');
+                return false;
+            }
+
+            // Check file sizes (10MB limit)
+            const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
+            const oversizedFiles = Array.from(fileInput.files).filter(file => file.size > maxFileSize);
+
+            if (oversizedFiles.length > 0) {
+                e.preventDefault();
+                const fileNames = oversizedFiles.map(f => f.name).join(', ');
+                alert(`The following files are too large (max 10MB): ${fileNames}`);
+                return false;
+            }
+
+            // Show loading state
+            const submitButton = uploadForm.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = 'Uploading...';
+            }
+
+            return true;
+        });
+    }
+
+    // Function to update upload area display when files are selected
+    function updateUploadAreaDisplay(files) {
+        const uploadArea = document.getElementById('uploadArea');
+        const fileCount = files.length;
+
+        // Find the existing label and update its content instead of replacing the entire innerHTML
+        const label = uploadArea.querySelector('label[for="file-upload"]');
+
+        if (fileCount > 0) {
+            const fileList = Array.from(files).map(file => file.name).join(', ');
+            const displayText = fileCount === 1 ?
+                `Selected: ${files[0].name}` :
+                `Selected ${fileCount} files: ${fileList.length > 50 ? fileList.substring(0, 50) + '...' : fileList}`;
+
+            if (label) {
+                label.innerHTML = `
+                    <span class="material-icons text-6xl text-green-500">check_circle</span>
+                    <p class="mt-4 text-lg font-semibold text-green-400">${displayText}</p>
+                    <p class="text-gray-400">Click to change files</p>
+                    <span class="mt-2 upload-btn-primary text-white font-bold py-2 px-4 rounded">
+                        Change Files
+                    </span>
+                `;
+            }
         } else {
-          throw new Error(data.message || 'Upload failed');
+            // Reset to original state
+            if (label) {
+                label.innerHTML = `
+                    <span class="material-icons text-6xl text-gray-500">cloud_upload</span>
+                    <p class="mt-4 text-lg font-semibold">Drag & Drop your files here</p>
+                    <p class="text-gray-400">or</p>
+                    <span class="mt-2 upload-btn-primary text-white font-bold py-2 px-4 rounded">
+                        Browse Files
+                    </span>
+                `;
+            }
         }
-      } catch (error) {
-        console.error('Upload error:', error);
-        completedFiles++; // Count failed uploads too for progress
-        updateProgress();
 
-        // Show specific error message for file size issues
-        if (error.message && error.message.includes('too large')) {
-          uploadStatus.textContent = `Upload failed: ${error.message}`;
-        }
-      }
-
-      currentFileIndex++;
-      completedCount++;
-
-      // Upload next file
-      setTimeout(uploadNextFile, 100); // Small delay between uploads
-    };
-
-    // Start uploading files
-    uploadNextFile();
-  };
-
-  // Event Listeners
-  doneButton.addEventListener('click', () => {
-    // Commit the uploaded files to the gallery
-    doneButton.disabled = true;
-    doneButton.textContent = 'Committing...';
-
-    fetch('/api/files/commit-uploads', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === 'success') {
-        window.location.href = '/gallery';
-      } else {
-        throw new Error(data.message || 'Failed to commit uploads');
-      }
-    })
-    .catch(error => {
-      console.error('Commit error:', error);
-      alert('Failed to commit uploads: ' + error.message);
-      doneButton.disabled = false;
-      doneButton.textContent = 'Done';
-    });
-  });
-
-  retryButton.addEventListener('click', () => {
-    if (pendingFiles.length > 0) {
-      uploadedFiles = [];
-      uploadAborted = false;
-      handleFileUpload([...pendingFiles]);
-    } else {
-      hideAllSections();
-      resetForm();
+        // No need to recreate the file input or reassign files since we're keeping the original input
     }
-  });
-
-  fileInput.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) handleFileUpload(e.target.files);
-  });
-
-  // Drag and Drop Handlers
-  uploadArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadArea.classList.add('border-blue-500', 'bg-blue-50');
-  });
-
-  uploadArea.addEventListener('dragleave', () => {
-    uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
-  });
-
-  uploadArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
-    if (e.dataTransfer.files.length > 0) {
-      handleFileUpload(e.dataTransfer.files);
-    }
-  });
 }
+
+// CASE TAG SUMMARY
+      // Accordion functionality with smooth animations
+      const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+      accordionHeaders.forEach(header => {
+          header.addEventListener('click', function() {
+              const target = this.getAttribute('data-target');
+              const content = document.getElementById(target);
+              const icon = this.querySelector('.accordion-icon');
+              const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+
+              // Close all other accordions
+              accordionHeaders.forEach(otherHeader => {
+                  if (otherHeader !== this) {
+                      const otherTarget = otherHeader.getAttribute('data-target');
+                      const otherContent = document.getElementById(otherTarget);
+                      const otherIcon = otherHeader.querySelector('.accordion-icon');
+
+                      otherContent.style.maxHeight = '0px';
+                      otherIcon.style.transform = 'rotate(0deg)';
+                      otherHeader.classList.remove('bg-gray-600');
+                      otherHeader.classList.add('bg-gray-700');
+                  }
+              });
+
+              // Toggle current accordion
+              if (isOpen) {
+                  // Close current accordion
+                  content.style.maxHeight = '0px';
+                  icon.style.transform = 'rotate(0deg)';
+                  this.classList.remove('bg-gray-600');
+                  this.classList.add('bg-gray-700');
+              } else {
+                  // Open current accordion
+                  content.style.maxHeight = content.scrollHeight + 'px';
+                  icon.style.transform = 'rotate(180deg)';
+                  this.classList.remove('bg-gray-700');
+                  this.classList.add('bg-gray-600');
+              }
+          });
+      });
+
+  // CASE TAG DETAILS
+   // Reuse the same delete functionality from gallery.html
+      document.addEventListener('DOMContentLoaded', function() {
+          const deleteModal = document.getElementById('deleteModal');
+          const deleteFileName = document.getElementById('deleteFileName');
+          const cancelDelete = document.getElementById('cancelDelete');
+          const confirmDelete = document.getElementById('confirmDelete');
+          let fileToDelete = null;
+
+          // Add event listeners to delete buttons
+          document.querySelectorAll('.delete-file-btn').forEach(button => {
+              button.addEventListener('click', function() {
+                  fileToDelete = {
+                      id: this.getAttribute('data-file-id'),
+                      name: this.getAttribute('data-file-name')
+                  };
+                  deleteFileName.textContent = fileToDelete.name;
+                  deleteModal.classList.remove('hidden');
+                  deleteModal.classList.add('flex');
+              });
+          });
+
+          // Cancel delete
+          cancelDelete.addEventListener('click', function() {
+              deleteModal.classList.add('hidden');
+              deleteModal.classList.remove('flex');
+              fileToDelete = null;
+          });
+
+          // Confirm delete
+          confirmDelete.addEventListener('click', function() {
+              if (fileToDelete) {
+                  fetch(`/api/files/${fileToDelete.id}`, {
+                      method: 'DELETE'
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.status === 'success') {
+                          location.reload();
+                      } else {
+                          alert('Failed to delete file: ' + data.message);
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      alert('Failed to delete file');
+                  });
+              }
+              deleteModal.classList.add('hidden');
+              deleteModal.classList.remove('flex');
+          });
+
+          // Add event listeners to download buttons
+          document.querySelectorAll('.download-file-btn').forEach(button => {
+              button.addEventListener('click', function() {
+                  const fileId = this.getAttribute('data-file-id');
+                  const fileName = this.getAttribute('data-file-name');
+
+                  window.location.href = `/api/files/download/${fileId}`;
+              });
+          });
+      });
