@@ -25,20 +25,37 @@
     <!-- Application CSS -->
     <link th:href="@{/css/app.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <!-- Theme initialization script to prevent flash of unstyled content -->
     <script>
-        let stompClient = null
-        function connectStomp() {
-        const socket = new SockJS('/ws');
-          stompClient = Stomp.over(socket);
-
-          stompClient.connect({}, function (frame) {
-            console.log('Connected:', frame);
-
-            stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function () {
-              console.log('connection is ready');
-            });
+      (function() {
+        const savedMode = localStorage.getItem('colorMode');
+        const html = document.documentElement;
+        const body = document.body;
+        
+        if (savedMode === 'light') {
+          body.classList.add('light-mode');
+          html.classList.remove('dark');
+        } else {
+          body.classList.remove('light-mode');
+          html.classList.add('dark');
         }
+      })();
     </script>
+<script>
+    let stompClient = null
+    function connectStomp() {
+    const socket = new SockJS('/ws');
+      stompClient = Stomp.over(socket);
+
+      stompClient.connect({}, function (frame) {
+        console.log('Connected:', frame);
+
+        stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function () {
+          console.log('connection is ready');
+        });
+    }
+</script>
 </head>
 
 <body class="flex h-screen">
@@ -87,14 +104,22 @@
                 <span class="material-icons mr-3">receipt_long</span>
                 <span>Invoices</span>
             </a>
+
+            <a th:if="${session.isManager}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"
+               th:href="@{/invoice/invoice-review}"
+               th:classappend="${currentPath == '/invoice/invoice-review'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">receipt_long</span>
+                <span>Invoice Review</span>
+            </a>
+
             <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/chat}"
                th:classappend="${currentPath == '/chat'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">chat</span>
                 <span>Chat</span>
             </a>
             <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/gallery}"
-               th:classappend="${currentPath == '/gallery' or currentPath == '/addFile' or currentPath == '/case-tags' or currentPath == `/case-tags/${caseNumber}`} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">collections</span>
+               th:classappend="${currentPath == '/gallery' or currentPath == '/addFile'} ? ' bg-blue-600'">
+            <span class="material-icons mr-3">collections</span>
                 <span>Gallery</span>
             </a>
         </nav>
@@ -153,7 +178,7 @@
                 <span class="material-icons text-white text-sm">support_agent</span>
             </div>
             <div class="bg-slate-700 text-white p-3 rounded-lg rounded-tl-none max-w-xs">
-                <p class="text-sm">Hello! I'm here to help you with TaskMaster. How can I assist you today?</p>
+                <p class="text-sm">Hello! I'm here to help you with any Legal related question. How can I assist you today?</p>
                 <span class="text-xs text-slate-400 mt-1 block">Just now</span>
             </div>
         </div>
@@ -182,23 +207,7 @@
         </div>
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Layout debug: DOM loaded');
-        const modeToggle = document.getElementById('mode-toggle');
-        console.log('Mode toggle element:', modeToggle);
-        if (modeToggle) {
-            console.log('Mode toggle found, adding test click listener');
-            modeToggle.addEventListener('click', function() {
-                console.log('Mode toggle clicked - debug version!');
-                document.body.classList.toggle('light-mode');
-                document.documentElement.classList.toggle('dark');
-            });
-        } else {
-            console.error('Mode toggle not found in layout debug');
-        }
-    });
-</script>
+<!-- Theme toggle is handled by app.js -->
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/htmx.org@2.0.4"></script>

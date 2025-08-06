@@ -170,4 +170,22 @@ public class ProcessService {
                 .singleResult();
     }
 
+    public List<org.flowable.engine.runtime.ProcessInstance> getAllProcessInstance(String processDefKey, String businessKey){
+        return runtimeService.createProcessInstanceQuery()
+                .processDefinitionKey(processDefKey)
+                .processInstanceBusinessKey(businessKey)
+                .includeProcessVariables()
+                .active()
+                .orderByProcessInstanceId().desc()
+                .list();
+    }
+
+    public org.flowable.engine.runtime.ProcessInstance getSingleProcessInstance(String processId, String processDefKey){
+        return runtimeService.createProcessInstanceQuery()
+                .processInstanceId(processId)
+                .processDefinitionKey(processDefKey)
+                .includeProcessVariables()
+                .singleResult();
+    }
+
 }

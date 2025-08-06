@@ -10,6 +10,7 @@ const DocumentController = {
         this.setupModals();
         this.setupDocumentActions();
         this.setupHTMXHandlers();
+        this.setupEditModeToggle();
     },
 
     // Tab functionality
@@ -161,6 +162,56 @@ const DocumentController = {
         });
     },
 
+    // Setup edit mode toggle functionality
+    setupEditModeToggle() {
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.edit-btn')) {
+                this.toggleEditMode(e.target.closest('.edit-btn'));
+            }
+        });
+
+        // HTMX beforeRequest handler to disable generate button during submission
+        document.body.addEventListener('htmx:beforeRequest', (evt) => {
+            if (evt.detail.elt.classList.contains('generate-btn')) {
+                evt.detail.elt.disabled = true;
+            }
+        });
+
+        document.body.addEventListener('htmx:afterRequest', (evt) => {
+            if (evt.detail.elt.classList.contains('generate-btn')) {
+                evt.detail.elt.disabled = false;
+            }
+        });
+    },
+
+    toggleEditMode(button) {
+        if (!button) return;
+
+        const index = button.id.split('-')[2];
+        const displayDiv = document.getElementById('display-content-' + index);
+        const editTextarea = document.getElementById('edit-content-' + index);
+
+        if (!displayDiv || !editTextarea) return;
+
+        if (editTextarea.style.display === 'none') {
+            // Switch to edit mode
+            editTextarea.value = displayDiv.textContent;
+            displayDiv.style.display = 'none';
+            editTextarea.style.display = 'block';
+            button.innerHTML = '<span class="material-icons case-btn-icon">save</span> Save Document';
+            button.classList.remove('case-btn-secondary');
+            button.classList.add('case-btn-primary');
+        } else {
+            // Switch back to display mode
+            displayDiv.textContent = editTextarea.value;
+            editTextarea.style.display = 'none';
+            displayDiv.style.display = 'block';
+            button.innerHTML = '<span class="material-icons case-btn-icon">edit</span> Edit Document';
+            button.classList.remove('case-btn-primary');
+            button.classList.add('case-btn-secondary');
+        }
+    },
+
     addNewDocument() {
         if (!this.newDocumentName || !this.modal) return;
 
@@ -246,8 +297,10 @@ const DocumentController = {
         const card = button.closest('.case-document-card');
         if (!card) return;
 
-        const textarea = card.querySelector('.case-generated-content');
-        if (!textarea) return;
+        // Try to find content in either textarea or display div
+        const textarea = card.querySelector('.case-generated-content-edit');
+        const displayDiv = card.querySelector('.case-generated-content-display');
+        const content = textarea ? textarea.value : (displayDiv ? displayDiv.textContent : '');
 
         const titleElement = card.querySelector('[style*="font-weight: 500"]');
         if (!titleElement) return;
@@ -255,7 +308,7 @@ const DocumentController = {
         const title = titleElement.textContent;
 
         // Check if we have a lawyer document (content to download)
-        if (!textarea.value.trim()) {
+        if (!content.trim()) {
             alert('No document content available to download');
             return;
         }
@@ -287,12 +340,11 @@ const DocumentController = {
             doc.text(title, 15, 20);
 
             // Add content (trimming any extra whitespace)
-            const content = textarea.value.trim();
             doc.setFontSize(12);
 
             // Split long text into multiple pages if needed
             const pageHeight = doc.internal.pageSize.height - 30;
-            const lines = doc.splitTextToSize(content, 180);
+            const lines = doc.splitTextToSize(content.trim(), 180);
             let y = 30;
 
             for (let i = 0; i < lines.length; i++) {
@@ -325,40 +377,64 @@ const DocumentController = {
         this.hideModal(this.editorModal);
     },
 
-    // HTMX integration
+    // HTMX integration for lawyer document generation
     setupHTMXHandlers() {
         document.body.addEventListener('htmx:afterRequest', (evt) => {
-            if (evt.detail.successful && evt.detail.requestConfig.path === '/forms/generate-lawyer-doc') {
+            if (evt.detail.successful && evt.detail.requestConfig.path.includes('/forms/generate-lawyer-doc/')) {
                 const button = evt.detail.elt;
                 if (!button) return;
 
                 const card = button.closest('.case-document-card');
                 if (!card) return;
 
-                const status = card.querySelector('.case-status-badge');
-                const generateBtn = card.querySelector('.generate-btn');
-                const editBtn = card.querySelector('.edit-btn');
-                const downloadBtn = card.querySelector('.download-btn');
-                const textarea = card.querySelector('.case-generated-content');
+                // Extract the index from the button ID
+                const index = button.id.split('-')[2];
 
-                if (status && generateBtn && editBtn && downloadBtn && textarea) {
+                const status = document.getElementById('status-' + index);
+                const generateBtn = document.getElementById('generate-btn-' + index);
+                const editBtn = document.getElementById('edit-btn-' + index);
+                const downloadBtn = document.getElementById('download-btn-' + index);
+                const displayDiv = document.getElementById('display-content-' + index);
+                const editTextarea = document.getElementById('edit-content-' + index);
+
+                if (status && generateBtn && editBtn && downloadBtn && displayDiv) {
                     // Get the raw text content from the response and trim whitespace
                     let generatedContent = evt.detail.xhr.responseText.trim();
 
-                    // Strip any HTML tags if present
-                    generatedContent = generatedContent.replace(/<[^>]*>/g, '');
-
-                    // Update the textarea with the clean content
-                    textarea.value = generatedContent;
-                    textarea.style.display = 'block';
+                    // Update the display div with the clean content
+                    displayDiv.textContent = generatedContent;
+                    displayDiv.style.display = 'block';
 
                     // Update status
                     status.textContent = 'Generated';
-                    status.classList.add('generated');
+                    status.style.backgroundColor = 'var(--success)';
 
-                    // Transform buttons
+                    // Show action buttons
                     generateBtn.style.display = 'none';
                     editBtn.style.display = 'inline-flex';
+                    downloadBtn.style.display = 'inline-flex';
+                }
+            }
+        });
+
+        // Handle HTMX afterSwap event for content updates
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            if (evt.detail.target.id.startsWith('display-content-')) {
+                const index = evt.detail.target.id.split('-')[2];
+                const statusBadge = document.getElementById(`status-${index}`);
+                const editBtn = document.getElementById(`edit-btn-${index}`);
+                const downloadBtn = document.getElementById(`download-btn-${index}`);
+
+                if (statusBadge) {
+                    statusBadge.textContent = 'Generated';
+                    statusBadge.style.backgroundColor = 'var(--success)';
+                }
+
+                if (editBtn) {
+                    editBtn.style.display = 'inline-flex';
+                }
+
+                if (downloadBtn) {
                     downloadBtn.style.display = 'inline-flex';
                 }
             }

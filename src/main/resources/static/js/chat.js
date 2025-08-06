@@ -1,5 +1,24 @@
-const currentUser = document.getElementById('currentUserId').value;
+       const currentUser = document.getElementById('currentUserId').value;
+       let isUserOnline = true
        const currentUserName = document.getElementById('currentUserName').value;
+       
+       // Theme change listener for chat elements
+       document.addEventListener('themeChanged', function(event) {
+           console.log('Chat theme changed to:', event.detail.mode);
+           // Force re-render of chat elements to apply new theme
+           updateChatTheme(event.detail.mode);
+       });
+       
+       function updateChatTheme(mode) {
+           // Update any dynamically created chat elements
+           const chatElements = document.querySelectorAll('.chat-item, .message-in, .message-out, .modal-content');
+           chatElements.forEach(element => {
+               // Trigger a reflow to ensure CSS is reapplied
+               element.style.display = 'none';
+               element.offsetHeight; // Force reflow
+               element.style.display = '';
+           });
+       }
        let stompClient = null;
        const socket = new SockJS('/ws');
        stompClient = Stomp.over(socket);
@@ -27,6 +46,10 @@ const currentUser = document.getElementById('currentUserId').value;
            // Subscribe to group messages
            stompClient.subscribe(`/topic/group/${currentUser}`, function (message) {
                handleIncomingMessage(message);
+           });
+           //Subscribe to user online status
+           stompClient.subscribe(`/topic/online/`, function (message) {
+                alert(message);
            });
 
        }, function (error) {

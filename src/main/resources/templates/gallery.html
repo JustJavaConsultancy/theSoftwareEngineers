@@ -197,5 +197,23 @@
         </div>
     </div>
 </div>
+
+<!-- Ensure gallery theme is applied on page load -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Apply theme immediately for gallery elements
+        const savedMode = localStorage.getItem('colorMode') || 'dark';
+        const body = document.body;
+        const html = document.documentElement;
+        
+        if (savedMode === 'light') {
+            body.classList.add('light-mode');
+            html.classList.remove('dark');
+        } else {
+            body.classList.remove('light-mode');
+            html.classList.add('dark');
+        }
+    });
+</script>
 </body>
 </html>

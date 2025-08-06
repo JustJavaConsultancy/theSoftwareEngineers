@@ -33,6 +33,10 @@
             background-color: #F59E0B;
             color: #FFFFFF;
         }
+        .status-new {
+            background-color: #374151;
+            color: #FFFFFF;
+        }
         .status-overdue {
             background-color: #EF4444;
             color: #FFFFFF;
@@ -67,6 +71,9 @@
         }
         .card-paid {
             border-left-color: #10B981;
+        }
+        .card-new {
+            border-left-color: #374151;
         }
         .card-pending {
             border-left-color: #F59E0B;
@@ -110,12 +117,9 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <p class="text-sm text-blue-200">Total Revenue</p>
-                        <p class="text-2xl font-bold text-white">$<span>24,500.00</span></p>
+                        <p class="text-2xl font-bold text-white">₦<span th:text="${totalAmount}">24,500.00</span></p>
                     </div>
-                    <span class="material-icons text-blue-300 text-3xl">attach_money</span>
-                </div>
-                <div class="mt-4 h-2 bg-blue-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-blue-400 rounded-full" style="width: 75%"></div>
+<!--                    <span class="material-icons text-blue-300 text-3xl">attach_money</span>-->
                 </div>
             </div>
 
@@ -123,12 +127,9 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <p class="text-sm text-green-200">Paid Invoices</p>
-                        <p class="text-2xl font-bold text-white" >18</p>
+                        <p class="text-2xl font-bold text-white" th:text="${paidInvoiceCount}" >18</p>
                     </div>
                     <span class="material-icons text-green-300 text-3xl">check_circle</span>
-                </div>
-                <div class="mt-4 h-2 bg-green-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-green-400 rounded-full" style="width: 72%"></div>
                 </div>
             </div>
 
@@ -136,12 +137,9 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <p class="text-sm text-yellow-200">Pending Invoices</p>
-                        <p class="text-2xl font-bold text-white" >7</p>
+                        <p class="text-2xl font-bold text-white" th:text="${pendingInvoiceCount}">7</p>
                     </div>
                     <span class="material-icons text-yellow-300 text-3xl">schedule</span>
-                </div>
-                <div class="mt-4 h-2 bg-yellow-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-yellow-400 rounded-full" style="width: 28%"></div>
                 </div>
             </div>
         </div>
@@ -152,50 +150,67 @@
                 <h3 class="text-xl font-semibold text-white">Recent Invoices</h3>
                 <p class="text-sm text-gray-400 mt-1">Your most recent invoice transactions</p>
             </div>
-            <div class="relative w-full md:w-72">
-                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-                <input class="bg-gray-800 w-full pl-10 pr-4 py-2 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search invoices..." type="text"/>
+
+            <div class="search-container relative">
+                <span class="material-icons search-icon">search</span>
+                <input class="search-input text-white rounded-lg pl-10 pr-4 py-2 w-40 md:w-64 lg:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search Invoices...." type="text"/>
             </div>
         </div>
-
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(allInvoices)}" class="processes-card text-center p-8" style="height: auto;">
+            <div class="mb-4">
+                <i class="fas fa-history text-4xl text-slate-500 opacity-50"></i>
+            </div>
+            <h3 class="text-xl font-medium text-slate-300 mb-2">No Invoice</h3>
+            <p class="text-slate-400 mb-6">No invoice has been created yet. Invoices will appear here once created.</p>
+        </div>
+        <div th:if="${!#lists.isEmpty(allInvoices)}">
         <!-- Invoice Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Invoice Cards - Dynamically generated from backend -->
-            <div th:each="invoice,iter : ${invoices}"
+
+            <div th:each="invoice,iter : ${allInvoices}"
                  class="card rounded-xl p-6 flex flex-col justify-between fade-in"
-                 th:classappend="${(invoice.status == 'PAID') ? 'card-paid' : (invoice.status == 'PENDING') ? 'card-pending' : 'card-overdue'}"
+                 th:classappend="${invoice.status == 'PAID' ? 'card-paid' : (invoice.status == 'approved' ?
+                 'card-pending' : (invoice.status == 'new') ? 'card-new' : (invoice.status == 'pending') ? 'card-new' :
+                  'card-overdue')}"
+
                  th:style="'animation-delay: ' + ${iter.index * 0.1} + 's'">
                 <div>
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-xs font-mono text-gray-400 tracking-wider" th:text="'#' + ${invoice.invoiceNumber}">#INV-00123</p>
-                            <p class="text-lg font-semibold text-white mt-2" th:text="${invoice.companyName}">Tech Solutions Inc.</p>
+                            <p class="text-xs font-mono text-gray-400 tracking-wider">#INV-00123</p>
+                            <p class="text-lg font-semibold text-white mt-2" th:text="${invoice.businessName}">Tech Solutions Inc.</p>
                             <p class="text-sm text-gray-400 mt-1 flex items-center">
                                 <span class="material-icons text-xs mr-1">person</span>
-                                <span th:text="${invoice.contactPerson}">John Doe</span>
+                                <span th:text="${invoice.clientName}">John Doe</span>
                             </p>
                             <p class="text-sm text-gray-400 mt-1 flex items-center">
                                 <span class="material-icons text-xs mr-1">location_on</span>
-                                <span th:text="${invoice.location}">Silicon Valley, CA</span>
+                                <span th:text="${invoice.address}">Silicon Valley, CA</span>
                             </p>
                         </div>
-                        <span th:class="${(invoice.status == 'PAID') ? 'status-paid' : (invoice.status == 'PENDING') ? 'status-pending' : 'status-overdue'} + ' text-xs font-semibold px-2.5 py-1 rounded-full flex items-center'"
+                        <span th:class="${(invoice.status == 'PAID') ? 'status-paid' : (invoice.status == 'approved') ? 'status-pending' :
+                        (invoice.status == 'new') ? 'status-new' : (invoice.status == 'pending') ? 'status-new' : 'status-overdue'} +
+                        ' text-xs font-semibold px-2.5 py-1 rounded-full flex items-center'"
                               class="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center">
                             <span class="material-icons text-xs mr-1"
-                                  th:text="${(invoice.status == 'PAID') ? 'check' : (invoice.status == 'PENDING') ? 'schedule' : 'warning'}"></span>
-                            <span th:text="${#strings.capitalize(invoice.status.toString().toLowerCase())}">Paid</span>
+                                  th:text="${(invoice.status == 'PAID') ? 'check' : (invoice.status == 'approved') ? 'schedule' :
+                                   (invoice.status == 'declined') ? 'cancel' : (invoice.status == 'new') ? 'pending':
+                                   (invoice.status == 'pending') ? 'pending' : 'warning'}"></span>
+                            <span th:text="${invoice.status == 'new' ? 'pending' : #strings.capitalize(invoice.status.toString().toLowerCase())}">Paid</span>
                         </span>
                     </div>
                     <div class="mt-6">
                         <div class="flex justify-between items-end">
                             <div>
                                 <p class="text-xs text-gray-400">Amount</p>
-                                <p class="text-2xl font-bold text-white">$<span th:text="${#numbers.formatDecimal(invoice.amount, 1, 2)}">2,500.00</span></p>
+                                <p class="text-2xl font-bold text-white">₦<span th:text="${#numbers.formatDecimal(invoice.amount, 1, 2)}">2,500.00</span></p>
                             </div>
                             <div class="text-right">
                                 <p class="text-xs text-gray-400">Due Date</p>
                                 <p th:class="'text-sm font-medium ' + ${invoice.status == 'OVERDUE' ? 'text-rose-400' : 'text-white'}"
-                                   th:text="${#temporals.format(invoice.dueDate, 'MMM d, yyyy')}">Aug 15, 2024</p>
+                                   th:text="${invoice.dueDate}">Aug 15, 2024</p>
                             </div>
                         </div>
                         <div class="invoice-progress mt-3">
@@ -209,10 +224,17 @@
                         <span class="material-icons text-base mr-1">content_copy</span>
                         Copy Link
                     </button>
-                    <button class="text-gray-400 hover:text-white flex items-center text-sm">
+                    <a th:href="@{/invoice/view-invoice/{id}(id=${invoice.processId})}"
+                            class="text-gray-400 hover:text-white flex items-center text-sm">
                         <span class="material-icons text-base mr-1">visibility</span>
                         View
-                    </button>
+                    </a>
+                    <a th:if="${invoice.status == 'declined'}"
+                       th:href="@{/invoice/edit-invoice/{id}(id=${invoice.processId})}"
+                       class="text-gray-400 hover:text-white flex items-center text-sm">
+                        <span class="material-icons text-base mr-1">edit</span>
+                        Edit
+                    </a>
                     <button class="text-gray-400 hover:text-white flex items-center text-sm">
                         <span class="material-icons text-base mr-1">download</span>
                         PDF
@@ -241,6 +263,7 @@
                     <span class="material-icons">chevron_right</span>
                 </button>
             </div>
+        </div>
         </div>
     </main>
     <script>

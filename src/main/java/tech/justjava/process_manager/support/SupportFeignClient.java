@@ -11,4 +11,7 @@ import java.util.Map;
 public interface SupportFeignClient {
     @PostMapping("/support")
    String postAiMessage(@RequestBody String request);
+
+    @PostMapping("/generateLegalDocument")
+    public String generateLegalDocument(@RequestBody Map<String,String> legalRequest);
 }

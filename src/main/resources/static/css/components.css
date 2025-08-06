@@ -175,6 +175,44 @@
             --border-radius: 0.375rem;
             --transition: all 0.2s ease-in-out;
         }
+        .case-generated-content-display {
+            width: 100%;
+            min-height: 200px;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            font-family: inherit;
+            font-size: inherit;
+            background-color: var(--bg-dark);
+            color: white;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            resize: none;
+            appearance: textarea;
+            -webkit-appearance: textarea;
+            -moz-appearance: textarea;
+            cursor: text;
+        }
+
+        .case-generated-content-display:empty::before {
+            content: "Generated content will appear here...";
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .case-generated-content-edit {
+            width: 100%;
+            min-height: 200px;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            font-family: inherit;
+            font-size: inherit;
+            background-color: var(--bg-dark);
+            color:white;
+        }
         .case-card {
             background-color: var(--bg-dark);
             border-radius: var(--border-radius);

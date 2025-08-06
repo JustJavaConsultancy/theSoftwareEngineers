@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice Detail</title>
+  <style>
+    .search-bar {
+        background-color: #374151;
+    }
+    .btn-primary {
+        background-color: #3B82F6;
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        background-color: #2563EB;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+    }
+    .btn-secondary {
+        background-color: #374151;
+        transition: all 0.3s ease;
+    }
+    .btn-secondary:hover {
+        background-color: #4B5563;
+        transform: translateY(-1px);
+    }
+    .card {
+        background-color: #1F2937;
+        transition: all 0.3s ease;
+    }
+    .form-input {
+        background-color: #1F2937;
+        border: 1px solid #374151;
+        transition: all 0.3s ease;
+    }
+    .form-input:focus {
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+    .form-label {
+        color: #D1D5DB;
+    }
+    .fade-in {
+        animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .glow {
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content" class="flex-1 p-4 md:p-6 overflow-y-auto">
+  <main>
+    <div class="max-w-2xl mx-auto">
+      <div class="flex justify-between items-center mb-8 animate__animated animate__fadeIn">
+        <div>
+          <h2 class="text-3xl font-bold text-white">Invoice</h2>
+          <p class="text-gray-400 mt-1">View client information, amount, and due date</p>
+        </div>
+        <button onclick="window.history.back()" class="btn-secondary flex items-center px-4 py-2 rounded-lg text-white font-medium">
+          <span class="material-icons mr-2">arrow_back</span>
+          Back
+        </button>
+      </div>
+      <form>
+
+        <!-- Client Information Card -->
+        <div class="card rounded-xl p-6 mb-6 fade-in">
+          <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+            <span class="material-icons mr-2">person</span>
+            Client Information
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <label class="form-label block text-sm mb-1">Business Name</label>
+              <input name="businessName" th:value="${singleInvoice.businessName}"
+                     type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                     placeholder="Acme Corporation" required readonly>
+            </div>
+            <div>
+              <label class="form-label block text-sm mb-1">Client Name</label>
+              <input name="clientName" th:value="${singleInvoice.clientName}"
+                     type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                     placeholder="Jane Doe" required readonly>
+            </div>
+            <div>
+              <label class="form-label block text-sm mb-1">Email</label>
+              <input  name="email" th:value="${singleInvoice.email}"
+                      type="email" class="form-input w-full px-4 py-2 rounded-lg"
+                      placeholder="contact@acme.com" required readonly>
+            </div>
+            <div>
+              <label class="form-label block text-sm mb-1">Address</label>
+              <input  name="address" th:value="${singleInvoice.address}"
+                      type="text" class="form-input w-full px-4 py-2 rounded-lg"
+                      placeholder="Ikeja, Lagos" required readonly>
+            </div>
+            <div>
+              <label class="form-label block text-sm mb-1">Phone (Optional)</label>
+              <input name="phoneNumber"  th:value="${singleInvoice.phoneNumber}"
+                     type="tel" class="form-input w-full px-4 py-2 rounded-lg"
+                     placeholder="+1 (555) 123-4567" readonly>
+            </div>
+          </div>
+        </div>
+
+        <!-- Invoice Details Card -->
+        <div class="card rounded-xl p-6 mb-6 fade-in" style="animation-delay: 0.1s">
+          <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+            <span class="material-icons mr-2">receipt</span>
+            Invoice Details
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="form-label block text-sm mb-1">Amount</label>
+              <div class="flex">
+                <span class="inline-flex items-center px-3 rounded-l-lg bg-gray-700 text-gray-300 text-sm">₦</span>
+                <input name="amount" th:value="${singleInvoice.amount}"
+                       type="number" class="form-input flex-1 rounded-r-lg rounded-l-none"
+                       placeholder="0.00" step="0.01" min="0" required readonly>
+              </div>
+            </div>
+            <div>
+              <label class="form-label block text-sm mb-1">Due Date</label>
+              <input  name="dueDate" th:value="${singleInvoice.dueDate}"
+                      type="date" class="form-input w-full px-4 py-2 rounded-lg" required>
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="form-label block text-sm mb-1">Description (Optional)</label>
+            <textarea  name="description" th:text="${singleInvoice.description}"
+                       class="form-input w-full px-4 py-2 rounded-lg" rows="2"
+                       placeholder="Service description" readonly></textarea>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+      </form>
+    </div>
+  </main>
+  <script>
+    const sections = document.querySelectorAll('.fade-in');
+     sections.forEach((section, index) => {
+         section.style.animationDelay = `${index * 0.1}s`;
+     });
+
+     // Add glow effect to create button
+     const createBtn = document.querySelector('.btn-primary');
+     createBtn.addEventListener('mouseenter', () => {
+         createBtn.classList.add('glow');
+     });
+     createBtn.addEventListener('mouseleave', () => {
+         createBtn.classList.remove('glow');
+     });
+
+     // Simple form validation
+     const formInputs = document.querySelectorAll('input[required]');
+     formInputs.forEach(input => {
+         input.addEventListener('input', () => {
+             if (input.value.trim() !== '') {
+                 input.classList.remove('border-red-500');
+             }
+         });
+     });
+
+     // Format amount input
+     const amountInput = document.querySelector('input[type="number"]');
+     amountInput.addEventListener('blur', () => {
+         if (amountInput.value) {
+             amountInput.value = parseFloat(amountInput.value).toFixed(2);
+         }
+     });
+  </script>
+</div>
+</body>
+</html>

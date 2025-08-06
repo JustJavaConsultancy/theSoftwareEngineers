@@ -61,6 +61,7 @@
                 </div>
 
                 <!-- Lawyer Documents Tab -->
+                <!-- Lawyer Documents Tab -->
                 <div id="lawyer-documents" class="case-tab-content">
                     <div style="display: flex; flex-direction: column; gap: 1rem;">
                         <div th:each="doc, iter : ${aiResponse.lawyerDocuments}" class="case-document-card">
@@ -69,29 +70,37 @@
                                 <div th:text="${doc}" style="font-size: 1.125rem; font-weight: 500; color: var(--text-primary); flex-grow: 1;">Document Title</div>
                                 <span class="case-status-badge" th:id="'status-' + ${iter.index}">Not Generated</span>
                             </div>
-                            <!-- Textarea for generated content -->
-                            <textarea class="case-generated-content"
-                                      th:attr="id='content-' + ${iter.index}"
+
+                            <!-- Div for displaying generated content -->
+                            <div class="case-generated-content-display"
+                                 th:attr="id='display-content-' + ${iter.index}"
+                                 style="display: none; white-space: pre-wrap; padding: 0.5rem; border-radius: 0.25rem; margin-bottom: 1rem;"></div>
+
+                            <!-- Textarea for editing content -->
+                            <textarea class="case-generated-content-edit"
+                                      th:attr="id='edit-content-' + ${iter.index}"
                                       name="generatedContent"
-                                      readonly
-                                      style="display: none;"></textarea>
+                                      style="display: none; width: 100%; min-height: 200px; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid var(--border-color); margin-bottom: 1rem;"></textarea>
 
                             <div class="case-action-buttons">
                                 <input type="hidden" th:name="docName" th:value="${doc}" th:id="'doc-' + ${iter.index}" />
                                 <button
-                                        hx-post="/forms/generate-lawyer-doc"
-                                        th:attr="hx-include='#doc-' + ${iter.index}"
-                                        hx-swap="none"
+                                        hx-post="/forms/generate-lawyer-doc/{docName}"
+                                        th:attr="hx-post='/forms/generate-lawyer-doc/' + ${doc},
+                                 hx-target='#display-content-' + ${iter.index},
+                                 hx-swap='innerHTML'"
                                         hx-disabled-elt="this"
                                         class="case-btn case-btn-primary generate-btn"
-                                        th:id="'generate-btn-' + ${iter.index}">
+                                        th:id="'generate-btn-' + ${iter.index}"
+                                        hx-on:click="this.disabled = true;">
                                     <span class="material-icons case-btn-icon">auto_awesome</span>
                                     Generate Document
                                 </button>
 
                                 <button type="button" class="case-btn case-btn-secondary edit-btn"
                                         th:id="'edit-btn-' + ${iter.index}"
-                                        style="display: none;">
+                                        style="display: none;"
+                                        onclick="toggleEditMode(this)">
                                     <span class="material-icons case-btn-icon">edit</span>
                                     Edit Document
                                 </button>
@@ -106,7 +115,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Court Documents Tab -->
                 <div id="court-documents" class="case-tab-content">
                     <form>
