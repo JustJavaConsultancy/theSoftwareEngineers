@@ -135,7 +135,7 @@ processInstances.forEach(processInstance -> {
 
     //System.out.println(" AiResponse==="+aiResponse);
     //System.out.println(" reason==="+aiResponse.get("reason"));
-    List<String> reasons= (List<String>) aiResponse.get("reason");
+/*    List<String> reasons= (List<String>) aiResponse.get("reason");
     reasons.forEach(reason->{
         System.out.println(" reason==="+reason);
             }
@@ -145,7 +145,7 @@ processInstances.forEach(processInstance -> {
     clientDocuments.forEach(clientDocument->{
         System.out.println(" clientDocument==="+clientDocument);
     });
-    //System.out.println(" clientDocuments==="+aiResponse.get("clientDocuments"));
+    //System.out.println(" clientDocuments==="+aiResponse.get("clientDocuments"));*/
 });
         List<Map<String, String>> processName = processService.getProcessDefinitionNames();
         Map<String, String> processNames = processName.stream().filter(p -> p.get("processKey").equals(processKey)).findFirst().orElse(null);
