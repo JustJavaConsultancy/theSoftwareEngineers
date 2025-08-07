@@ -105,7 +105,7 @@ public class UserManagementController {
 
     @GetMapping("/deleteGroup/{groupId}")
     public ResponseEntity<Void> deleteGroup(@PathVariable String groupId){
-        keycloakService.deleteGroup(groupId);
+        keycloakService.deleteClientGroup(groupId);
         HttpHeaders headers = new HttpHeaders();
         headers.add("HX-Redirect", "/users/groups");
         return ResponseEntity.status(HttpStatus.OK).headers(headers).build();

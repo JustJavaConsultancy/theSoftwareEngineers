@@ -48,12 +48,13 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String index(HttpServletRequest request) {
+    public String index(HttpServletRequest request, Model model) {
 
         if(authenticationManager.isAdmin()){
             request.getSession(true).setAttribute("isAdmin", true);
         }
-
+        List<Map<String, String>> processNames = processService.getProcessDefinitionNames();
+        model.addAttribute("processNames", processNames);
         if(authenticationManager.isManager()){
             request.getSession(true).setAttribute("isManager", true);
         }
@@ -88,6 +89,8 @@ public class HomeController {
                 .desc()
                 .count();
 
+        List<Map<String, String>> processNames = processService.getProcessDefinitionNames();
+        model.addAttribute("processNames", processNames);
         model.addAttribute("processInstancesCount", processInstancesCount);
         model.addAttribute("activeTasksCount", activeTasksCount);
         model.addAttribute("completedTasksCount", completedTasksCount);
