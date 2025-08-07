@@ -10,10 +10,12 @@ import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,11 +32,15 @@ import tech.justjava.process_manager.process.model.ProcessDTO;
 import tech.justjava.process_manager.process.service.ProcessService;
 import tech.justjava.process_manager.process.service.ProcessServiceAI;
 import tech.justjava.process_manager.process.service.TemplateRenderer;
+import tech.justjava.process_manager.task.service.TaskService;
 import tech.justjava.process_manager.util.JsonStringFormatter;
 import tech.justjava.process_manager.util.ReferencedWarning;
 import tech.justjava.process_manager.util.WebUtils;
 
+import java.net.URI;
 import java.util.*;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 
 @Controller
@@ -52,6 +58,8 @@ public class ProcessController {
     @Autowired
     AuthenticationManager authenticationManager;
 
+    @Autowired
+    private TaskService taskService;
     private final RuntimeService  runtimeService;
     private final HistoryService historyService;
     private final ProcessServiceAI  processServiceAI;
@@ -180,7 +188,7 @@ processInstances.forEach(processInstance -> {
         System.out.println(" process name===="+process.getName());
         System.out.println(" process id===="+process.getId());
         String userPrompt= process.getDocumentation();
-        System.out.println(" process documentation ===="+userPrompt);
+        //System.out.println(" process documentation ===="+userPrompt);
         String formThymeleaf=null;
         Optional<Form> form=formService.findByFormCode(processKey);
         if(form.isPresent()){
@@ -215,16 +223,29 @@ processInstances.forEach(processInstance -> {
         return "process/form-fragment";
     }
     @PostMapping("/start")
-    public String handleFormSubmit(@RequestParam Map<String,Object> formData) {
+    public ResponseEntity<Void> handleFormSubmit(@RequestParam Map<String,Object> formData) {
         System.out.println(" The Form Data==="+formData);
 
+        String nextPage = "/processes";
         String hashCode= String.valueOf((String.valueOf(authenticationManager.get("preferred_username"))+String.valueOf(System.currentTimeMillis())).hashCode());
 
         ProcessInstance processInstance=
                 runtimeService.startProcessInstanceById(formData.get("id").toString(),hashCode,formData);
 
-        System.out.println("  The Process Instance Variables ==="+processInstance.getProcessVariables());
-        return "process/success";
+        Map<String,Object> processVariable=processInstance.getProcessVariables();
+
+        if(processVariable.get("nextPage")!=null){
+            Task nextTask =taskService.getTaskByInstanceAndDefinitionKey(processInstance.getProcessInstanceId(), (String) processVariable.get("nextPage"));
+            nextPage ="/tasks/add/"+nextTask.getId();
+            processVariable.remove("nextPage");
+            System.out.println(" Is this next task actually active inside the Process Controller?==="+nextTask.getState());
+        }
+        System.out.println("  The Process Instance Variables ==="+processVariable);
+        //System.out.println("  The aiBriefAnalysis ==="+processVariable);
+        return ResponseEntity
+                .status(200)
+                .header("HX-Redirect", nextPage)
+                .build();
     }
     @GetMapping("/startProcess")
     public String startProcess() {

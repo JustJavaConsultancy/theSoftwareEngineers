@@ -19,19 +19,72 @@
                     <p class="text-gray-400">Add new files to your project gallery.</p>
                 </div>
 
-                <form id="uploadForm" enctype="multipart/form-data">
+                <!-- Display upload results -->
+                <div th:if="${uploadResults != null and !uploadResults.empty}" class="mb-6">
+                    <div class="bg-green-900 border border-green-700 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <span class="material-icons text-green-500 mr-2">check_circle</span>
+                            <h3 class="text-lg font-semibold text-white">Upload Successful!</h3>
+                        </div>
+                        <ul class="text-green-200">
+                            <li th:each="result : ${uploadResults}" th:text="${result}"></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Display errors -->
+                <div th:if="${errors != null and !errors.empty}" class="mb-6">
+                    <div class="bg-red-900 border border-red-700 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <span class="material-icons text-red-500 mr-2">error</span>
+                            <h3 class="text-lg font-semibold text-white">Upload Errors</h3>
+                        </div>
+                        <ul class="text-red-200">
+                            <li th:each="error : ${errors}" th:text="${error}"></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <form id="uploadForm" th:action="@{/addFile}" method="post" enctype="multipart/form-data">
+                    <!-- Case Tags and Metadata Section -->
+                    <div id="caseTagsContainer" class="mb-6">
+                        <h3 class="text-xl font-semibold mb-4 text-white">Case Information</h3>
+                        <div id="caseTagsList">
+                            <div class="case-tag-item bg-gray-800 p-4 rounded-lg mb-4">
+                                <div class="flex gap-4 mb-3">
+                                    <div class="flex-1">
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Case Tags</label>
+                                        <select name="caseTags" class="case-tag-select w-full p-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option value="">Select a case tag</option>
+                                            <option th:each="option : ${caseTagOptions}"
+                                                    th:value="${option.value}"
+                                                    th:text="${option.label}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="flex-1">
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Value</label>
+                                        <input type="text" name="caseValues" class="case-title-input w-full p-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter case title">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="addMoreCaseTag" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+                            <span class="material-icons mr-1">add</span>
+                            Add More
+                        </button>
+                    </div>
+
+                    <!-- Drag & Drop Upload Area -->
                     <div
                             id="uploadArea"
                             class="upload-area border-2 border-dashed rounded-lg p-12 text-center mb-6 transition-colors duration-200"
                     >
-                        <input class="hidden" id="file-upload" name="file" type="file" multiple />
+                        <input class="hidden" id="file-upload" name="files" type="file" multiple required />
                         <label
                                 for="file-upload"
                                 class="cursor-pointer flex flex-col items-center"
                         >
-                  <span class="material-icons text-6xl text-gray-500"
-                  >cloud_upload</span
-                  >
+                            <span class="material-icons text-6xl text-gray-500">cloud_upload</span>
                             <p class="mt-4 text-lg font-semibold">
                                 Drag & Drop your files here
                             </p>
@@ -39,63 +92,25 @@
                             <span
                                     class="mt-2 upload-btn-primary text-white font-bold py-2 px-4 rounded"
                             >
-                    Browse Files
-                  </span>
+                                Browse Files
+                            </span>
                         </label>
                     </div>
-                </form>
 
-                <!-- Upload Progress Section -->
-                <div id="uploadProgress" class="hidden mb-6">
-                    <div class="bg-gray-800 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-medium text-white">Uploading...</span>
-                            <span id="progressPercentage" class="text-sm text-gray-400">0%</span>
-                        </div>
-                        <div class="w-full bg-gray-700 rounded-full h-2">
-                            <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                        </div>
-                        <div id="uploadStatus" class="mt-2 text-sm text-gray-400"></div>
+                    <div class="mb-4">
+                        <p class="text-gray-400 text-sm">Maximum file size: 1MB per file. Multiple files supported.</p>
                     </div>
-                </div>
 
-                <!-- Upload Results Section -->
-                <div id="uploadResults" class="hidden">
-                    <div class="bg-gray-800 rounded-lg p-4 mb-6">
-                        <div class="flex items-center mb-4">
-                            <span class="material-icons text-green-500 mr-2">check_circle</span>
-                            <h3 class="text-lg font-semibold text-white">Upload Complete!</h3>
-                        </div>
-                        <div id="uploadedFilesList" class="space-y-2 mb-4">
-                            <!-- Uploaded files will be listed here -->
-                        </div>
-                        <div class="flex justify-end">
-                            <button
-                                    id="doneButton"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200"
-                            >
-                                Done
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Upload Error Section -->
-                <div id="uploadError" class="hidden">
-                    <div class="bg-red-900 border border-red-700 rounded-lg p-4 mb-6">
-                        <div class="flex items-center mb-2">
-                            <span class="material-icons text-red-500 mr-2">error</span>
-                            <h3 class="text-lg font-semibold text-white">Upload Failed</h3>
-                        </div>
-                        <p id="errorMessage" class="text-red-200"></p>
-                        <button
-                                id="retryButton"
-                                class="mt-3 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-200"
-                        >
-                            Try Again
+                    <!-- Submit Button -->
+                    <div class="flex justify-end gap-4">
+                        <a href="/gallery" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                            Cancel
+                        </a>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                            Upload Files
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
         </section>
     </main>

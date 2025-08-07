@@ -176,7 +176,7 @@ public class KeycloakService {
             System.out.println("User not found after creation.");
             return null;
         }
-        return response.getBody().getFirst();
+        return response.getBody().get(0);
     }
 
     public void addUserToGroup(String userId, String groupName){

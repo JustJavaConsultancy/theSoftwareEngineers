@@ -17,20 +17,24 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, String> {
     // Find committed files by type
     List<FileInfo> findByStatusAndTypeOrderByDateAddedDesc(String status, String type);
 
+    // Find committed files by case number
+    List<FileInfo> findByStatusAndCaseNumberOrderByDateAddedDesc(String status, String caseNumber);
+
     // Find temporary files by session ID
     List<FileInfo> findByStatusAndSessionIdOrderByDateAddedDesc(String status, String sessionId);
 
     // Search committed files by name or case number
     @Query("SELECT f FROM FileInfo f WHERE f.status = 'COMMITTED' AND " +
             "(LOWER(f.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(f.caseNumber) LIKE LOWER(CONCAT('%', :query, '%')))")
-    List<FileInfo> searchCommittedFiles(@Param("query") String query);
+            "LOWER(f.caseNumber) LIKE LOWER(CONCAT('%', :query, '%')))" +
+            "AND (:type is NULL OR f.type = :type)" )
+    List<FileInfo> searchCommittedFiles(@Param("query") String query, @Param("type") String type);
 
-    // Search committed files by name or case number and type
-    @Query("SELECT f FROM FileInfo f WHERE f.status = 'COMMITTED' AND f.type = :type AND " +
-            "(LOWER(f.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(f.caseNumber) LIKE LOWER(CONCAT('%', :query, '%')))")
-    List<FileInfo> searchCommittedFilesByType(@Param("query") String query, @Param("type") String type);
+//    // Search committed files by name or case number and type
+//    @Query("SELECT f FROM FileInfo f WHERE f.status = 'COMMITTED' AND f.type = :type AND " +
+//            "(LOWER(f.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+//            "LOWER(f.caseNumber) LIKE LOWER(CONCAT('%', :query, '%')))")
+//    List<FileInfo> searchCommittedFilesByType(@Param("query") String query, @Param("type") String type);
 
     // Find by microservice file ID (useful for downloads and deletes)
     Optional<FileInfo> findByMicroserviceFileId(String microserviceFileId);
