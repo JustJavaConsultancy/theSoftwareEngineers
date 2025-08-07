@@ -176,7 +176,8 @@ inputCss: border p-2 w-full
     <table class="min-w-full border-collapse border border-gray-300">
       <thead>
         <tr>
-          <th class="border p-2" th:each="col : ${#lists.arrayList('name','email','country')}" th:text="${col}"></th>
+        <th:block th:with="cols=${{'name', 'email', 'country'}}">
+          <th class="border p-2" th:each="col : "${cols}" th:text="${col}"></th>
         </tr>
       </thead>
       <tbody>
