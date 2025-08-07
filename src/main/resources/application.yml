@@ -26,7 +26,7 @@ spring:
       max-request-size: 20MB
   ai:
     openai:
-      api-key: ${openaiAPI_KEY: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}
+      api-key: ${openaiAPI_KEY}
       model: gpt-4o-mini
       chat:
         options:
