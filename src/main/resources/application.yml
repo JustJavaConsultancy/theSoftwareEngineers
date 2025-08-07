@@ -2,7 +2,7 @@ spring:
   datasource:
     url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/processManager}
     username: ${JDBC_DATABASE_USERNAME:postgres}
-    password: ${JDBC_DATABASE_PASSWORD:Cyber 123$}
+    password: ${JDBC_DATABASE_PASSWORD:1234}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
@@ -26,7 +26,7 @@ spring:
       max-request-size: 20MB
   ai:
     openai:
-      api-key: ${openaiAPI_KEY}
+      api-key: ${openaiAPI_KEY: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}
       model: gpt-4o-mini
       chat:
         options:
