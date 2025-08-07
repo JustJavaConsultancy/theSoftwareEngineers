@@ -936,6 +936,25 @@ public class GalleryController {
         return "caseTagDetails";
     }
 
+    @GetMapping("/risk-assessment/{caseNumber}")
+    public String viewRiskAssessment(@PathVariable String caseNumber, Model model) {
+        // Pass case number
+        model.addAttribute("caseNumber", caseNumber);
+
+        // Mock data - in real case you'd analyze actual files
+        model.addAttribute("riskLevel", "High");
+        model.addAttribute("riskSummary", "This case presents a high risk due to insufficient evidence corroboration and multiple pending witness statements.");
+        model.addAttribute("riskFactors", List.of(
+                "Key witness testimony is unverified",
+                "Digital evidence authenticity in question",
+                "Client has prior related cases",
+                "Conflicting expert reports"
+        ));
+
+        return "riskAssessment";
+    }
+
+
     private List<CaseTagInfo> parseCaseTagsFromFile(FileInfo file) {
         List<CaseTagInfo> caseTags = new ArrayList<>();
 
