@@ -254,7 +254,7 @@ public class KeycloakService {
     }
 
     @Transactional
-    public void deleteGroup(String groupId) {
+    public void deleteClientGroup(String groupId) {
         ResponseEntity<Void> response = keycloakClient.deleteGroup(getAccessToken(), groupId);
         if (response.getStatusCode().is2xxSuccessful()) {
             UserGroup group = userGroupRepository.findByGroupId(groupId);
@@ -276,6 +276,15 @@ public class KeycloakService {
         conversationRepository.saveAll(user.getConversations());
         user.getConversations().clear();
         userRepository.delete(user);
+    }
+    @Transactional
+    protected void deleteGroup(UserGroup group) {
+        List<User> users = group.getUsers();
+        for (User user : users) {
+            user.setUserGroup(null);
+        }
+        userRepository.saveAll(users);
+        userGroupRepository.delete(group);
     }
 
     public void syncGroups() {
@@ -314,7 +323,7 @@ public class KeycloakService {
                 .filter(group -> !realmGroupNames.contains(group.getGroupName().toLowerCase()))
                 .toList();
         if (!groupsToDelete.isEmpty()) {
-            userGroupRepository.deleteAll(groupsToDelete);
+            groupsToDelete.forEach(this::deleteGroup);
         }
         System.out.println("\nDone Syncing Groups");
     }

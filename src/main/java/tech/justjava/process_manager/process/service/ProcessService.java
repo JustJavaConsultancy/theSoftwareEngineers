@@ -16,7 +16,7 @@ import tech.justjava.process_manager.process.repos.ProcessRepository;
 import tech.justjava.process_manager.process_instance.domain.ProcessInstance;
 import tech.justjava.process_manager.process_instance.repos.ProcessInstanceRepository;
 import tech.justjava.process_manager.util.ReferencedWarning;
-
+import tech.justjava.process_manager.util.StringUtils;
 
 @Service("customProcessService")
 @Transactional(rollbackFor = Exception.class)
@@ -187,5 +187,25 @@ public class ProcessService {
                 .includeProcessVariables()
                 .singleResult();
     }
+
+    public List<ProcessDefinition> getProcessDefinition(){
+        return repositoryService
+                .createProcessDefinitionQuery()
+                .latestVersion()
+                .list();
+    }
+
+    public List<Map<String, String>> getProcessDefinitionNames(){
+        List<ProcessDefinition> processDefinitions = getProcessDefinition();
+        return processDefinitions.stream()
+                .map(p -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("processKey", p.getKey());
+                    map.put("processName", StringUtils.formatCamelCaseText(p.getName()));
+                    return map;
+                })
+                .toList();
+    }
+
 
 }
