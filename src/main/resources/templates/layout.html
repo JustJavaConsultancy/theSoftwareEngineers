@@ -41,6 +41,34 @@
           html.classList.add('dark');
         }
       })();
+        function toggleDropdown(menuId) {
+            const submenu = document.getElementById(`${menuId}-submenu`);
+            const icon = document.getElementById(`${menuId}-icon`);
+
+            if (submenu.style.maxHeight === '0px' || !submenu.style.maxHeight) {
+                // Open the dropdown
+                submenu.style.maxHeight = `${submenu.scrollHeight}px`;
+                icon.classList.add('rotate-90');
+
+                // Show submenu items with delay for staggered effect
+                const items = submenu.querySelectorAll('a');
+                items.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.remove('opacity-0');
+                    }, index * 100);
+                });
+            } else {
+                // Close the dropdown
+                submenu.style.maxHeight = '0px';
+                icon.classList.remove('rotate-90');
+
+                // Hide submenu items
+                const items = submenu.querySelectorAll('a');
+                items.forEach(item => {
+                    item.classList.add('opacity-0');
+                });
+            }
+        }
     </script>
 <script>
     let stompClient = null
@@ -74,15 +102,30 @@
                 <span>Dashboard</span>
             </a>
 
-            <a th:if="${session.isAdmin == true or session.isManager == true}"
-               class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"
-               th:classappend="${currentPath == '/processes/' + name.processKey} ? ' bg-blue-600'"
-               th:each="name : ${session.processNames}"
-               th:href="@{'/processes/' + ${name.processKey}}">
-                <span class="material-icons mr-3">task_alt</span>
-                <span th:text="${name.processName}">Process Name</span>
-                <span>Tasks</span>
-            </a>
+<!--            <a th:if="${session.isAdmin == true or session.isManager == true}"-->
+<!--               class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"-->
+<!--               th:classappend="${currentPath == '/processes/' + name.processKey} ? ' bg-blue-600'"-->
+<!--               th:each="name : ${session.processNames}"-->
+<!--               th:href="@{'/processes/' + ${name.processKey}}">-->
+<!--                <span class="material-icons mr-3">task_alt</span>-->
+<!--                <span th:text="${name.processName}">Process Name</span>-->
+<!--                <span>Tasks</span>-->
+<!--            </a>-->
+            <div th:each="name : ${session.processNames}">
+                <button th:attr="onclick='toggleDropdown(&quot;' + ${name.processName} + '&quot;)'"
+                 class="w-full flex items-center justify-between px-4 py-3 text-slate-300 transition-all duration-200 menu-item">
+                    <div class="flex items-center space-x-3">
+                        <span class="material-icons">task_alt</span>
+                        <span th:text="${name.processName}">Default</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs dropdown-icon transition-transform duration-200" th:id="${name.processName} + '-icon'"></i>
+                </button>
+
+                <div class="submenu mt-1 ml-10" th:id="${name.processName} + '-submenu'" style="max-height: 0px;">
+                    <a th:href="@{'/processes/' + ${name.processKey}}" th:text="${name.processName}" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Account</a>
+                    <a href="#" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Tasks</a>
+                </div>
+            </div>
 
             <!--<a class="f lex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/processes}"
                th:classappend="${currentPath == '/processes'} ? ' bg-blue-600'">
