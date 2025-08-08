@@ -56,6 +56,15 @@ public class TaskService {
                 .desc()
                 .list();
     }
+    public List<org.flowable.task.api.Task> findActiveflowableTasksByProcess(String processKey) {
+        return flowableTaskService
+                .createTaskQuery()
+                .processDefinitionKey(processKey)
+                .active()
+                .orderByTaskCreateTime()
+                .desc()
+                .list();
+    }
     public org.flowable.task.api.Task findTaskById(String taskId) {
         return flowableTaskService
                 .createTaskQuery()

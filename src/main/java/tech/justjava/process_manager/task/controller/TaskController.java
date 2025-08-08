@@ -70,9 +70,9 @@ public class TaskController {
                 .collect(CustomCollectors.toSortedMap(ProcessInstance::getId, ProcessInstance::getProcessName)));
     }
 
-    @GetMapping
-    public String list(final Model model) {
-        model.addAttribute("tasks", taskService.findActiveflowableTasks());
+    @GetMapping({"/{processKey}"})
+    public String list(@PathVariable String processKey, final Model model) {
+        model.addAttribute("tasks", taskService.findActiveflowableTasksByProcess(processKey));
         return "task/list";
     }
 
