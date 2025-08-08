@@ -687,16 +687,68 @@ public class GalleryController {
         public void setCaseTags(String caseTags) { this.caseTags = caseTags; }
     }
 
-    @GetMapping("/case-tags")
-    public String caseTagsSummary(Model model) {
-        List<FileInfo> allFiles = fileInfoRepository.findByStatusOrderByDateAddedDesc("COMMITTED");
+    // Remove the download endpoint - will use print dialog approach
 
+    @GetMapping("/red-document")
+    public String redDocument(Model model) {
+        List<FileInfo> allFiles = fileInfoRepository.findByStatusOrderByDateAddedDesc("COMMITTED");
         // Group files by case numbers
         Map<String, CaseTagSummary> caseNumberGroups = new HashMap<>();
 
         for (FileInfo file : allFiles) {
             String caseNumber = file.getCaseNumber();
+            if (caseNumber != null && !caseNumber.trim().isEmpty()) {
+                if (!caseNumberGroups.containsKey(caseNumber)) {
+                    CaseTagSummary summary = new CaseTagSummary();
+                    summary.setTag(caseNumber);
+                    summary.setLabel(caseNumber);
+                    summary.setFiles(new ArrayList<>());
+                    caseNumberGroups.put(caseNumber, summary);
+                }
+                caseNumberGroups.get(caseNumber).getFiles().add(convertToDTO(file));
+            }
+        }
 
+        // Convert to list and sort by case number
+        List<CaseTagSummary> caseTagSummaries = new ArrayList<>(caseNumberGroups.values());
+        caseTagSummaries.sort((a, b) -> a.getLabel().compareTo(b.getLabel()));
+
+        // Prepare red document data with risk factors
+        List<RedDocumentCase> redDocumentCases = new ArrayList<>();
+        for (CaseTagSummary caseTag : caseTagSummaries) {
+            RedDocumentCase redCase = new RedDocumentCase();
+            redCase.setCaseNumber(caseTag.getLabel());
+
+            // Get risk factors for this case
+            if (riskAssessments.containsKey(caseTag.getLabel())) {
+                Map<String, Object> riskData = riskAssessments.get(caseTag.getLabel());
+                @SuppressWarnings("unchecked")
+                List<String> riskFactors = (List<String>) riskData.get("riskFactors");
+                redCase.setRiskFactors(riskFactors != null ? riskFactors : new ArrayList<>());
+            } else {
+                // Default risk factors if none stored
+                redCase.setRiskFactors(List.of(
+                        "Key witness testimony is unverified",
+                        "Digital evidence authenticity in question",
+                        "Client has prior related cases",
+                        "Conflicting expert reports"
+                ));
+            }
+            redDocumentCases.add(redCase);
+        }
+
+        model.addAttribute("redDocumentCases", redDocumentCases);
+        return "redDocument";
+    }
+
+    @GetMapping("/case-tags")
+    public String caseTagsSummary(Model model) {
+        List<FileInfo> allFiles = fileInfoRepository.findByStatusOrderByDateAddedDesc("COMMITTED");
+        // Group files by case numbers
+        Map<String, CaseTagSummary> caseNumberGroups = new HashMap<>();
+
+        for (FileInfo file : allFiles) {
+            String caseNumber = file.getCaseNumber();
             if (caseNumber != null && !caseNumber.trim().isEmpty()) {
                 if (!caseNumberGroups.containsKey(caseNumber)) {
                     CaseTagSummary summary = new CaseTagSummary();
@@ -713,9 +765,6 @@ public class GalleryController {
         for (CaseTagSummary summary : caseNumberGroups.values()) {
             String generatedSummary = generateCaseSummary(summary);
             summary.setSummary(generatedSummary);
-
-            List<String> bulletPoints = generateCaseBulletPoints(summary);
-            summary.setBulletPoints(bulletPoints);
         }
 
         // Convert to list and sort by case number
@@ -723,13 +772,21 @@ public class GalleryController {
         caseTagSummaries.sort((a, b) -> a.getLabel().compareTo(b.getLabel()));
 
         model.addAttribute("caseTagSummaries", caseTagSummaries);
+        model.addAttribute("riskAssessments", riskAssessments); // Pass risk assessments to template
         return "caseTagSummary";
     }
 
     private String generateCaseSummary(CaseTagSummary caseTagSummary) {
+        String caseNumber = caseTagSummary.getLabel();
+
+        // Check if we have a stored summary for this case
+        if (caseSummaries.containsKey(caseNumber)) {
+            return caseSummaries.get(caseNumber);
+        }
+
+        // Generate default summary if no stored summary exists
         List<FileInfoDTO> files = caseTagSummary.getFiles();
         int fileCount = files.size();
-        String caseNumber = caseTagSummary.getLabel();
 
         // Analyze file types
         Map<String, Integer> fileTypeCount = new HashMap<>();
@@ -798,6 +855,56 @@ public class GalleryController {
             summary.append(".");
         }
 
+        // Add detailed bullet points as part of the main summary content
+        summary.append("\n\nKey Details:\n");
+        summary.append("• Contains ").append(files.size()).append(" file").append(files.size() == 1 ? "" : "s")
+                .append(" related to ").append(caseNumber).append(" investigation\n");
+
+        // Add file type specific details
+        if (fileTypeCount.containsKey("images") && fileTypeCount.get("images") > 0) {
+            summary.append("• Includes ").append(fileTypeCount.get("images")).append(" image file")
+                    .append(fileTypeCount.get("images") == 1 ? "" : "s").append(" for visual evidence\n");
+        }
+
+        if (fileTypeCount.containsKey("documents") && fileTypeCount.get("documents") > 0) {
+            summary.append("• Contains ").append(fileTypeCount.get("documents")).append(" document")
+                    .append(fileTypeCount.get("documents") == 1 ? "" : "s").append(" with case documentation\n");
+        }
+
+        if (fileTypeCount.containsKey("videos") && fileTypeCount.get("videos") > 0) {
+            summary.append("• Features ").append(fileTypeCount.get("videos")).append(" video file")
+                    .append(fileTypeCount.get("videos") == 1 ? "" : "s").append(" for multimedia evidence\n");
+        }
+
+        if (fileTypeCount.containsKey("audio") && fileTypeCount.get("audio") > 0) {
+            summary.append("• Includes ").append(fileTypeCount.get("audio")).append(" audio file")
+                    .append(fileTypeCount.get("audio") == 1 ? "" : "s").append(" for recorded evidence\n");
+        }
+
+        // Add case tag specific details
+        if (caseTagTypes.contains("evidence")) {
+            summary.append("• Organized with evidence tags for legal proceedings\n");
+        }
+
+        if (caseTagTypes.contains("witness-statement")) {
+            summary.append("• Contains witness statements for case testimony\n");
+        }
+
+        if (caseTagTypes.contains("forensic-report")) {
+            summary.append("• Includes forensic analysis reports\n");
+        }
+
+        if (caseTagTypes.contains("crime-scene-photo")) {
+            summary.append("• Features crime scene photography documentation\n");
+        }
+
+        // Add general organizational detail
+        if (!caseTagTypes.isEmpty()) {
+            summary.append("• Categorized by case tags for efficient case management");
+        } else {
+            summary.append("• Ready for case tag categorization and organization");
+        }
+
         return summary.toString();
     }
 
@@ -809,84 +916,6 @@ public class GalleryController {
             }
         }
         return tagType; // fallback to the tag type itself
-    }
-
-    private List<String> generateCaseBulletPoints(CaseTagSummary caseTagSummary) {
-        List<String> bulletPoints = new ArrayList<>();
-        List<FileInfoDTO> files = caseTagSummary.getFiles();
-        String caseNumber = caseTagSummary.getLabel();
-
-        // Analyze case data to generate relevant bullet points
-        Set<String> caseTagTypes = new HashSet<>();
-        Map<String, Integer> fileTypeCount = new HashMap<>();
-
-        for (FileInfoDTO file : files) {
-            // Count file types
-            String fileType = file.getType();
-            fileTypeCount.put(fileType, fileTypeCount.getOrDefault(fileType, 0) + 1);
-
-            // Extract case tag types
-            try {
-                String caseTagsJson = file.getCaseTags();
-                if (caseTagsJson != null && !caseTagsJson.trim().isEmpty()) {
-                    List<Map<String, Object>> caseTagsList = objectMapper.readValue(caseTagsJson, List.class);
-                    for (Map<String, Object> caseTagMap : caseTagsList) {
-                        String tagType = (String) caseTagMap.get("tag");
-                        if (tagType != null) {
-                            caseTagTypes.add(tagType);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                // Continue without case tag analysis if parsing fails
-            }
-        }
-
-        // Generate dynamic bullet points based on case content
-        bulletPoints.add("Contains " + files.size() + " file" + (files.size() == 1 ? "" : "s") + " related to " + caseNumber + " investigation");
-
-        // Add file type specific bullet points
-        if (fileTypeCount.containsKey("images") && fileTypeCount.get("images") > 0) {
-            bulletPoints.add("Includes " + fileTypeCount.get("images") + " image file" + (fileTypeCount.get("images") == 1 ? "" : "s") + " for visual evidence");
-        }
-
-        if (fileTypeCount.containsKey("documents") && fileTypeCount.get("documents") > 0) {
-            bulletPoints.add("Contains " + fileTypeCount.get("documents") + " document" + (fileTypeCount.get("documents") == 1 ? "" : "s") + " with case documentation");
-        }
-
-        if (fileTypeCount.containsKey("videos") && fileTypeCount.get("videos") > 0) {
-            bulletPoints.add("Features " + fileTypeCount.get("videos") + " video file" + (fileTypeCount.get("videos") == 1 ? "" : "s") + " for multimedia evidence");
-        }
-
-        if (fileTypeCount.containsKey("audio") && fileTypeCount.get("audio") > 0) {
-            bulletPoints.add("Includes " + fileTypeCount.get("audio") + " audio file" + (fileTypeCount.get("audio") == 1 ? "" : "s") + " for recorded evidence");
-        }
-
-        // Add case tag specific bullet points
-        if (caseTagTypes.contains("evidence")) {
-            bulletPoints.add("Organized with evidence tags for legal proceedings");
-        }
-
-        if (caseTagTypes.contains("witness-statement")) {
-            bulletPoints.add("Contains witness statements for case testimony");
-        }
-
-        if (caseTagTypes.contains("forensic-report")) {
-            bulletPoints.add("Includes forensic analysis reports");
-        }
-
-        if (caseTagTypes.contains("crime-scene-photo")) {
-            bulletPoints.add("Features crime scene photography documentation");
-        }
-
-        // Add general organizational bullet point
-        if (!caseTagTypes.isEmpty()) {
-            bulletPoints.add("Categorized by case tags for efficient case management");
-        } else {
-            bulletPoints.add("Ready for case tag categorization and organization");
-        }
-
-        return bulletPoints;
     }
 
     @GetMapping("/case-tags/{caseNumber}")
@@ -941,19 +970,141 @@ public class GalleryController {
         // Pass case number
         model.addAttribute("caseNumber", caseNumber);
 
-        // Mock data - in real case you'd analyze actual files
-        model.addAttribute("riskLevel", "High");
-        model.addAttribute("riskSummary", "This case presents a high risk due to insufficient evidence corroboration and multiple pending witness statements.");
-        model.addAttribute("riskFactors", List.of(
-                "Key witness testimony is unverified",
-                "Digital evidence authenticity in question",
-                "Client has prior related cases",
-                "Conflicting expert reports"
-        ));
+        // Check if we have stored risk assessment data for this case
+        if (riskAssessments.containsKey(caseNumber)) {
+            Map<String, Object> riskData = riskAssessments.get(caseNumber);
+            model.addAttribute("riskLevel", riskData.get("riskLevel"));
+            model.addAttribute("riskSummary", riskData.get("riskSummary"));
+            model.addAttribute("riskFactors", riskData.get("riskFactors"));
+        } else {
+            // Default mock data - in real case you'd analyze actual files
+            model.addAttribute("riskLevel", "High");
+            model.addAttribute("riskSummary", "This case presents a high risk due to insufficient evidence corroboration and multiple pending witness statements.");
+            model.addAttribute("riskFactors", List.of(
+                    "Key witness testimony is unverified",
+                    "Digital evidence authenticity in question",
+                    "Client has prior related cases",
+                    "Conflicting expert reports"
+            ));
+        }
 
         return "riskAssessment";
     }
 
+    // In-memory storage for case summaries and risk assessments (for demo purposes)
+    private Map<String, String> caseSummaries = new HashMap<>();
+    private Map<String, Map<String, Object>> riskAssessments = new HashMap<>();
+
+    @PostMapping("/case-summary/update")
+    public String updateCaseSummary(@RequestParam("caseNumber") String caseNumber,
+                                    @RequestParam("summary") String summary,
+                                    Model model) {
+        try {
+            if (caseNumber == null || summary == null || summary.trim().isEmpty()) {
+                model.addAttribute("error", "Case number and summary are required");
+                return "redirect:/case-tags?error=invalid_data";
+            }
+
+            // Store the updated summary in memory (in real implementation, save to database)
+            caseSummaries.put(caseNumber, summary);
+            System.out.println("Updated case summary for " + caseNumber + ": " + summary);
+
+            // Redirect back to case tags page with success message
+            return "redirect:/case-tags?success=summary_updated";
+
+        } catch (Exception e) {
+            System.out.println("Failed to update case summary: " + e.getMessage());
+            return "redirect:/case-tags?error=update_failed";
+        }
+    }
+
+    @PostMapping("/risk-assessment/update")
+    public String updateRiskAssessment(@RequestParam("caseNumber") String caseNumber,
+                                       @RequestParam("riskLevel") String riskLevel,
+                                       @RequestParam("riskSummary") String riskSummary,
+                                       @RequestParam("riskFactors") String riskFactorsText,
+                                       Model model) {
+        try {
+            if (caseNumber == null || riskLevel == null || riskSummary == null || riskSummary.trim().isEmpty()) {
+                return "redirect:/risk-assessment/" + caseNumber + "?error=invalid_data";
+            }
+
+            // Parse risk factors from textarea (one per line)
+            List<String> riskFactors = new ArrayList<>();
+            if (riskFactorsText != null && !riskFactorsText.trim().isEmpty()) {
+                String[] lines = riskFactorsText.split("\n");
+                for (String line : lines) {
+                    String trimmed = line.trim();
+                    if (!trimmed.isEmpty()) {
+                        riskFactors.add(trimmed);
+                    }
+                }
+            }
+
+            // Store the updated risk assessment in memory (in real implementation, save to database)
+            Map<String, Object> riskData = new HashMap<>();
+            riskData.put("riskLevel", riskLevel);
+            riskData.put("riskSummary", riskSummary);
+            riskData.put("riskFactors", riskFactors);
+            riskAssessments.put(caseNumber, riskData);
+
+            System.out.println("Updated risk assessment for " + caseNumber);
+            System.out.println("Risk Level: " + riskLevel);
+            System.out.println("Risk Summary: " + riskSummary);
+            System.out.println("Risk Factors: " + riskFactors);
+
+            // Redirect back to risk assessment page with success message
+            return "redirect:/risk-assessment/" + caseNumber + "?success=assessment_updated";
+
+        } catch (Exception e) {
+            System.out.println("Failed to update risk assessment: " + e.getMessage());
+            return "redirect:/risk-assessment/" + caseNumber + "?error=update_failed";
+        }
+    }
+
+    @PostMapping("/risk-assessment/update-nested")
+    public String updateRiskAssessmentNested(@RequestParam("caseNumber") String caseNumber,
+                                             @RequestParam("riskLevel") String riskLevel,
+                                             @RequestParam("riskSummary") String riskSummary,
+                                             @RequestParam("riskFactors") String riskFactorsText,
+                                             Model model) {
+        try {
+            if (caseNumber == null || riskLevel == null || riskSummary == null || riskSummary.trim().isEmpty()) {
+                return "redirect:/case-tags?error=invalid_data";
+            }
+
+            // Parse risk factors from textarea (one per line)
+            List<String> riskFactors = new ArrayList<>();
+            if (riskFactorsText != null && !riskFactorsText.trim().isEmpty()) {
+                String[] lines = riskFactorsText.split("\n");
+                for (String line : lines) {
+                    String trimmed = line.trim();
+                    if (!trimmed.isEmpty()) {
+                        riskFactors.add(trimmed);
+                    }
+                }
+            }
+
+            // Store the updated risk assessment in memory (in real implementation, save to database)
+            Map<String, Object> riskData = new HashMap<>();
+            riskData.put("riskLevel", riskLevel);
+            riskData.put("riskSummary", riskSummary);
+            riskData.put("riskFactors", riskFactors);
+            riskAssessments.put(caseNumber, riskData);
+
+            System.out.println("Updated nested risk assessment for " + caseNumber);
+            System.out.println("Risk Level: " + riskLevel);
+            System.out.println("Risk Summary: " + riskSummary);
+            System.out.println("Risk Factors: " + riskFactors);
+
+            // Redirect back to case tags page with success message
+            return "redirect:/case-tags?success=assessment_updated";
+
+        } catch (Exception e) {
+            System.out.println("Failed to update nested risk assessment: " + e.getMessage());
+            return "redirect:/case-tags?error=update_failed";
+        }
+    }
 
     private List<CaseTagInfo> parseCaseTagsFromFile(FileInfo file) {
         List<CaseTagInfo> caseTags = new ArrayList<>();
@@ -1019,7 +1170,6 @@ public class GalleryController {
         private String label;
         private List<FileInfoDTO> files;
         private String summary;
-        private List<String> bulletPoints;
 
         public String getTag() { return tag; }
         public void setTag(String tag) { this.tag = tag; }
@@ -1036,9 +1186,6 @@ public class GalleryController {
 
         public String getSummary() { return summary; }
         public void setSummary(String summary) { this.summary = summary; }
-
-        public List<String> getBulletPoints() { return bulletPoints; }
-        public void setBulletPoints(List<String> bulletPoints) { this.bulletPoints = bulletPoints; }
     }
 
     // Case tag detail info class for the detail view
@@ -1089,5 +1236,17 @@ public class GalleryController {
         public void setFiles(List<FileInfoDTO> files) { this.files = files; }
 
         public int getFileCount() { return files != null ? files.size() : 0; }
+    }
+
+    // Red document case class for the red document view
+    public static class RedDocumentCase {
+        private String caseNumber;
+        private List<String> riskFactors;
+
+        public String getCaseNumber() { return caseNumber; }
+        public void setCaseNumber(String caseNumber) { this.caseNumber = caseNumber; }
+
+        public List<String> getRiskFactors() { return riskFactors; }
+        public void setRiskFactors(List<String> riskFactors) { this.riskFactors = riskFactors; }
     }
 }
