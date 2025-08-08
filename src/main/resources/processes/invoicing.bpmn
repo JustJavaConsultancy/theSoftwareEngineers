@@ -1,13 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:design="http://flowable.org/design" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://flowable.org/test" design:palette="flowable-work-process-palette">
   <process id="invoicing" name="invoicing" isExecutable="true" flowable:candidateStarterGroups="flowableUser">
+    <documentation>Form Submission URL: @{http://localhost:9000/processes/start}
+
+Submit button caption : Start
+businessName:
+type: text
+label: Business Name
+placeholder: Acme Corporation
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+clientName:
+type: text
+label: Client Name
+placeholder: Jane Doe
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+email:
+type: text
+label: Email
+placeholder: contact@acme.com
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+address:
+type: text
+label: Address
+placeholder: Ikeja, Lagos
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+phoneNumber:
+type: text
+label: Phone (Optional)
+placeholder: +234 9055529102
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+amount:
+type: number
+label: Amount
+placeholder: 0.00
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+dueDate:
+type: date
+label: Phone (Optional)
+placeholder: dd/mm/yyyy
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+description:
+type: textarea
+label: Description (Optional)
+placeholder: service description
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
     <extensionElements>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
-      <design:creationdate><![CDATA[2025-07-29T12:27:44.740Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-07-31T12:11:04.447Z]]></design:modificationdate>
+      <design:creationdate><![CDATA[2025-08-07T13:16:40.052Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2025-08-08T01:33:16.147Z]]></design:modificationdate>
     </extensionElements>
     <userTask id="FormTask_SeniorReview" name="Senior Review" flowable:assignee="manager" flowable:formFieldValidation="false">
       <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
         <design:stencilid><![CDATA[FormTask]]></design:stencilid>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
@@ -32,6 +99,7 @@ print(email);
     </scriptTask>
     <userTask id="FormTask_ClientPayment" name="Client Payment" flowable:formFieldValidation="false">
       <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
         <design:stencilid><![CDATA[FormTask]]></design:stencilid>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
@@ -47,6 +115,7 @@ print(status);]]></script>
     </scriptTask>
     <userTask id="FormTask_EditInvoice" name="Edit Invoice" flowable:formFieldValidation="false">
       <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
         <design:stencilid><![CDATA[FormTask]]></design:stencilid>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
@@ -145,12 +214,12 @@ print(status);]]></script>
         <omgdc:Bounds height="28.0" width="28.0" x="1329.9073985680188" y="228.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_15" id="BPMNEdge_SequenceFlow_15" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="653.7138424821002" y="242.0"></omgdi:waypoint>
-        <omgdi:waypoint x="723.7773269689736" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="653.0" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="723.0" y="242.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_16" id="BPMNEdge_SequenceFlow_16" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="633.7138424821002" y="222.0"></omgdi:waypoint>
-        <omgdi:waypoint x="633.7138424821002" y="104.0"></omgdi:waypoint>
+        <omgdi:waypoint x="633.0" y="222.0"></omgdi:waypoint>
+        <omgdi:waypoint x="633.0" y="104.0"></omgdi:waypoint>
         <omgdi:waypoint x="548.0" y="104.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_17" id="BPMNEdge_SequenceFlow_17" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
@@ -158,28 +227,28 @@ print(status);]]></script>
         <omgdi:waypoint x="498.0" y="202.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_11" id="BPMNEdge_SequenceFlow_11" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="978.907398568019" y="242.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1027.9073985680188" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="978.0" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1027.0" y="242.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_12" id="BPMNEdge_SequenceFlow_12" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="1127.9073985680188" y="242.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1179.9073985680188" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1127.0" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1179.0" y="242.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_8" id="BPMNEdge_SequenceFlow_8" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="823.7773269689736" y="242.0"></omgdi:waypoint>
-        <omgdi:waypoint x="878.907398568019" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="823.0" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="878.0" y="242.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_13" id="BPMNEdge_SequenceFlow_13" flowable:sourceDockerX="15.0" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="347.0" y="242.0"></omgdi:waypoint>
         <omgdi:waypoint x="448.0" y="242.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_14" id="BPMNEdge_SequenceFlow_14" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
-        <omgdi:waypoint x="1279.9073985680188" y="242.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1329.9073985680188" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1279.0" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1329.0" y="242.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_6" id="BPMNEdge_SequenceFlow_6" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="20.0" flowable:targetDockerY="20.0">
         <omgdi:waypoint x="548.0" y="242.0"></omgdi:waypoint>
-        <omgdi:waypoint x="613.7138424821002" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="613.0" y="242.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
