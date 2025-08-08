@@ -78,7 +78,8 @@
                th:each="name : ${processNames}"
                th:href="@{'/processes/' + ${name.processKey}}">
                 <span class="material-icons mr-3">task_alt</span>
-                <span th:text="${name.processName}">Tasks</span>
+                <span th:text="${name.processName}">Process Name</span>
+                <span>Tasks</span>
             </a>
 
             <!--<a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/processes}"
