@@ -74,15 +74,17 @@
                 <span>Dashboard</span>
             </a>
 
-            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"
-               th:each="name : ${processNames}"
+            <a th:if="${session.isAdmin == true or session.isManager == true}"
+               class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"
+               th:classappend="${currentPath == '/processes/' + name.processKey} ? ' bg-blue-600'"
+               th:each="name : ${session.processNames}"
                th:href="@{'/processes/' + ${name.processKey}}">
                 <span class="material-icons mr-3">task_alt</span>
                 <span th:text="${name.processName}">Process Name</span>
                 <span>Tasks</span>
             </a>
 
-            <!--<a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/processes}"
+            <!--<a class="f lex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/processes}"
                th:classappend="${currentPath == '/processes'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">sync_alt</span>
                 <span>Cases</span>

@@ -58,11 +58,12 @@ public class HomeController {
             request.getSession(true).setAttribute("isAdmin", true);
         }
         List<Map<String, String>> processNames = processService.getProcessDefinitionNames();
-        model.addAttribute("processNames", processNames);
+
         if(authenticationManager.isManager()){
             request.getSession(true).setAttribute("isManager", true);
         }
 
+        request.getSession(true).setAttribute("processNames", processNames);
         return "redirect:/dashboard";
     }
 
@@ -112,7 +113,7 @@ public class HomeController {
         ProcessInstance processInstance = processService.startProcess("customerSupport",loginUser, formData);
 
         formData.put("ticketStatus", "open");
-        formData.put("issueHandle", false);
+        formData.put("issueHandle", true);
         String processInstanceId = processInstance.getProcessInstanceId();
         Task handleTask = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
                 "FormTask_HandleIssue");
@@ -120,17 +121,17 @@ public class HomeController {
         taskService.completeTask(handleTask.getId(), formData);
 
 
-        Task reAssignTask = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
-                "FormTask_ReAssign");
-        System.out.println("This is the reassign task" + reAssignTask);
-        taskService.completeTask(reAssignTask.getId(), formData);
-
-        formData.put("issueHandle", true);
-        Task handleTask_2 = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
-                "FormTask_HandleIssue");
-
-        System.out.println("This is the handle task " + handleTask_2);
-        taskService.completeTask(handleTask_2.getId(), formData);
+//        Task reAssignTask = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
+//                "FormTask_ReAssign");
+//        System.out.println("This is the reassign task" + reAssignTask);
+//        taskService.completeTask(reAssignTask.getId(), formData);
+//
+//        formData.put("issueHandle", true);
+//        Task handleTask_2 = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
+//                "FormTask_HandleIssue");
+//
+//        System.out.println("This is the handle task " + handleTask_2);
+//        taskService.completeTask(handleTask_2.getId(), formData);
 
         return "redirect:/dashboard";
     }

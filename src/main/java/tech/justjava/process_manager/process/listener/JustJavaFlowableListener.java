@@ -48,12 +48,12 @@ public class JustJavaFlowableListener implements FlowableEventListener {
                     System.out.println(" The processVariables inside here ==="+processVariables);
 
 
-                    Map<String,Object> aiBriefAnalysis= (Map<String, Object>) processVariables.get("aiBriefAnalysis");
-
-                    Boolean isComplete = (Boolean) aiBriefAnalysis.get("isComplete");
-
-                    System.out.println(" The aiBriefAnalysis inside here ==="+aiBriefAnalysis);
-                    System.out.println(" The isComplete inside here ==="+isComplete);
+//                    Map<String,Object> aiBriefAnalysis= (Map<String, Object>) processVariables.get("aiBriefAnalysis");
+//
+//                    Boolean isComplete = (Boolean) aiBriefAnalysis.get("isComplete");
+//
+//                    System.out.println(" The aiBriefAnalysis inside here ==="+aiBriefAnalysis);
+//                    System.out.println(" The isComplete inside here ==="+isComplete);
                     System.out.println(" The set assignee==="+setAssignee);
 
                     task.getProcessVariables().put("currentTask",task.getName());
