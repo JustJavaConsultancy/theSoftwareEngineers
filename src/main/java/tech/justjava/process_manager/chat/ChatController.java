@@ -45,6 +45,11 @@ public class ChatController {
         return "chat/chat";
     }
     
+    @GetMapping("/videocall")
+    public String videoCallPage(Model model) {
+        return "videocall";
+    }
+    
     // Video call endpoint
     @GetMapping("/api/chat/video-call/user-info")
     @ResponseBody

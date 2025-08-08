@@ -13,26 +13,34 @@
 <div layout:fragment="content" class="flex h-screen">
   <main class="main-content flex-1 p-8 overflow-y-auto">
     <section>
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
           <h2 class="text-3xl font-bold">Case Numbers Summary</h2>
           <p class="text-gray-400">Overview of all case numbers and their associated files.</p>
         </div>
-        <div class="flex items-center gap-4">
-          <a th:href="@{/gallery}">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+          <a th:href="@{/gallery}" class="w-full sm:w-auto">
             <button
-                    class="bg-gray-600 hover:bg-gray-700 flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-200"
+                    class="bg-gray-600 hover:bg-gray-700 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-200 w-full"
             >
               <span class="material-icons">arrow_back</span>
               Back to Gallery
             </button>
           </a>
-          <a th:href="@{/addFile}">
+          <a th:href="@{/addFile}" class="w-full sm:w-auto">
             <button
-                    class="btn-primary2 flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold"
+                    class="btn-primary2 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-semibold w-full"
             >
               <span class="material-icons">add</span>
               Add File
+            </button>
+          </a>
+          <a th:href="@{/red-document}" class="w-full sm:w-auto">
+            <button
+                    class="bg-red-600 hover:bg-red-700 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-200 w-full"
+            >
+              <span class="material-icons">description</span>
+              Generate Red Document
             </button>
           </a>
         </div>
@@ -51,13 +59,13 @@
           </a>
         </div>
 
-        <!-- Accordions for Case Numbers -->
+        <!-- Main Accordions for Case Numbers -->
         <div th:if="${!#lists.isEmpty(caseTagSummaries)}" class="space-y-4">
-          <div th:each="caseTag, iterStat : ${caseTagSummaries}" class="accordion-item border border-gray-600 rounded-lg overflow-hidden">
-            <!-- Accordion Header -->
+          <div th:each="caseTag, iterStat : ${caseTagSummaries}" class="main-accordion-item border border-gray-600 rounded-lg overflow-hidden">
+            <!-- Main Accordion Header -->
             <button
-                    class="accordion-header w-full px-6 py-4 bg-gray-700 hover:bg-gray-600 flex items-center justify-between text-left transition-all duration-300 ease-in-out"
-                    th:attr="data-target='accordion-' + ${iterStat.index}"
+                    class="main-accordion-header w-full px-6 py-4 bg-gray-700 hover:bg-gray-600 flex items-center justify-between text-left transition-all duration-300 ease-in-out"
+                    th:attr="data-target='main-accordion-' + ${iterStat.index}"
                     type="button"
             >
               <div class="flex items-center flex-1">
@@ -73,42 +81,223 @@
               </div>
               <div class="flex items-center gap-3">
                 <span class="bg-primary text-white text-xs px-2 py-1 rounded-full" th:text="${caseTag.fileCount}"></span>
-                <span class="material-icons accordion-icon text-gray-400 transform transition-transform duration-300 ease-in-out">expand_more</span>
+                <span class="material-icons main-accordion-icon text-gray-400 transform transition-transform duration-300 ease-in-out">expand_more</span>
               </div>
             </button>
 
-            <!-- Accordion Content -->
+            <!-- Main Accordion Content -->
             <div
-                    class="accordion-content overflow-hidden transition-all duration-300 ease-in-out bg-gray-750 border-t border-gray-600"
-                    th:attr="id='accordion-' + ${iterStat.index}"
+                    class="main-accordion-content overflow-hidden transition-all duration-300 ease-in-out bg-gray-750 border-t border-gray-600"
+                    th:attr="id='main-accordion-' + ${iterStat.index}"
                     style="max-height: 0;"
             >
               <div class="p-6">
-                <!-- File Summary Section -->
-                <div class="mb-6">
-                  <h4 class="text-md font-semibold text-white mb-3 flex items-center">
-                    <span class="material-icons text-green-400 mr-2">summarize</span>
-                    Case Summary
-                  </h4>
-                  <div class="bg-gray-800 rounded-lg p-4">
-                    <p class="text-gray-300 mb-3" th:text="${caseTag.summary}">
-                      Case summary will be loaded from the backend.
-                    </p>
+                <!-- Sub-accordions -->
+                <div class="space-y-3">
 
-                    <div class="text-sm text-gray-400 space-y-2">
-                      <p th:each="bulletPoint : ${caseTag.bulletPoints}" th:text="'• ' + ${bulletPoint}">
-                        • Dynamic bullet point from backend
-                      </p>
+                  <!-- Case Summary Sub-accordion -->
+                  <div class="sub-accordion-item border border-gray-500 rounded-lg overflow-hidden">
+                    <button
+                            class="sub-accordion-header w-full px-4 py-3 bg-gray-600 hover:bg-gray-500 flex items-center justify-between text-left transition-all duration-300 ease-in-out"
+                            th:attr="data-target='case-summary-' + ${iterStat.index}"
+                            type="button"
+                    >
+                      <div class="flex items-center">
+                        <span class="material-icons text-green-400 mr-2">summarize</span>
+                        <h4 class="text-md font-semibold text-white">Case Summary</h4>
+                      </div>
+                      <span class="material-icons sub-accordion-icon text-gray-400 transform transition-transform duration-300 ease-in-out">expand_more</span>
+                    </button>
+
+                    <div
+                            class="sub-accordion-content overflow-hidden transition-all duration-300 ease-in-out bg-gray-700"
+                            th:attr="id='case-summary-' + ${iterStat.index}"
+                            style="max-height: 0;"
+                    >
+                      <div class="p-4">
+                        <!-- Summary View -->
+                        <div class="bg-gray-800 rounded-lg p-4 mb-4" th:attr="id='summary-view-' + ${iterStat.index}">
+                          <div class="text-gray-300 whitespace-pre-line" th:text="${caseTag.summary}" th:attr="id='summary-text-' + ${iterStat.index}">
+                            Case summary will be loaded from the backend.
+                          </div>
+                        </div>
+
+                        <!-- Edit Summary Section (Hidden by default) -->
+                        <div class="bg-gray-800 rounded-lg p-4 mb-4 hidden" th:attr="id='summary-edit-' + ${iterStat.index}">
+                          <form th:action="@{/case-summary/update}" method="post">
+                            <input type="hidden" name="caseNumber" th:value="${caseTag.label}" />
+                            <textarea
+                                    name="summary"
+                                    class="w-full bg-gray-700 text-gray-300 border border-gray-600 rounded-lg p-3 mb-3 resize-none overflow-hidden"
+                                    style="min-height: 120px;"
+                                    th:attr="id='summary-textarea-' + ${iterStat.index}"
+                                    placeholder="Enter case summary..."
+                                    required
+                                    th:text="${caseTag.summary}"></textarea>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                              <button
+                                      type="submit"
+                                      class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                              >
+                                <span class="material-icons text-sm">save</span>
+                                Save
+                              </button>
+                              <button
+                                      type="button"
+                                      class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                                      th:attr="onclick='cancelEditSummary(' + ${iterStat.index} + ')'"
+                              >
+                                <span class="material-icons text-sm">cancel</span>
+                                Cancel
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+
+                        <!-- Summary Action Buttons -->
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                          <a th:href="@{/case-tags/{caseNumber}(caseNumber=${caseTag.label})}" class="flex-1 sm:flex-none">
+                            <button class="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 w-full">
+                              <span class="material-icons text-sm">visibility</span>
+                              View Details
+                            </button>
+                          </a>
+                          <button
+                                  type="button"
+                                  class="text-blue-500 hover:text-blue-400 font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 flex-1 sm:flex-none"
+                                  th:attr="onclick='editSummary(' + ${iterStat.index} + ')'"
+                          >
+                            <span class="material-icons text-sm">edit</span>
+                            Edit Summary
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <!-- View Details Button -->
-                <div class="flex justify-end">
-                  <a th:href="@{/case-tags/{caseNumber}(caseNumber=${caseTag.label})}">
-                    <button class="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 flex items-center gap-2 transform hover:scale-105">
-                      View Details
+
+                  <!-- Risk Assessment Sub-accordion -->
+                  <div class="sub-accordion-item border border-gray-500 rounded-lg overflow-hidden">
+                    <button
+                            class="sub-accordion-header w-full px-4 py-3 bg-gray-600 hover:bg-gray-500 flex items-center justify-between text-left transition-all duration-300 ease-in-out"
+                            th:attr="data-target='risk-assessment-' + ${iterStat.index}"
+                            type="button"
+                    >
+                      <div class="flex items-center">
+                        <span class="material-icons text-red-400 mr-2">warning</span>
+                        <h4 class="text-md font-semibold text-white">Risk Assessment</h4>
+                      </div>
+                      <span class="material-icons sub-accordion-icon text-gray-400 transform transition-transform duration-300 ease-in-out">expand_more</span>
                     </button>
-                  </a>
+
+                    <div
+                            class="sub-accordion-content overflow-hidden transition-all duration-300 ease-in-out bg-gray-700"
+                            th:attr="id='risk-assessment-' + ${iterStat.index}"
+                            style="max-height: 0;"
+                    >
+                      <div class="p-4">
+                        <!-- Risk Assessment Content - Using actual data from backend -->
+                        <div th:attr="data-case-number=${caseTag.label}">
+                          <!-- View Mode -->
+                          <div th:attr="id='risk-view-' + ${iterStat.index}">
+                            <h3 class="text-xl font-semibold text-white mb-4" th:attr="id='risk-level-header-' + ${iterStat.index}">
+                              Overall Risk Level:
+                              <span th:class="${riskAssessments[caseTag.label] != null and riskAssessments[caseTag.label]['riskLevel'] == 'Low' ? 'text-green-500' : (riskAssessments[caseTag.label] != null and riskAssessments[caseTag.label]['riskLevel'] == 'Medium' ? 'text-yellow-500' : (riskAssessments[caseTag.label] != null and riskAssessments[caseTag.label]['riskLevel'] == 'High' ? 'text-red-500' : 'text-red-600'))}"
+                                    th:text="${riskAssessments[caseTag.label] != null ? riskAssessments[caseTag.label]['riskLevel'] : 'High'}"
+                                    th:attr="id='risk-level-display-' + ${iterStat.index}">High</span>
+                            </h3>
+                            <p class="text-gray-300 mb-4" th:attr="id='risk-summary-display-' + ${iterStat.index}"
+                               th:text="${riskAssessments[caseTag.label] != null ? riskAssessments[caseTag.label]['riskSummary'] : 'This case presents a high risk due to insufficient evidence corroboration and multiple pending witness statements.'}">
+                              This case presents a high risk due to insufficient evidence corroboration and multiple pending witness statements.
+                            </p>
+                            <div class="mb-4" th:attr="id='risk-factors-section-' + ${iterStat.index}">
+                              <h4 class="text-lg font-semibold text-white mb-2">Risk Factors:</h4>
+                              <ul class="list-disc list-inside text-gray-400 space-y-2" th:attr="id='risk-factors-display-' + ${iterStat.index}">
+                                <li th:each="factor : ${riskAssessments[caseTag.label] != null ? riskAssessments[caseTag.label]['riskFactors'] : {'Key witness testimony is unverified', 'Digital evidence authenticity in question', 'Client has prior related cases', 'Conflicting expert reports'}}"
+                                    th:text="${factor}">Risk factor</li>
+                              </ul>
+                            </div>
+                          </div>
+
+                          <!-- Edit Mode (Hidden by default) -->
+                          <div th:attr="id='risk-edit-' + ${iterStat.index}" class="hidden">
+                            <form th:action="@{/risk-assessment/update-nested}" method="post">
+                              <input type="hidden" name="caseNumber" th:value="${caseTag.label}" />
+
+                              <div class="mb-4">
+                                <label class="block text-white font-semibold mb-2">Overall Risk Level:</label>
+                                <select
+                                        name="riskLevel"
+                                        th:attr="id='risk-level-select-' + ${iterStat.index}"
+                                        class="w-full bg-gray-700 text-gray-300 border border-gray-600 rounded-lg p-3"
+                                        required
+                                >
+                                  <option value="Low" th:selected="${riskAssessments[caseTag.label] != null and riskAssessments[caseTag.label]['riskLevel'] == 'Low'}">Low</option>
+                                  <option value="Medium" th:selected="${riskAssessments[caseTag.label] != null and riskAssessments[caseTag.label]['riskLevel'] == 'Medium'}">Medium</option>
+                                  <option value="High" th:selected="${riskAssessments[caseTag.label] == null or riskAssessments[caseTag.label]['riskLevel'] == 'High'}">High</option>
+                                  <option value="Critical" th:selected="${riskAssessments[caseTag.label] != null and riskAssessments[caseTag.label]['riskLevel'] == 'Critical'}">Critical</option>
+                                </select>
+                              </div>
+
+                              <div class="mb-4">
+                                <label class="block text-white font-semibold mb-2">Risk Summary:</label>
+                                <textarea
+                                        name="riskSummary"
+                                        th:attr="id='risk-summary-textarea-' + ${iterStat.index}"
+                                        class="w-full bg-gray-700 text-gray-300 border border-gray-600 rounded-lg p-3 resize-vertical min-h-[100px]"
+                                        placeholder="Enter risk assessment summary..."
+                                        required
+                                        th:text="${riskAssessments[caseTag.label] != null ? riskAssessments[caseTag.label]['riskSummary'] : 'This case presents a high risk due to insufficient evidence corroboration and multiple pending witness statements.'}">This case presents a high risk due to insufficient evidence corroboration and multiple pending witness statements.</textarea>
+                              </div>
+
+                              <div class="mb-6">
+                                <label class="block text-white font-semibold mb-2">Risk Factors (one per line):</label>
+                                <textarea
+                                        name="riskFactors"
+                                        th:attr="id='risk-factors-textarea-' + ${iterStat.index}"
+                                        class="w-full bg-gray-700 text-gray-300 border border-gray-600 rounded-lg p-3 resize-vertical min-h-[120px]"
+                                        placeholder="Enter risk factors, one per line..."
+                                        th:text="${riskAssessments[caseTag.label] != null ? #strings.listJoin(riskAssessments[caseTag.label]['riskFactors'], '&#10;') : 'Key witness testimony is unverified&#10;Digital evidence authenticity in question&#10;Client has prior related cases&#10;Conflicting expert reports'}">Key witness testimony is unverified
+Digital evidence authenticity in question
+Client has prior related cases
+Conflicting expert reports</textarea>
+                              </div>
+
+                              <div class="flex flex-col sm:flex-row gap-2">
+                                <button
+                                        type="submit"
+                                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                                >
+                                  <span class="material-icons text-sm">save</span>
+                                  Save Assessment
+                                </button>
+                                <button
+                                        type="button"
+                                        class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                                        th:attr="onclick='cancelEditRiskAssessmentNested(' + ${iterStat.index} + ')'"
+                                >
+                                  <span class="material-icons text-sm">cancel</span>
+                                  Cancel
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+
+                          <!-- Edit Button (Below content) -->
+                          <div class="mt-6 pt-4 border-t border-gray-600">
+                            <button
+                                    type="button"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2 transform hover:scale-105"
+                                    th:attr="onclick='editRiskAssessmentNested(' + ${iterStat.index} + ')', id='edit-button-' + ${iterStat.index}"
+                            >
+                              <span class="material-icons text-sm">edit</span>
+                              Edit Assessment
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>

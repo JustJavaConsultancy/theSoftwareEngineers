@@ -745,3 +745,26 @@ body.light-mode #uploadError .text-white {
 body.light-mode #uploadError .text-red-200 {
     color: #dc2626 !important;
 }
+
+        .risk-content {
+            white-space: pre-wrap;
+            font-family: monospace;
+            background-color: #1e293b;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+        .risk-section {
+            margin-bottom: 1.5rem;
+        }
+        .risk-high {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .risk-medium {
+            color: #f59e0b;
+        }
+        .risk-low {
+            color: #10b981;
+        }

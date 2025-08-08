@@ -412,19 +412,21 @@
            copyBtn.addEventListener('click', function(e) {
                e.preventDefault();
                dropdownMenu.classList.add('hidden');
-               let roomId = '';
-               let name = '';
-               if (currentChat && currentChat.id) {
-                   roomId = `room_${currentChat.id}`.replace(/[^a-zA-Z0-9_]/g, '_');
-                   name = currentChat.name || '';
-               } else {
+               
+               if (!currentChat || !currentChat.id) {
                    alert('No chat selected.');
                    return;
                }
+               
+               // Generate the same room ID format as the video call
+               const roomId = `room_${currentChat.id}`.replace(/[^a-zA-Z0-9_]/g, '_');
                const baseUrl = window.location.protocol + '//' + window.location.host;
-               const link = `${baseUrl}/chat?roomID=${roomId}`;
+               
+               // Create a shareable video call link that works for anyone
+               const link = `${baseUrl}/videocall?roomID=${roomId}&meetingName=${encodeURIComponent(currentChat.name || 'Video Call')}`;
+               
                navigator.clipboard.writeText(link).then(() => {
-                   showToast('Meeting link copied!');
+                   showToast('Meeting link copied! Anyone with this link can join the video call.');
                }, () => {
                    alert('Failed to copy link.');
                });
