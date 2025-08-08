@@ -476,12 +476,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Initialize theme on page load
   function initializeTheme() {
-    const savedMode = localStorage.getItem(MODE_KEY);
-    if (savedMode === 'light' || savedMode === 'dark') {
-      setMode(savedMode);
-    } else {
+  const savedMode = localStorage.getItem(MODE_KEY);
+  if (savedMode === 'light' || savedMode === 'dark') {
+    setMode(savedMode);
+  } else {
       // Default to dark mode if no preference is saved
-      setMode('dark');
+    setMode('dark');
     }
   }
 
@@ -930,9 +930,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeFormUploadFunctionality() {
-    // Elements
-    const uploadArea = document.getElementById('uploadArea');
-    const fileInput = document.getElementById('file-upload');
+  // Elements
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInput = document.getElementById('file-upload');
     const addMoreButton = document.getElementById('addMoreCaseTag');
     const caseTagsList = document.getElementById('caseTagsList');
     const uploadForm = document.getElementById('uploadForm');
@@ -1042,12 +1042,12 @@ function initializeFormUploadFunctionality() {
             }
 
             // Check file sizes (10MB limit)
-            const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
+    const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
             const oversizedFiles = Array.from(fileInput.files).filter(file => file.size > maxFileSize);
 
-            if (oversizedFiles.length > 0) {
+    if (oversizedFiles.length > 0) {
                 e.preventDefault();
-                const fileNames = oversizedFiles.map(f => f.name).join(', ');
+      const fileNames = oversizedFiles.map(f => f.name).join(', ');
                 alert(`The following files are too large (max 10MB): ${fileNames}`);
                 return false;
             }
@@ -1181,16 +1181,16 @@ function initializeFormUploadFunctionality() {
               if (fileToDelete) {
                   fetch(`/api/files/${fileToDelete.id}`, {
                       method: 'DELETE'
-                  })
-                  .then(response => response.json())
-                  .then(data => {
-                      if (data.status === 'success') {
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
                           location.reload();
-                      } else {
+      } else {
                           alert('Failed to delete file: ' + data.message);
-                      }
-                  })
-                  .catch(error => {
+      }
+    })
+    .catch(error => {
                       console.error('Error:', error);
                       alert('Failed to delete file');
                   });
