@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,8 @@ import java.util.Map;
 public class HomeController {
 
     private final RuntimeService runtimeService;
-    private final TaskService taskService;
+    private final tech.justjava.process_manager.task.service.TaskService taskService;
+    private final TaskService flowableTaskService;
     private final HistoryService historyService;
     private final SupportFeignClient supportFeignClient;
     private final AuthenticationManager authenticationManager;
@@ -33,13 +35,15 @@ public class HomeController {
 
     public HomeController(
             RuntimeService runtimeService,
-            TaskService taskService,
+            tech.justjava.process_manager.task.service.TaskService taskService,
+            TaskService flowableTaskService,
             HistoryService historyService,
             SupportFeignClient supportFeignClient,
             AuthenticationManager authenticationManager,
             ProcessService processService
     ) {
         this.runtimeService = runtimeService;
+        this.flowableTaskService = flowableTaskService;
         this.taskService = taskService;
         this.historyService = historyService;
         this.supportFeignClient = supportFeignClient;
@@ -75,7 +79,7 @@ public class HomeController {
                 .desc() // Sort by end time
                 .count();
 
-        List<Task> activeTasks = taskService.createTaskQuery()
+        List<Task> activeTasks = flowableTaskService.createTaskQuery()
                 .processDefinitionKey(processKey)
                 .active()
                 .list();
@@ -99,6 +103,38 @@ public class HomeController {
 
         return "dashboard";
     }
+
+//    sample customer
+    @GetMapping("/support")
+    public String supportHandler(Model model){
+        String loginUser = (String) authenticationManager.get("sub");
+        Map<String, Object> formData = new HashMap<>();
+        ProcessInstance processInstance = processService.startProcess("customerSupport",loginUser, formData);
+
+        formData.put("ticketStatus", "open");
+        formData.put("issueHandle", false);
+        String processInstanceId = processInstance.getProcessInstanceId();
+        Task handleTask = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
+                "FormTask_HandleIssue");
+        System.out.println("This is the current task " + handleTask);
+        taskService.completeTask(handleTask.getId(), formData);
+
+
+        Task reAssignTask = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
+                "FormTask_ReAssign");
+        System.out.println("This is the reassign task" + reAssignTask);
+        taskService.completeTask(reAssignTask.getId(), formData);
+
+        formData.put("issueHandle", true);
+        Task handleTask_2 = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
+                "FormTask_HandleIssue");
+
+        System.out.println("This is the handle task " + handleTask_2);
+        taskService.completeTask(handleTask_2.getId(), formData);
+
+        return "redirect:/dashboard";
+    }
+
 
     // === SUPPORT CHAT BACKEND ===
     @PostMapping("/api/chat/send")

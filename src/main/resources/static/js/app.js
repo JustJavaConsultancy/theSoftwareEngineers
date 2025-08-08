@@ -1106,46 +1106,65 @@ function initializeFormUploadFunctionality() {
 }
 
 // CASE TAG SUMMARY
-      // Accordion functionality with smooth animations
-      const accordionHeaders = document.querySelectorAll('.accordion-header');
-
-      accordionHeaders.forEach(header => {
-          header.addEventListener('click', function() {
-              const target = this.getAttribute('data-target');
-              const content = document.getElementById(target);
-              const icon = this.querySelector('.accordion-icon');
-              const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
-
-              // Close all other accordions
-              accordionHeaders.forEach(otherHeader => {
-                  if (otherHeader !== this) {
-                      const otherTarget = otherHeader.getAttribute('data-target');
-                      const otherContent = document.getElementById(otherTarget);
-                      const otherIcon = otherHeader.querySelector('.accordion-icon');
-
-                      otherContent.style.maxHeight = '0px';
-                      otherIcon.style.transform = 'rotate(0deg)';
-                      otherHeader.classList.remove('bg-gray-600');
-                      otherHeader.classList.add('bg-gray-700');
-                  }
-              });
-
-              // Toggle current accordion
-              if (isOpen) {
-                  // Close current accordion
-                  content.style.maxHeight = '0px';
-                  icon.style.transform = 'rotate(0deg)';
-                  this.classList.remove('bg-gray-600');
-                  this.classList.add('bg-gray-700');
-              } else {
-                  // Open current accordion
-                  content.style.maxHeight = content.scrollHeight + 'px';
-                  icon.style.transform = 'rotate(180deg)';
-                  this.classList.remove('bg-gray-700');
-                  this.classList.add('bg-gray-600');
-              }
-          });
-      });
+//      // Accordion functionality with smooth animations
+//      const accordionHeaders = document.querySelectorAll('.accordion-header');
+//
+//      accordionHeaders.forEach(header => {
+//          header.addEventListener('click', function() {
+//              const target = this.getAttribute('data-target');
+//              const content = document.getElementById(target);
+//              const icon = this.querySelector('.accordion-icon');
+//              const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+//
+//              // Close all other accordions
+//              accordionHeaders.forEach(otherHeader => {
+//                  if (otherHeader !== this) {
+//                      const otherTarget = otherHeader.getAttribute('data-target');
+//                      const otherContent = document.getElementById(otherTarget);
+//                      const otherIcon = otherHeader.querySelector('.accordion-icon');
+//
+//                      otherContent.style.maxHeight = '0px';
+//                      otherIcon.style.transform = 'rotate(0deg)';
+//                      otherHeader.classList.remove('bg-gray-600');
+//                      otherHeader.classList.add('bg-gray-700');
+//                  }
+//              });
+//
+//              // Toggle current accordion
+//              if (isOpen) {
+//                  // Close current accordion
+//                  content.style.maxHeight = '0px';
+//                  icon.style.transform = 'rotate(0deg)';
+//                  this.classList.remove('bg-gray-600');
+//                  this.classList.add('bg-gray-700');
+//              } else {
+//                  // Open current accordion
+//                  content.style.maxHeight = content.scrollHeight + 'px';
+//                  icon.style.transform = 'rotate(180deg)';
+//                  this.classList.remove('bg-gray-700');
+//                  this.classList.add('bg-gray-600');
+//              }
+//          });
+//      });
+//
+//      function editSummary(index) {
+//          const viewDiv = document.getElementById('summary-view-' + index);
+//          const editDiv = document.getElementById('summary-edit-' + index);
+//
+//          viewDiv.classList.add('hidden');
+//          editDiv.classList.remove('hidden');
+//        }
+//
+//        function cancelEditSummary(index) {
+//          const viewDiv = document.getElementById('summary-view-' + index);
+//          const editDiv = document.getElementById('summary-edit-' + index);
+//          const textarea = document.getElementById('summary-textarea-' + index);
+//          const originalText = document.getElementById('summary-text-' + index).textContent;
+//
+//          textarea.value = originalText;
+//          editDiv.classList.add('hidden');
+//          viewDiv.classList.remove('hidden');
+//        }
 
   // CASE TAG DETAILS
    // Reuse the same delete functionality from gallery.html
@@ -1209,3 +1228,518 @@ function initializeFormUploadFunctionality() {
               });
           });
       });
+
+
+// Main accordion functionality with auto-close
+document.addEventListener('DOMContentLoaded', function() {
+    // Main accordion functionality
+    const mainAccordionHeaders = document.querySelectorAll('.main-accordion-header');
+
+    mainAccordionHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const target = this.getAttribute('data-target');
+            const content = document.getElementById(target);
+            const icon = this.querySelector('.main-accordion-icon');
+
+            // Check if this accordion is currently open
+            const isCurrentlyOpen = content.style.maxHeight !== '0px' && content.style.maxHeight !== '';
+
+            // Close all main accordions first
+            mainAccordionHeaders.forEach(otherHeader => {
+                const otherTarget = otherHeader.getAttribute('data-target');
+                const otherContent = document.getElementById(otherTarget);
+                const otherIcon = otherHeader.querySelector('.main-accordion-icon');
+
+                if (otherContent && otherIcon) {
+                    otherContent.style.maxHeight = '0px';
+                    otherIcon.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // If the clicked accordion wasn't open, open it
+            if (!isCurrentlyOpen && content && icon) {
+                // Use a large max-height to ensure content is always fully visible
+                content.style.maxHeight = '9999px';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        });
+    });
+
+    // Sub-accordion functionality
+    const subAccordionHeaders = document.querySelectorAll('.sub-accordion-header');
+
+    subAccordionHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const target = this.getAttribute('data-target');
+            const content = document.getElementById(target);
+            const icon = this.querySelector('.sub-accordion-icon');
+
+            if (content && icon) {
+                if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
+                    // Open sub-accordion with large max-height to ensure full content visibility
+                    content.style.maxHeight = '9999px';
+                    icon.style.transform = 'rotate(180deg)';
+
+                    // Update parent accordion height
+                    setTimeout(() => {
+                        updateParentAccordionHeight(content);
+                    }, 50);
+                } else {
+                    // Close sub-accordion
+                    content.style.maxHeight = '0px';
+                    icon.style.transform = 'rotate(0deg)';
+
+                    // Update parent accordion height after animation
+                    setTimeout(() => {
+                        updateParentAccordionHeight(content);
+                    }, 300);
+                }
+            }
+        });
+    });
+
+    // Legacy accordion functionality for pages that still use the old structure
+    const legacyAccordionHeaders = document.querySelectorAll('.accordion-header');
+
+    legacyAccordionHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const target = this.getAttribute('data-target');
+            const content = document.getElementById(target);
+            const icon = this.querySelector('.accordion-icon');
+
+            // Check if this accordion is currently open
+            const isCurrentlyOpen = content && (content.style.maxHeight !== '0px' && content.style.maxHeight !== '');
+
+            // Close all legacy accordions first
+            legacyAccordionHeaders.forEach(otherHeader => {
+                const otherTarget = otherHeader.getAttribute('data-target');
+                const otherContent = document.getElementById(otherTarget);
+                const otherIcon = otherHeader.querySelector('.accordion-icon');
+
+                if (otherContent && otherIcon) {
+                    otherContent.style.maxHeight = '0px';
+                    otherIcon.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // If the clicked accordion wasn't open, open it
+            if (!isCurrentlyOpen && content && icon) {
+                content.style.maxHeight = '9999px';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        });
+    });
+
+    // Risk assessment data is already loaded from backend via template
+    console.log('Risk assessment data loaded from backend');
+
+    // Check if we're on the risk assessment page (standalone)
+    if (document.getElementById('risk-view')) {
+        console.log('Risk assessment page loaded');
+
+        // Make sure edit button is visible initially
+        const editButton = document.getElementById('edit-button');
+        if (editButton) {
+            editButton.classList.remove('hidden');
+        }
+    }
+
+    console.log('App.js loaded and initialized');
+});
+
+function updateParentAccordionHeight(subContent) {
+    const mainAccordionContent = subContent.closest('.main-accordion-content');
+    if (mainAccordionContent && mainAccordionContent.style.maxHeight !== '0px') {
+        // Use large max-height to ensure parent can accommodate all sub-content
+        mainAccordionContent.style.maxHeight = '9999px';
+    }
+}
+
+// Case summary editing functions
+function editSummary(index) {
+    const viewDiv = document.getElementById('summary-view-' + index);
+    const editDiv = document.getElementById('summary-edit-' + index);
+    const textarea = document.getElementById('summary-textarea-' + index);
+
+    if (viewDiv && editDiv) {
+        viewDiv.style.display = 'none';
+        editDiv.classList.remove('hidden');
+
+        // Auto-resize textarea when edit mode is activated
+        if (textarea) {
+            // Initial resize
+            setTimeout(() => autoResizeTextarea(textarea), 10);
+
+            // Add event listeners for auto-resize
+            textarea.addEventListener('input', function() {
+                autoResizeTextarea(this);
+            });
+
+            textarea.addEventListener('keyup', function() {
+                autoResizeTextarea(this);
+            });
+        }
+
+        // Update parent accordion height
+        setTimeout(() => {
+            const subContent = editDiv.closest('.sub-accordion-content');
+            updateParentAccordionHeight(subContent);
+        }, 100);
+    }
+}
+
+function cancelEditSummary(index) {
+    const viewDiv = document.getElementById('summary-view-' + index);
+    const editDiv = document.getElementById('summary-edit-' + index);
+
+    if (viewDiv && editDiv) {
+        viewDiv.style.display = 'block';
+        editDiv.classList.add('hidden');
+
+        // Update parent accordion height
+        setTimeout(() => {
+            const subContent = editDiv.closest('.sub-accordion-content');
+            updateParentAccordionHeight(subContent);
+        }, 100);
+    }
+}
+
+// Risk assessment editing functions for nested accordions
+function editRiskAssessment(index) {
+    console.log('editRiskAssessment called with index:', index);
+
+    const viewDiv = document.getElementById('risk-view-' + index);
+    const editDiv = document.getElementById('risk-edit-' + index);
+    const editButton = document.getElementById('edit-button-' + index);
+
+    console.log('Elements found:', {
+        viewDiv: !!viewDiv,
+        editDiv: !!editDiv,
+        editButton: !!editButton
+    });
+
+    if (viewDiv && editDiv) {
+        viewDiv.style.display = 'none';
+        editDiv.classList.remove('hidden');
+        if (editButton) editButton.style.display = 'none';
+
+        // Populate the form with current content
+        populateRiskAssessmentForm(index);
+
+        // Update parent accordion height
+        setTimeout(() => {
+            const subContent = editDiv.closest('.sub-accordion-content');
+            updateParentAccordionHeight(subContent);
+        }, 100);
+    } else {
+        console.error('Could not find required elements for editRiskAssessment');
+    }
+}
+
+function cancelEditRiskAssessment(index) {
+    console.log('cancelEditRiskAssessment called with index:', index);
+
+    const viewDiv = document.getElementById('risk-view-' + index);
+    const editDiv = document.getElementById('risk-edit-' + index);
+    const editButton = document.getElementById('edit-button-' + index);
+
+    if (viewDiv && editDiv) {
+        viewDiv.style.display = 'block';
+        editDiv.classList.add('hidden');
+        if (editButton) editButton.style.display = 'block';
+
+        // Update parent accordion height
+        setTimeout(() => {
+            const subContent = editDiv.closest('.sub-accordion-content');
+            updateParentAccordionHeight(subContent);
+        }, 100);
+    }
+}
+
+// Standalone risk assessment functions (for the dedicated risk assessment page)
+function editRiskAssessment() {
+    console.log('Standalone editRiskAssessment called');
+
+    const viewDiv = document.getElementById('risk-view');
+    const editDiv = document.getElementById('risk-edit');
+    const editButton = document.getElementById('edit-button');
+
+    console.log('Standalone elements found:', {
+        viewDiv: !!viewDiv,
+        editDiv: !!editDiv,
+        editButton: !!editButton
+    });
+
+    if (viewDiv && editDiv && editButton) {
+        viewDiv.classList.add('hidden');
+        editDiv.classList.remove('hidden');
+        editButton.classList.add('hidden');
+
+        // Populate the form with current content
+        populateRiskAssessmentForm();
+    } else {
+        console.error('Could not find required elements for standalone editRiskAssessment');
+    }
+}
+
+function cancelEditRiskAssessment() {
+    console.log('Standalone cancelEditRiskAssessment called');
+
+    const viewDiv = document.getElementById('risk-view');
+    const editDiv = document.getElementById('risk-edit');
+    const editButton = document.getElementById('edit-button');
+
+    if (viewDiv && editDiv && editButton) {
+        // Reset form values to original
+        if (window.riskAssessmentData) {
+            const riskLevelSelect = document.getElementById('risk-level-select');
+            const riskSummaryTextarea = document.getElementById('risk-summary-textarea');
+            const riskFactorsTextarea = document.getElementById('risk-factors-textarea');
+
+            if (riskLevelSelect) riskLevelSelect.value = window.riskAssessmentData.originalRiskLevel;
+            if (riskSummaryTextarea) riskSummaryTextarea.value = window.riskAssessmentData.originalRiskSummary;
+            if (riskFactorsTextarea) riskFactorsTextarea.value = window.riskAssessmentData.originalRiskFactors.join('\n');
+        }
+
+        editDiv.classList.add('hidden');
+        viewDiv.classList.remove('hidden');
+        editButton.classList.remove('hidden');
+    }
+}
+
+function populateRiskAssessmentForm(index) {
+    console.log('populateRiskAssessmentForm called with index:', index);
+
+    // Handle both standalone and nested accordion versions
+    const suffix = index !== undefined ? '-' + index : '';
+
+    // Get all the content from the view mode
+    const riskLevelDisplay = document.getElementById('risk-level-display' + suffix);
+    const riskSummaryDisplay = document.getElementById('risk-summary-display' + suffix);
+    const riskFactorsDisplay = document.getElementById('risk-factors-display' + suffix);
+
+    // Get form elements
+    const riskLevelSelect = document.getElementById('risk-level-select' + suffix);
+    const riskSummaryTextarea = document.getElementById('risk-summary-textarea' + suffix);
+    const riskFactorsTextarea = document.getElementById('risk-factors-textarea' + suffix);
+
+    console.log('Form elements found:', {
+        riskLevelDisplay: !!riskLevelDisplay,
+        riskSummaryDisplay: !!riskSummaryDisplay,
+        riskFactorsDisplay: !!riskFactorsDisplay,
+        riskLevelSelect: !!riskLevelSelect,
+        riskSummaryTextarea: !!riskSummaryTextarea,
+        riskFactorsTextarea: !!riskFactorsTextarea
+    });
+
+    // Populate risk level
+    if (riskLevelDisplay && riskLevelSelect) {
+        riskLevelSelect.value = riskLevelDisplay.textContent.trim();
+        console.log('Set risk level to:', riskLevelDisplay.textContent.trim());
+    }
+
+    // Populate risk summary
+    if (riskSummaryDisplay && riskSummaryTextarea) {
+        riskSummaryTextarea.value = riskSummaryDisplay.textContent.trim();
+        console.log('Set risk summary to:', riskSummaryDisplay.textContent.trim());
+    }
+
+    // Populate risk factors
+    if (riskFactorsDisplay && riskFactorsTextarea) {
+        const factorItems = riskFactorsDisplay.querySelectorAll('li');
+        const factors = Array.from(factorItems).map(li => li.textContent.trim());
+        riskFactorsTextarea.value = factors.join('\n');
+        console.log('Set risk factors to:', factors);
+    }
+}
+
+// Risk assessment data is now loaded directly from the backend via Thymeleaf template
+// No need for JavaScript data loading since the template already contains the actual data
+function loadRiskAssessmentData() {
+    console.log('Risk assessment data is loaded directly from backend via template');
+    // Data is already populated in the HTML template from the backend
+}
+
+// Auto-resize textarea function
+function autoResizeTextarea(textarea) {
+    if (textarea) {
+        // Reset height to auto to get the correct scrollHeight
+        textarea.style.height = 'auto';
+        // Set height to scrollHeight to fit content
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+}
+
+// Auto-resize textareas on input
+document.addEventListener('input', function(e) {
+    if (e.target.tagName.toLowerCase() === 'textarea') {
+        autoResizeTextarea(e.target);
+    }
+});
+
+// PDF generation functionality for red document page - using print dialog
+function downloadPDF() {
+    console.log('downloadPDF function called');
+
+    // Get the main content to print
+    const mainContent = document.getElementById('red-document-content');
+    if (!mainContent) {
+        console.error('red-document-content not found');
+        alert('PDF content not found. Please ensure you are on the red document page.');
+        return;
+    }
+
+    // Show loading state
+    const downloadBtn = document.getElementById('downloadPdfBtn');
+    if (downloadBtn) {
+        const originalText = downloadBtn.innerHTML;
+        downloadBtn.innerHTML = '<span class="material-icons animate-spin">refresh</span> Generating...';
+        downloadBtn.disabled = true;
+
+        // Reset button state after opening print dialog
+        setTimeout(() => {
+            downloadBtn.innerHTML = originalText;
+            downloadBtn.disabled = false;
+        }, 1000);
+    }
+
+    // Open print dialog
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Red Document - Risk Factors Report</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; color: #333; line-height: 1.6; }
+                h1 { text-align: center; margin-bottom: 30px; }
+                h2 { color: #1f2937; border-bottom: 2px solid #dc2626; padding-bottom: 10px; margin-top: 30px; }
+                h3 { color: #dc2626; margin-bottom: 15px; }
+                ul { margin-left: 20px; }
+                li { margin-bottom: 8px; }
+                .header-info { text-align: center; margin-bottom: 40px; color: #666; }
+                .footer { margin-top: 50px; text-align: center; color: #666; font-size: 12px; }
+                @media print {
+                    body { margin: 15px; }
+                    .no-print { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Red Document - Risk Factors Report</h1>
+            <div class="header-info">Generated on ${new Date().toLocaleDateString()}</div>
+            ${mainContent.innerHTML}
+            <div class="footer">
+                <p>This document contains confidential risk assessment information.</p>
+                <p>Generated by Case Management System</p>
+            </div>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+}
+
+// Nested risk assessment functions (different names to avoid conflicts)
+function editRiskAssessmentNested(index) {
+    console.log('editRiskAssessmentNested called with index:', index);
+
+    const viewDiv = document.getElementById('risk-view-' + index);
+    const editDiv = document.getElementById('risk-edit-' + index);
+    const editButton = document.getElementById('edit-button-' + index);
+
+    console.log('Nested elements found:', {
+        viewDiv: !!viewDiv,
+        editDiv: !!editDiv,
+        editButton: !!editButton
+    });
+
+    if (viewDiv && editDiv && editButton) {
+        viewDiv.classList.add('hidden');
+        editDiv.classList.remove('hidden');
+        editButton.classList.add('hidden');
+
+        // Populate the form with current content for nested version
+        populateRiskAssessmentFormNested(index);
+
+        // Update parent accordion height
+        setTimeout(() => {
+            const subContent = editDiv.closest('.sub-accordion-content');
+            updateParentAccordionHeight(subContent);
+        }, 100);
+    } else {
+        console.error('Could not find required elements for editRiskAssessmentNested');
+    }
+}
+
+function cancelEditRiskAssessmentNested(index) {
+    console.log('cancelEditRiskAssessmentNested called with index:', index);
+
+    const viewDiv = document.getElementById('risk-view-' + index);
+    const editDiv = document.getElementById('risk-edit-' + index);
+    const editButton = document.getElementById('edit-button-' + index);
+
+    if (viewDiv && editDiv && editButton) {
+        editDiv.classList.add('hidden');
+        viewDiv.classList.remove('hidden');
+        editButton.classList.remove('hidden');
+
+        // Update parent accordion height
+        setTimeout(() => {
+            const subContent = editDiv.closest('.sub-accordion-content');
+            updateParentAccordionHeight(subContent);
+        }, 100);
+    }
+}
+
+function populateRiskAssessmentFormNested(index) {
+    console.log('populateRiskAssessmentFormNested called with index:', index);
+
+    // Get all the content from the view mode
+    const riskLevelDisplay = document.getElementById('risk-level-display-' + index);
+    const riskSummaryDisplay = document.getElementById('risk-summary-display-' + index);
+    const riskFactorsDisplay = document.getElementById('risk-factors-display-' + index);
+
+    // Get form elements
+    const riskLevelSelect = document.getElementById('risk-level-select-' + index);
+    const riskSummaryTextarea = document.getElementById('risk-summary-textarea-' + index);
+    const riskFactorsTextarea = document.getElementById('risk-factors-textarea-' + index);
+
+    console.log('Nested form elements found:', {
+        riskLevelDisplay: !!riskLevelDisplay,
+        riskSummaryDisplay: !!riskSummaryDisplay,
+        riskFactorsDisplay: !!riskFactorsDisplay,
+        riskLevelSelect: !!riskLevelSelect,
+        riskSummaryTextarea: !!riskSummaryTextarea,
+        riskFactorsTextarea: !!riskFactorsTextarea
+    });
+
+    // Populate risk level
+    if (riskLevelDisplay && riskLevelSelect) {
+        riskLevelSelect.value = riskLevelDisplay.textContent.trim();
+        console.log('Set nested risk level to:', riskLevelDisplay.textContent.trim());
+    }
+
+    // Populate risk summary
+    if (riskSummaryDisplay && riskSummaryTextarea) {
+        riskSummaryTextarea.value = riskSummaryDisplay.textContent.trim();
+        console.log('Set nested risk summary to:', riskSummaryDisplay.textContent.trim());
+    }
+
+    // Populate risk factors
+    if (riskFactorsDisplay && riskFactorsTextarea) {
+        const factorItems = riskFactorsDisplay.querySelectorAll('li');
+        const factors = Array.from(factorItems).map(li => li.textContent.trim());
+        riskFactorsTextarea.value = factors.join('\n');
+        console.log('Set nested risk factors to:', factors);
+    }
+}
+
+// Make functions globally available
+window.editSummary = editSummary;
+window.cancelEditSummary = cancelEditSummary;
+window.editRiskAssessment = editRiskAssessment;
+window.cancelEditRiskAssessment = cancelEditRiskAssessment;
+window.editRiskAssessmentNested = editRiskAssessmentNested;
+window.cancelEditRiskAssessmentNested = cancelEditRiskAssessmentNested;
+window.downloadPDF = downloadPDF;

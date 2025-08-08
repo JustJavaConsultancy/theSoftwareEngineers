@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Red Document - Risk Factors Report</title>
+</head>
+<body>
+<div layout:fragment="content" class="flex h-screen">
+  <main class="main-content flex-1 p-8 overflow-y-auto">
+    <section>
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+          <h2 class="text-3xl font-bold text-red-500">Red Document</h2>
+          <p class="text-gray-400">Comprehensive risk factors report for all cases.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+          <a th:href="@{/case-tags}" class="w-full sm:w-auto">
+            <button class="bg-gray-600 hover:bg-gray-700 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-semibold w-full">
+              <span class="material-icons">arrow_back</span>
+              Back to Summary
+            </button>
+          </a>
+          <button
+                  id="downloadPdfBtn"
+                  class="bg-red-600 hover:bg-red-700 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-200 w-full sm:w-auto"
+                  onclick="downloadPDF()"
+          >
+            <span class="material-icons">download</span>
+            Download PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Red Document Content -->
+      <div id="red-document-content" class="bg-gray-800 rounded-lg p-6">
+        <div th:if="${#lists.isEmpty(redDocumentCases)}" class="text-center py-12">
+          <span class="material-icons text-6xl text-gray-500 mb-4">description</span>
+          <h3 class="text-xl font-semibold text-gray-300 mb-2">No Cases Found</h3>
+          <p class="text-gray-400 mb-6">No cases with risk assessments available.</p>
+          <a th:href="@{/case-tags}">
+            <button class="btn-primary2 flex items-center gap-2 px-6 py-3 rounded-lg text-white font-semibold mx-auto">
+              <span class="material-icons">arrow_back</span>
+              Back to Cases
+            </button>
+          </a>
+        </div>
+
+        <!-- Cases with Risk Factors -->
+        <div th:if="${!#lists.isEmpty(redDocumentCases)}" class="space-y-8">
+          <div th:each="redCase : ${redDocumentCases}" class="case-section">
+            <div class="border-b border-gray-600 pb-6 mb-6">
+              <h3 class="text-2xl font-bold text-white mb-4 flex items-center">
+                <span th:text="${redCase.caseNumber}"></span>
+              </h3>
+
+              <div class="bg-gray-700 rounded-lg p-4">
+                <h4 class="text-lg font-semibold text-red-400 mb-3 flex items-center">
+                  Risk Factors
+                </h4>
+
+                <div th:if="${#lists.isEmpty(redCase.riskFactors)}" class="text-gray-400 italic">
+                  No risk factors identified for this case.
+                </div>
+
+                <ul th:if="${!#lists.isEmpty(redCase.riskFactors)}" class="space-y-2">
+                  <li th:each="riskFactor : ${redCase.riskFactors}"
+                      class="flex items-start text-gray-300">
+                    <span th:text="${riskFactor}"></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Statistics -->
+      <div th:if="${!#lists.isEmpty(redDocumentCases)}" class="mt-8 grid gap-6 md:grid-cols-3">
+        <div class="bg-gray-800 rounded-lg p-6">
+          <div class="flex items-center">
+            <span class="material-icons text-red-400 mr-3">folder</span>
+            <div>
+              <h3 class="text-2xl font-bold text-white" th:text="${#lists.size(redDocumentCases)}"></h3>
+              <p class="text-gray-400">Total Cases</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 rounded-lg p-6">
+          <div class="flex items-center">
+            <span class="material-icons text-yellow-400 mr-3">warning</span>
+            <div>
+              <h3 class="text-2xl font-bold text-white"
+                  th:text="${#aggregates.sum(redDocumentCases.![riskFactors.size()])}"></h3>
+              <p class="text-gray-400">Total Risk Factors</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 rounded-lg p-6">
+          <div class="flex items-center">
+            <span class="material-icons text-blue-400 mr-3">description</span>
+            <div>
+              <h3 class="text-2xl font-bold text-white">PDF</h3>
+              <p class="text-gray-400">Export Format</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Hidden content for PDF generation -->
+<div id="pdf-content" style="display: none;">
+  <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+    <h1 style="color: #dc2626; text-align: center; margin-bottom: 30px;">Red Document - Risk Factors Report</h1>
+    <p style="text-align: center; margin-bottom: 40px; color: #666;">Generated on <span id="pdf-date"></span></p>
+
+    <div th:each="redCase : ${redDocumentCases}" style="margin-bottom: 40px; page-break-inside: avoid;">
+      <h2 style="color: #1f2937; border-bottom: 2px solid #dc2626; padding-bottom: 10px; margin-bottom: 20px;"
+          th:text="${redCase.caseNumber}"></h2>
+
+      <h3 style="color: #dc2626; margin-bottom: 15px;">Risk Factors:</h3>
+
+      <div th:if="${#lists.isEmpty(redCase.riskFactors)}" style="color: #666; font-style: italic;">
+        No risk factors identified for this case.
+      </div>
+
+      <ul th:if="${!#lists.isEmpty(redCase.riskFactors)}" style="margin-left: 20px; line-height: 1.6;">
+        <li th:each="riskFactor : ${redCase.riskFactors}"
+            style="margin-bottom: 8px;"
+            th:text="${riskFactor}"></li>
+      </ul>
+    </div>
+
+    <div style="margin-top: 50px; text-align: center; color: #666; font-size: 12px;">
+      <p>This document contains confidential risk assessment information.</p>
+      <p>Generated by Case Management System</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
