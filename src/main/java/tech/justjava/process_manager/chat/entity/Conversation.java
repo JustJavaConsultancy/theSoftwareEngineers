@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static tech.justjava.process_manager.util.StringUtils.InstantToStringDate;
 
@@ -46,11 +45,20 @@ public class Conversation {
     @OrderBy("sentAt ASC")
     private List<Message> messages = new ArrayList<>();
 
-    public String getReceiver(String userId){
+    public String getReceiverId(String userId){
         if (members.size() > 2){
             return "";
         }
-        return members.stream().filter(user -> !user.getUserId().equals(userId)).map(User::getFirstName).collect(Collectors.joining(","));
+        return members.stream().map(User::getUserId)
+                .filter(userUserId -> ! userUserId.equals(userId))
+                .findFirst().orElse(null);
+    }
+    public String getReceiverName(String userId){
+        if (members.size() > 2){
+            return "";
+        }
+        return  members.stream().filter(user -> !user.getUserId().equals(userId))
+                .map(User::getName).findFirst().orElse(null);
     }
     public String getCreatedAt() {
         return InstantToStringDate(this.createdAt);
