@@ -88,7 +88,7 @@
 
 <body class="flex h-screen">
 <div class="sidebar-overlay"></div>
-<aside class="sidebar w-64 p-6 flex flex-col justify-between fixed lg:relative h-full">
+<aside class="sidebar w-64 p-6 flex flex-col justify-between fixed lg:relative h-screen overflow-y-auto">
     <div>
         <div class="flex items-center mb-10 space-x-2">
             <img src="/images/justjavaLogo.svg" class="w-8 h-8">
@@ -116,7 +116,8 @@
                  class="w-full flex items-center justify-between px-4 py-3 text-slate-300 transition-all duration-200 menu-item">
                     <div class="flex items-center space-x-3">
                         <span class="material-icons">task_alt</span>
-                        <span th:text="${name.processName}">Default</span>
+                        <span th:text="${#strings.arraySplit(name.processName, ' ')[0]}"
+                        >Default</span>
                     </div>
                     <i class="fas fa-chevron-down text-xs dropdown-icon transition-transform duration-200" th:id="${name.processName} + '-icon'"></i>
                 </button>
