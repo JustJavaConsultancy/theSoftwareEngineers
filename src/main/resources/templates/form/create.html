@@ -96,6 +96,7 @@
         </div>
 
       <form id="saveForm" th:action="@{/forms/save-form}" method="post">
+        <input id="processKey" name="processKey" th:value="${processKey}"  type="hidden">
         <input id="newFormName" name="taskName" type="hidden">
         <input id="taskID" name="taskID" type="hidden">
         <input id="taskFormCode" type="hidden">

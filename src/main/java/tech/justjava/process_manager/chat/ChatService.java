@@ -1,6 +1,7 @@
 package tech.justjava.process_manager.chat;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.justjava.process_manager.chat.dto.ConversationDto;
@@ -67,6 +68,7 @@ public class ChatService {
         return conversation;
     }
 
+    @Async
     @Transactional
     public void newMessage(ChatMessage chatMessage) {
 //        Optional<Conversation> conversation = conversationRepository.findById(chatMessage.getConversationId());
@@ -105,7 +107,9 @@ public class ChatService {
             if (conversation.getGroup()) {
                 conversationDto.setTitle(conversation.getTitle());
             }else {
-                conversationDto.setTitle(conversation.getReceiver(userId));
+                conversationDto.setReceiverId(conversation.getReceiverId(userId));
+                conversationDto.setReceiverName(conversation.getReceiverName(userId));
+                conversationDto.setTitle(conversation.getReceiverName(userId));
             }
             dtos.add(conversationDto);
         }

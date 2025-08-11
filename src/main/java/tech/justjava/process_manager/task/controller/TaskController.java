@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.flowable.engine.RuntimeService;
 import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -38,9 +39,11 @@ public class TaskController {
 
     @Autowired
     ProcessServiceAI  processServiceAI;
-
     @Autowired
     TemplateRenderer templateRenderer;
+
+    @Autowired
+    RuntimeService runtimeService;
     private final TaskService taskService;
     private final FormService formService;
     private final ObjectMapper objectMapper;
@@ -70,9 +73,9 @@ public class TaskController {
                 .collect(CustomCollectors.toSortedMap(ProcessInstance::getId, ProcessInstance::getProcessName)));
     }
 
-    @GetMapping
-    public String list(final Model model) {
-        model.addAttribute("tasks", taskService.findActiveflowableTasks());
+    @GetMapping({"/{processKey}"})
+    public String list(@PathVariable String processKey, final Model model) {
+        model.addAttribute("tasks", taskService.findActiveflowableTasksByProcess(processKey));
         return "task/list";
     }
 
@@ -80,6 +83,9 @@ public class TaskController {
     public String add(@PathVariable("taskId") final String taskId, Model model) {
 
         Task  task=taskService.findTaskById(taskId);
+        String processKey=runtimeService.createProcessInstanceQuery()
+                .processInstanceId(task.getProcessInstanceId())
+                .singleResult().getProcessDefinitionKey();
         System.out.println(" Process Variable =="+task.getProcessVariables());
         String formThymeleaf=null;
         Optional<Form> form=formService.findByFormCode(task.getTaskDefinitionKey());
@@ -88,10 +94,12 @@ public class TaskController {
             formThymeleaf=form.get().getFormInterface();
             //System.out.println(" formThymeleaf  "+formThymeleaf);
         }else{
+
             Form newForm=new Form();
             newForm.setFormCode(task.getTaskDefinitionKey());
             newForm.setFormName(task.getName());
             newForm.setFormDetails(task.getDescription());
+            newForm.setProcessKey(processKey);
             formThymeleaf=processServiceAI.generateTaskThymeleafForm(task.getDescription());
             formThymeleaf=formThymeleaf.replace("```","").replace("html","");
             newForm.setFormInterface(formThymeleaf);
@@ -124,12 +132,19 @@ public class TaskController {
     public ResponseEntity<Void> add(@RequestParam Map<String,Object> formData) {
         //formData.put("shortRoute",true);
         System.out.println("1 Here is the Submitted Data Here==="+formData);
-        String nextPage = "/tasks";
+
         String taskId = (String) formData.get("id");
         System.out.println("2 Here is the Submitted Data Here==="+formData);
         Task task = taskService.findTaskById(taskId);
         taskService.completeTask(taskId,formData);
-        if(task.getProcessVariables().get("nextPage")!=null){
+
+        String nextPage = "/tasks/"+runtimeService
+                .createProcessInstanceQuery()
+                .processInstanceId(task.getProcessInstanceId())
+                .includeProcessVariables()
+                .singleResult()
+                .getProcessDefinitionKey();
+        if(formData.get("nextPage")!=null){
             Task nextTask =taskService.getTaskByInstanceAndDefinitionKey(task.getProcessInstanceId(),
                     (String) task.getProcessVariables().get("nextPage"));
             nextPage ="/tasks/add/"+nextTask.getId();
@@ -138,6 +153,7 @@ public class TaskController {
             task.getProcessVariables().remove("nextPage");
         }
 
+        System.out.println(" The next page here==="+nextPage);
         return ResponseEntity
                 .status(200)
                 .header("HX-Redirect", nextPage)

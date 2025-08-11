@@ -1,0 +1,445 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Form Fragment</title>
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <!-- Font Awesome CSS -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+            rel="stylesheet"
+            crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Application CSS -->
+    <link href="/css/app.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <!-- Theme initialization script to prevent flash of unstyled content -->
+    <script>
+      (function() {
+        const savedMode = localStorage.getItem('colorMode');
+        const html = document.documentElement;
+        const body = document.body;
+
+        if (savedMode === 'light') {
+          body.classList.add('light-mode');
+          html.classList.remove('dark');
+        } else {
+          body.classList.remove('light-mode');
+          html.classList.add('dark');
+        }
+      })();
+        function toggleDropdown(menuId) {
+            const submenu = document.getElementById(`${menuId}-submenu`);
+            const icon = document.getElementById(`${menuId}-icon`);
+
+            if (submenu.style.maxHeight === '0px' || !submenu.style.maxHeight) {
+                // Open the dropdown
+                submenu.style.maxHeight = `${submenu.scrollHeight}px`;
+                icon.classList.add('rotate-90');
+
+                // Show submenu items with delay for staggered effect
+                const items = submenu.querySelectorAll('a');
+                items.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.remove('opacity-0');
+                    }, index * 100);
+                });
+            } else {
+                // Close the dropdown
+                submenu.style.maxHeight = '0px';
+                icon.classList.remove('rotate-90');
+
+                // Hide submenu items
+                const items = submenu.querySelectorAll('a');
+                items.forEach(item => {
+                    item.classList.add('opacity-0');
+                });
+            }
+        }
+    </script>
+<script>
+    let stompClient = null
+    function connectStomp() {
+    const socket = new SockJS('/ws');
+      stompClient = Stomp.over(socket);
+
+      stompClient.connect({}, function (frame) {
+        console.log('Connected:', frame);
+
+        stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function () {
+          console.log('connection is ready');
+        });
+    }
+</script>
+<meta charset="UTF-8">
+
+<!-- Bootstrap 5 CSS -->
+<link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-9ndCyUa6mY2lT2DFbJ8QZbXzBvb3Y6F87nL4rS1A+I1D9r1I6gOGJXcU7k5C6Ufn"
+            crossorigin="anonymous"
+    >
+<style>
+        .card {
+           background-color: #1E293B;
+           border-radius: 0.75rem;
+       }
+       .form-input {
+           background-color: #334155;
+           border-color: #475569;
+           color: #E2E8F0;
+       }
+       .form-input:focus {
+           outline: none;
+           border-color: #38BDF8;
+           box-shadow: 0 0 0 2px #0F172A, 0 0 0 4px #38BDF8;
+       }
+       .btn-primary {
+           background-color: #3B82F6;
+       }
+       .btn-primary:hover {
+           background-color: #2563EB;
+       }
+       .progress-bar-bg {
+           background-color: #334155;
+       }
+       .progress-bar {
+           background-color: #3B82F6;
+       }
+    </style>
+</head>
+
+<body class="flex h-screen">
+<div class="sidebar-overlay"></div>
+<aside class="sidebar w-64 p-6 flex flex-col justify-between fixed lg:relative h-full">
+    <div>
+        <div class="flex items-center mb-10 space-x-2">
+            <img src="/images/justjavaLogo.svg" class="w-8 h-8">
+            <h1 class="text-2xl font-bold text-white mt-1 brand-title">JustJava</h1>
+        </div>
+        <nav class="space-y-4">
+            <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
+               href="/dashboard">
+                <span class="material-icons mr-3">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+
+<!--            <a th:if="${session.isAdmin == true or session.isManager == true}"-->
+<!--               class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"-->
+<!--               th:classappend="${currentPath == '/processes/' + name.processKey} ? ' bg-blue-600'"-->
+<!--               th:each="name : ${session.processNames}"-->
+<!--               th:href="@{'/processes/' + ${name.processKey}}">-->
+<!--                <span class="material-icons mr-3">task_alt</span>-->
+<!--                <span th:text="${name.processName}">Process Name</span>-->
+<!--                <span>Tasks</span>-->
+<!--            </a>-->
+            <div>
+                <button class="w-full flex items-center justify-between px-4 py-3 text-slate-300 transition-all duration-200 menu-item" onclick="toggleDropdown(&quot;Software Engineering Process&quot;)">
+                    <div class="flex items-center space-x-3">
+                        <span class="material-icons">task_alt</span>
+                        <span>Software Engineering Process</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs dropdown-icon transition-transform duration-200" id="Software Engineering Process-icon"></i>
+                </button>
+
+                <div class="submenu mt-1 ml-10" id="Software Engineering Process-submenu" style="max-height: 0px;">
+                    <a href="/processes/softwareEngineeringProcess" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Software Engineering Process</a>
+                    <a href="/tasks/softwareEngineeringProcess" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Tasks</a>
+                    <a href="/forms/softwareEngineeringProcess" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Manage Forms</a>
+                </div>
+            </div>
+            <div>
+                <button class="w-full flex items-center justify-between px-4 py-3 text-slate-300 transition-all duration-200 menu-item" onclick="toggleDropdown(&quot;Case Manager&quot;)">
+                    <div class="flex items-center space-x-3">
+                        <span class="material-icons">task_alt</span>
+                        <span>Case Manager</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs dropdown-icon transition-transform duration-200" id="Case Manager-icon"></i>
+                </button>
+
+                <div class="submenu mt-1 ml-10" id="Case Manager-submenu" style="max-height: 0px;">
+                    <a href="/processes/caseManager" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Case Manager</a>
+                    <a href="/tasks/caseManager" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Tasks</a>
+                    <a href="/forms/caseManager" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Manage Forms</a>
+                </div>
+            </div>
+            <div>
+                <button class="w-full flex items-center justify-between px-4 py-3 text-slate-300 transition-all duration-200 menu-item" onclick="toggleDropdown(&quot;Customer Support&quot;)">
+                    <div class="flex items-center space-x-3">
+                        <span class="material-icons">task_alt</span>
+                        <span>Customer Support</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs dropdown-icon transition-transform duration-200" id="Customer Support-icon"></i>
+                </button>
+
+                <div class="submenu mt-1 ml-10" id="Customer Support-submenu" style="max-height: 0px;">
+                    <a href="/processes/customerSupport" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Customer Support</a>
+                    <a href="/tasks/customerSupport" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Tasks</a>
+                    <a href="/forms/customerSupport" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Manage Forms</a>
+                </div>
+            </div>
+            <div>
+                <button class="w-full flex items-center justify-between px-4 py-3 text-slate-300 transition-all duration-200 menu-item" onclick="toggleDropdown(&quot;Invoicing&quot;)">
+                    <div class="flex items-center space-x-3">
+                        <span class="material-icons">task_alt</span>
+                        <span>Invoicing</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs dropdown-icon transition-transform duration-200" id="Invoicing-icon"></i>
+                </button>
+
+                <div class="submenu mt-1 ml-10" id="Invoicing-submenu" style="max-height: 0px;">
+                    <a href="/processes/invoicing" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Invoicing</a>
+                    <a href="/tasks/invoicing" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Tasks</a>
+                    <a href="/forms/invoicing" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Manage Forms</a>
+                </div>
+            </div>
+            <div>
+                <button class="w-full flex items-center justify-between px-4 py-3 text-slate-300 transition-all duration-200 menu-item" onclick="toggleDropdown(&quot;User Story Process Flow&quot;)">
+                    <div class="flex items-center space-x-3">
+                        <span class="material-icons">task_alt</span>
+                        <span>User Story Process Flow</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs dropdown-icon transition-transform duration-200" id="User Story Process Flow-icon"></i>
+                </button>
+
+                <div class="submenu mt-1 ml-10" id="User Story Process Flow-submenu" style="max-height: 0px;">
+                    <a href="/processes/userStoryProcessFlow" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">User Story Process Flow</a>
+                    <a href="/tasks/userStoryProcessFlow" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Tasks</a>
+                    <a href="/forms/userStoryProcessFlow" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Manage Forms</a>
+                </div>
+            </div>
+
+            <!--<a class="f lex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/processes}"
+               th:classappend="${currentPath == '/processes'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">sync_alt</span>
+                <span>Cases</span>
+            </a>
+            <a th:if="${session.isAdmin}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/forms}"
+               th:classappend="${currentPath == '/forms'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">note_add</span>
+                <span>Task Forms</span>
+            </a>-->
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" href="/report">
+                <span class="material-icons mr-3">bar_chart</span>
+                <span>Reports</span>
+            </a>
+            <!--<a th:if="${session.isAdmin}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/users}"
+               th:classappend="${currentPath == '/users'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">group</span>
+                <span>User Management</span>
+            </a>-->
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" href="/invoice">
+                <span class="material-icons mr-3">receipt_long</span>
+                <span>Invoices</span>
+            </a>
+
+
+
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" href="/chat">
+                <span class="material-icons mr-3">chat</span>
+                <span>Chat</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" href="/gallery">
+            <span class="material-icons mr-3">collections</span>
+                <span>Gallery</span>
+            </a>
+        </nav>
+    </div>
+</aside>
+<main class="main-content flex-1 flex flex-col overflow-x-hidden">
+    <header class="flex items-center justify-between p-4 md:p-6 border-b border-slate-800">
+        <div class="flex items-center">
+            <button id="menu-toggle" class="text-slate-400 mr-4 lg:hidden">
+                <span class="material-icons">menu</span>
+            </button>
+            <div class="search-container relative">
+                <span class="material-icons search-icon">search</span>
+                <input class="search-input text-white rounded-lg pl-10 pr-4 py-2 w-40 md:w-64 lg:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search" type="text"/>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4 md:space-x-6">
+            <button id="mode-toggle" class="text-slate-400">
+                <span class="material-icons">nightlight_round</span>
+            </button>
+            <button class="text-slate-400 relative">
+                <span class="material-icons">notifications</span>
+                <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+            <img alt="User avatar" class="w-8 h-8 md:w-10 md:h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1TNQQ4ccZFKvYjRCc-rE6p0QuKlFhfQYUbx1rZZS3ODc_DtNgl6b-1LYcXbxLfeyClRY0GHzY0wvA4-gyFvp5IfVYOVVgdn9H8XRZv3JFNrNWD46u6DL1PQ9JlEVx6QzF2e1pOeuEa8VmW1V-2uuTOORkf0lCwPlKUWwAJnIPGOrCMC99VYhvwvozKwbk84CId3PYToMrt_Q3zg6mp4TZb_REXlsSWHPsOl7wS56kpGKt71JHpGs9hK7omvmX9jsYW33esDwKMlVU"/>
+        </div>
+    </header>
+    <div class="flex-1 p-4 md:p-6 overflow-y-auto">
+    <!-- Start Process Page Content - Simplified Header -->
+    <div class="mb-6">
+        <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">Task Form</h2>
+        <p class="text-slate-400">Claim and complete task</p>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="mt-8 w-full progress-bar-bg rounded-full h-2.5">
+        <div class="progress-bar h-2.5 rounded-full" style="width: 45%"></div>
+    </div>
+
+    <!-- Full-width Form Container -->
+    <div class="w-full">
+        <!-- Process Information Card -->
+
+        <div class="mt-10 card p-8">
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <span class="material-icons text-blue-400 text-3xl">info</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-white">Finalize the brief</h2>
+                    <p class="mt-1 text-slate-400">Basic details about the task</p>
+                </div>
+            </div>
+            <div class="p-5"><form id="formContainer" action="http://localhost:9000/tasks/complete" method="post" hx-post="http://localhost:9000/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML">
+  <input type="hidden" value="65af0dea-75ca-11f0-a8ce-00090faa0001" id="id" name="id">
+  <input type="hidden" value="FormTask_18" name="nextPage">
+
+  <div class="mb-3">
+    <label for="brief" class="block text-sm font-medium text-slate-300 mb-2">Brief</label>
+    <textarea value="Employer: BrightStar Manufacturing Ltd., Ikeja, Lagos
+Years of Service: 7 years (January 2018 – March 2025)
+Summary of Events:
+I was employed as a Senior Accountant with BrightStar Manufacturing Ltd. for over seven years. On the 14th of March 2025, I was summoned to the HR office and informed that my services were no longer required. I was told to submit my company laptop and access card immediately and leave the premises. No reason was given for the termination, and I was not given any prior notice.
+
+My salary for February 2025 has not been paid, and I have not received any termination letter. I am also owed three months’ unpaid leave allowance for 2023 and 2024.
+
+I believe my dismissal was wrongful because I have not been involved in any misconduct and I have consistently met my performance targets. I suspect this action may be linked to my refusal to approve certain questionable financial transactions requested by my supervisor earlier this year." id="brief" name="brief" class="form-input w-full px-4 py-3 rounded-lg border pr-12" placeholder="Brief" required></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label class="block text-sm font-medium text-slate-300 mb-2">Followup Questions</label>
+    <ul class="w-full px-4 py-3 rounded-lg border bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 space-y-2 list-disc list-inside">
+      <li>What is the specific legal issue you are facing?</li>
+      <li>Can you provide the names of all parties involved?</li>
+      <li>What are the relevant dates related to the events in question?</li>
+      <li>Do you have any supporting documents or evidence related to your claim?</li>
+      <li>Have you attempted to resolve this issue before? If so, what steps did you take?</li>
+    </ul>
+  </div>
+
+  <div class="mb-3">
+    <label class="block text-sm font-medium text-slate-300 mb-2">Required Documents</label>
+    <ul class="w-full px-4 py-3 rounded-lg border bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 space-y-2 list-disc list-inside">
+      <li>Contracts or agreements related to the case</li>
+      <li>Any correspondence with the opposing party</li>
+      <li>Relevant receipts or invoices</li>
+      <li>Police reports (if applicable)</li>
+      <li>Witness statements (if available)</li>
+    </ul>
+  </div>
+
+  <button type="submit" class="flex items-center" style="background-color: #87CEEB; color: white; font-weight: 500; padding: 0.625rem 1.5rem; border-radius: 0.5rem; transition: background-color 0.2s;">
+    Complete
+  </button>
+</form></div>
+        </div>
+    </div>
+
+    <!-- Document Name Modal -->
+    <div id="document-name-modal" class="case-modal">
+        <div class="case-modal-content">
+            <button class="material-icons case-modal-close" id="close-modal">close</button>
+            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--text-primary);">Name Your Document</h3>
+            <div class="case-form-group">
+                <label class="case-form-label" for="new-document-name">Document Name</label>
+                <input class="case-form-control" id="new-document-name" type="text" placeholder="Enter document name"/>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem; gap: 0.75rem;">
+                <button class="case-btn case-btn-secondary" id="cancel-add-document">Cancel</button>
+                <button class="case-btn case-btn-primary" id="confirm-add-document">Add Document</button>
+            </div>
+        </div>
+    </div>
+    <script src="/js/caseManagement.js"></script>
+</div>
+
+</main>
+
+<!-- Support Chat Button -->
+<button id="support-chat-btn" class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 z-50 hover:scale-110">
+    <span class="material-icons text-2xl">headset_mic</span>
+</button>
+
+<!-- Chat Box -->
+<div id="chat-box" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-120 h-196 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 hidden flex-col max-sm:w-full max-sm:h-full max-sm:top-0 max-sm:left-0 max-sm:transform-none max-sm:rounded-none" style="background-color: rgb(30, 41, 59);">
+    <!-- Chat Header -->
+    <div id="chat-header" class="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-900 rounded-t-lg max-sm:rounded-none cursor-move" style="background-color: rgb(15, 23, 42);">
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-blue-400">support_agent</span>
+            <h3 class="text-white font-semibold">Support Chat</h3>
+            <div class="w-2 h-2 bg-green-500 rounded-full ml-2"></div>
+        </div>
+        <button id="close-chat-btn" class="text-slate-400 hover:text-white transition-colors">
+            <span class="material-icons">close</span>
+        </button>
+    </div>
+
+    <!-- Chat Messages -->
+    <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-800">
+        <div class="flex items-start space-x-2">
+            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span class="material-icons text-white text-sm">support_agent</span>
+            </div>
+            <div class="bg-slate-700 text-white p-3 rounded-lg rounded-tl-none max-w-xs">
+                <p class="text-sm">Hello! I'm here to help you with any Legal related question. How can I assist you today?</p>
+                <span class="text-xs text-slate-400 mt-1 block">Just now</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="p-4 border-t border-slate-700 bg-slate-900">
+        <div class="flex space-x-2">
+            <input
+                    id="chat-input"
+                    type="text"
+                    placeholder="Type your message..."
+                    class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400"
+                    style="background-color: rgb(51, 65, 85); color: white;"
+            />
+            <button
+                    id="send-message-btn"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                <span class="material-icons text-sm">send</span>
+            </button>
+        </div>
+        <div class="flex items-center mt-2 text-xs text-slate-400">
+            <span class="material-icons text-xs mr-1">info</span>
+            <span>Press Enter to send</span>
+        </div>
+    </div>
+</div>
+<!-- Theme toggle is handled by app.js -->
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+<script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
+<script src="https://unpkg.com/hyperscript.org@0.9.14/dist/_hyperscript.min.js"></script>
+<script defer src="//unpkg.com/alpinejs"></script>
+
+<!-- Custom JS -->
+<script src="/js/app.js"></script>
+
+<!-- Debug script for mode toggle -->
+
+</body>
+</html>

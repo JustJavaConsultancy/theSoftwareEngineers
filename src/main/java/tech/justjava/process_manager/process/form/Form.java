@@ -20,9 +20,12 @@ public class Form {
     @Column(name = "form_code", nullable = false)
     private String formCode;
 
+    @Column(name = "processKey", nullable = false)
+    private String processKey;
     @Column(name = "form_details", columnDefinition = "text")
     private String formDetails;
 
     @Column(name = "form_interface",columnDefinition = "text")
     private String formInterface;
+
 }

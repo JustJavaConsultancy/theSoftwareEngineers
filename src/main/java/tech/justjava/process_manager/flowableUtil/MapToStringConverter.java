@@ -23,12 +23,14 @@ public class MapToStringConverter implements JavaDelegate {
     public void execute(DelegateExecution execution) {
         Map<String, Object> payload = new HashMap<>();
         //payload.put("userPrompt", execution.getVariable("userPrompt"));
+/*
         payload.put(variableToConvertToString.getExpressionText(),
                 execution.getVariable(variableToConvertToString.getExpressionText()));
+*/
 
         try {
             String json = objectMapper.writeValueAsString(payload);
-            execution.setVariable(variableToConvertToString.getExpressionText(), json);
+            execution.setVariable(variableToConvertToString.getExpressionText()+"_STR", json);
             //System.out.println(" The JSON going to thymeleaf generation==="+json);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

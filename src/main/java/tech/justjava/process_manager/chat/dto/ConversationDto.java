@@ -13,7 +13,10 @@ public class ConversationDto implements Serializable {
     Long id;
     String title;
     Boolean group;
+    String receiverId;
+    String receiverName;
     String createdAt;
+
     @Embedded
     List<MessageDto> messages;
 

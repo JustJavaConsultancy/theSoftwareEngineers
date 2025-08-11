@@ -31,7 +31,7 @@ public class Message {
     private Conversation conversation;
 
     private String senderId;
-    private String receiverName;
+//    private String receiverName;
 
     @Column(columnDefinition = "TEXT")
     private String content;

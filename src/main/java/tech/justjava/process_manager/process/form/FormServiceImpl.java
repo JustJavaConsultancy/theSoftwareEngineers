@@ -20,6 +20,11 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
+    public List<Form> findByProcessKey(String processKey) {
+        return formRepository.findByProcessKey(processKey);
+    }
+
+    @Override
     public Optional<Form> findById(Long id) {
         return formRepository.findById(id);
     }
@@ -36,6 +41,11 @@ public class FormServiceImpl implements FormService {
 
     @Override
     public Form save(Form form) {
+        //System.out.println(" The form name=="+form.getFormName());
+        //System.out.println(" The form code=="+form.getFormCode());
+        //System.out.println(" The form details=="+form.getFormDetails());
+        //System.out.println("  The form interface=="+form.getFormInterface());
+        //System.out.println(" The form process key=="+form.getProcessKey());
         return formRepository.save(form);
     }
 
