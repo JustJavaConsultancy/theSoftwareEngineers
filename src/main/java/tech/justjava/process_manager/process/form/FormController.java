@@ -48,14 +48,15 @@ public class FormController {
         this.supportFeignClient = supportFeignClient;
     }
 
-    @GetMapping
-    public String listForms(Model model) {
-        model.addAttribute("forms", formService.findAll());
+    @GetMapping("/{processKey}")
+    public String listForms(@PathVariable("processKey") String processKey,Model model) {
+        model.addAttribute("processKey",processKey);
+        model.addAttribute("forms", formService.findByProcessKey(processKey));
         return "form/list";
     }
 
-    @GetMapping("/new")
-    public String showCreateForm(Model model) {
+    @GetMapping("/new/{processKey}")
+    public String showCreateForm(@PathVariable("processKey") String processKey, Model model) {
 
         ProcessDefinition processDefinition = repositoryService
                 .createProcessDefinitionQuery()
@@ -63,14 +64,15 @@ public class FormController {
                 .latestVersion()
                 .singleResult();
         List<UserTask> userTasks=processService.getProcessUserTasks(processDefinition.getId());
-        userTasks.forEach(userTask -> {
+/*        userTasks.forEach(userTask -> {
             System.out.println(" the usertask id"+userTask.getId()+
                     "  the usertask name"+userTask.getName()+
                     "  the usertask documentation"+userTask.getDocumentation()+
                     "  the usertask assignee"+userTask.getAssignee());
-        });
+        });*/
         model.addAttribute("form", new Form());
         model.addAttribute("tasks", userTasks);
+        model.addAttribute("processKey",processKey);
         return "form/create";
     }
 
@@ -121,10 +123,12 @@ public class FormController {
             @RequestParam String taskID,
             @RequestParam String taskFormCode,
             @RequestParam String taskFormDescription,
+            @RequestParam String processKey,
             Model model) {
 
         // Process and save the form
-        System.out.println("Saved form with code: " + taskFormDescription);
+        System.out.println("Saved form with code: " + taskFormDescription
+        + " taskFormCode==="+taskFormCode);
         String formCode = processServiceAI
                 .generateTaskThymeleafForm(taskFormDescription)
                 .replace("```","")
@@ -134,6 +138,7 @@ public class FormController {
         form.setFormName(taskName);
         form.setFormCode(taskID);
         form.setFormInterface(formCode);
+        form.setProcessKey(processKey);
         formService.save(form);
         // Add success message
         model.addAttribute("message", "Form saved successfully!");
@@ -152,16 +157,24 @@ public class FormController {
         form.setId(id);
         Optional<Form> savedForm=formService.findById(id);
         savedForm.ifPresent(form1 -> {
-            if(form.getFormDetails()!=null && !form.getFormDetails().equalsIgnoreCase(form1.getFormDetails())){
+            if(form.getFormDetails()!=null && !form.getFormDetails()
+                    .equalsIgnoreCase(form1.getFormDetails())){
                 String formInterface=processServiceAI
                         .generateTaskThymeleafForm(form.getFormDetails())
                                 .replace("```","")
                                 .replace("html","");
                 form.setFormInterface(formInterface);
             }
+            form.setProcessKey(form1.getProcessKey());
         });
+/*        System.out.println("***** The form name=="+form.getFormName());
+        System.out.println("***** The form code=="+form.getFormCode());
+        System.out.println("***** The form details=="+form.getFormDetails());
+        System.out.println("***** The form interface=="+form.getFormInterface());
+        System.out.println("***** The form process key=="+form.getProcessKey());*/
+
         formService.save(form);
-        return "redirect:/forms";
+        return "redirect:/forms/"+form.getProcessKey();
     }
 
     @GetMapping("/delete/{id}")
@@ -192,7 +205,7 @@ public class FormController {
         String response = supportFeignClient.generateLegalDocument(legalRequest);
         response = response.replace("```plaintext\n", "").replace("```", "");
 
-        System.out.println(" The Response===="+response);
+        //System.out.println(" The Response===="+response);
 
         //System.out.println(" Markdown version=="+markdownService.convertToHtml(response));
         return ResponseEntity.ok(response);

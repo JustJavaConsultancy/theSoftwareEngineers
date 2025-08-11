@@ -124,6 +124,7 @@
                 <div class="submenu mt-1 ml-10" th:id="${name.processName} + '-submenu'" style="max-height: 0px;">
                     <a th:href="@{'/processes/' + ${name.processKey}}" th:text="${name.processName}" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Account</a>
                     <a th:href="@{'/tasks/' + ${name.processKey}}" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Tasks</a>
+                    <a th:href="@{'/forms/' + ${name.processKey}}" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Manage Forms</a>
                 </div>
             </div>
 
