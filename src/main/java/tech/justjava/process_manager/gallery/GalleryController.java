@@ -168,14 +168,25 @@ public class GalleryController {
             System.out.println("Metadata being sent to Feign client:");
             System.out.println("  - Map reference: " + metadata);
             System.out.println("  - Map hashCode: " + metadata.hashCode());
+            Map<String,String> correctMap = new  HashMap<>();
+            try{
+                System.out.println(" Converting to List OF Map Here ");
+                List<Map<String,String>> maps= objectMapper.readValue(metadata.get("caseTags"), List.class);
+                maps.forEach(map->{
+                    System.out.println(" The Map Here==="+map);
+                    correctMap.put(map.get("tag"),map.get("value"));
+                });
 
+                System.out.println("1 After the Conversion nko correctMap now=="+correctMap);
+            }catch (Exception exc){
+                System.out.println(exc.getMessage());
+            }
             System.out.println("=== CALLING FEIGN CLIENT uploadWithMetaData (uploadSingleFile) ===");
-            System.out.println("About to call: fileFeignClient.uploadWithMetaData(file, metadata)");
-
-            uploadResponse = fileFeignClient.uploadWithMetaData(file, metadata);
+            System.out.println("Here again After the Conversion nko correctMap now=="+correctMap);
+            uploadResponse = fileFeignClient.uploadWithMetaData(file, objectMapper.writeValueAsString(correctMap));
 
             System.out.println("=== FEIGN CLIENT RESPONSE RECEIVED (uploadSingleFile) ===");
-            System.out.println("Raw microservice response: '" + uploadResponse + "'");
+            System.out.println("1 Raw microservice response: '" + uploadResponse + "'");
             System.out.println("Response type: " + (uploadResponse != null ? uploadResponse.getClass().getSimpleName() : "null"));
             System.out.println("Response length: " + (uploadResponse != null ? uploadResponse.length() : "null"));
 
@@ -249,16 +260,8 @@ public class GalleryController {
 
     private List<CaseTagOption> getCaseTagOptions() {
         List<CaseTagOption> options = new ArrayList<>();
-        options.add(new CaseTagOption("evidence", "Evidence"));
-        options.add(new CaseTagOption("witness-statement", "Witness Statement"));
-        options.add(new CaseTagOption("forensic-report", "Forensic Report"));
-        options.add(new CaseTagOption("legal-document", "Legal Document"));
-        options.add(new CaseTagOption("investigation-notes", "Investigation Notes"));
-        options.add(new CaseTagOption("surveillance", "Surveillance"));
-        options.add(new CaseTagOption("interview-recording", "Interview Recording"));
-        options.add(new CaseTagOption("crime-scene-photo", "Crime Scene Photo"));
-        options.add(new CaseTagOption("expert-testimony", "Expert Testimony"));
-        options.add(new CaseTagOption("case-summary", "Case Summary"));
+        options.add(new CaseTagOption("tag", "Tag"));
+
         return options;
     }
 
@@ -272,14 +275,14 @@ public class GalleryController {
         Map<String, Object> response = new HashMap<>();
         String sessionId = request.getSession().getId();
 
-        System.out.println("=== uploadWithMetaData endpoint called ===");
+/*        System.out.println("=== uploadWithMetaData endpoint called ===");
         System.out.println("File name: " + (file != null ? file.getOriginalFilename() : "null"));
         System.out.println("File size: " + (file != null ? file.getSize() : "null"));
-        System.out.println("Case tags: " + caseTagsJson);
+        System.out.println("Case tags: " + caseTagsJson);*/
 
         try {
             if (file == null || file.isEmpty()) {
-                System.out.println("ERROR: File is empty or null");
+                //System.out.println("ERROR: File is empty or null");
                 response.put("status", "error");
                 response.put("message", "File is empty");
                 return ResponseEntity.badRequest().body(response);
@@ -291,7 +294,7 @@ public class GalleryController {
                 fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
             }
 
-            System.out.println("Processing file: " + originalFilename + " with extension: " + fileExtension);
+            //System.out.println("Processing file: " + originalFilename + " with extension: " + fileExtension);
 
             // Generate case number for committed files
             long committedCount = fileInfoRepository.countByStatus("COMMITTED");
@@ -306,7 +309,7 @@ public class GalleryController {
                 metadata.put("caseTags", caseTagsJson);
             }
 
-            System.out.println("=== DETAILED METADATA ANALYSIS ===");
+            //System.out.println("=== DETAILED METADATA ANALYSIS ===");
             System.out.println("Raw caseTagsJson received: " + caseTagsJson);
             System.out.println("Metadata Map created with " + metadata.size() + " entries:");
             for (Map.Entry<String, String> entry : metadata.entrySet()) {
@@ -328,19 +331,30 @@ public class GalleryController {
                 System.out.println("Metadata being sent to Feign client:");
                 System.out.println("  - Map reference: " + metadata);
                 System.out.println("  - Map hashCode: " + metadata.hashCode());
+                Map<String,String> correctMap = new  HashMap<>();
+                try{
+                    System.out.println(" Converting to List OF Map Here ");
+                    List<Map<String,String>> maps= objectMapper.readValue(metadata.get("caseTags"), List.class);
+                    maps.forEach(map->{
+                        System.out.println(" The Map Here==="+map);
+                        correctMap.put(map.get("tag"),map.get("value"));
+                    });
+
+                    System.out.println(" After the Conversion nko correctMap now=="+correctMap);
+                }catch (Exception exc){
+                    System.out.println(exc.getMessage());
+                }
 
                 System.out.println("=== CALLING FEIGN CLIENT uploadWithMetaData ===");
-                System.out.println("About to call: fileFeignClient.uploadWithMetaData(file, metadata)");
+                uploadResponse = fileFeignClient.uploadWithMetaData(file, objectMapper.writeValueAsString(correctMap));
 
-                uploadResponse = fileFeignClient.uploadWithMetaData(file, metadata);
-
-                System.out.println("=== FEIGN CLIENT RESPONSE RECEIVED ===");
-                System.out.println("Raw microservice response: '" + uploadResponse + "'");
+     /*           System.out.println("=== FEIGN CLIENT RESPONSE RECEIVED ===");
+                System.out.println("2 Raw microservice response: '" + uploadResponse + "'");
                 System.out.println("Response type: " + (uploadResponse != null ? uploadResponse.getClass().getSimpleName() : "null"));
                 System.out.println("Response length: " + (uploadResponse != null ? uploadResponse.length() : "null"));
-
+*/
                 if (uploadResponse == null || uploadResponse.trim().isEmpty()) {
-                    System.out.println("ERROR: Microservice returned null or empty response");
+                    //System.out.println("ERROR: Microservice returned null or empty response");
                     response.put("status", "error");
                     response.put("message", "Failed to upload file to storage service - no response");
                     return ResponseEntity.status(500).body(response);
@@ -456,7 +470,21 @@ public class GalleryController {
                 // Upload to microservice with metadata
                 String uploadResponse;
                 try {
-                    uploadResponse = fileFeignClient.uploadWithMetaData(file, metadata);
+                    Map<String,String> correctMap = new  HashMap<>();
+                    try{
+                        System.out.println(" Converting to List OF Map Here ");
+                        List<Map<String,String>> maps= objectMapper.readValue(metadata.get("caseTags"), List.class);
+                        maps.forEach(map->{
+                            System.out.println(" The Map Here==="+map);
+                            correctMap.put(map.get("tag"),map.get("value"));
+                        });
+
+                        System.out.println(" After the Conversion nko correctMap now=="+correctMap);
+                    }catch (Exception exc){
+                        System.out.println(exc.getMessage());
+                    }
+                    uploadResponse = fileFeignClient.uploadWithMetaData(file,
+                            objectMapper.writeValueAsString(correctMap));
                     if (uploadResponse == null) {
                         throw new RuntimeException("Microservice upload failed for: " + originalFilename);
                     }
