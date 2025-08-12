@@ -23,10 +23,9 @@ public class MapToStringConverter implements JavaDelegate {
     public void execute(DelegateExecution execution) {
         Map<String, Object> payload = new HashMap<>();
         //payload.put("userPrompt", execution.getVariable("userPrompt"));
-/*
+
         payload.put(variableToConvertToString.getExpressionText(),
                 execution.getVariable(variableToConvertToString.getExpressionText()));
-*/
 
         try {
             String json = objectMapper.writeValueAsString(payload);

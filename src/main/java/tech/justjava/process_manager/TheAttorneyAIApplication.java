@@ -7,10 +7,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-public class ProcessManagerApplication {
+public class TheAttorneyAIApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(ProcessManagerApplication.class, args);
+        SpringApplication.run(TheAttorneyAIApplication.class, args);
     }
 
 }
