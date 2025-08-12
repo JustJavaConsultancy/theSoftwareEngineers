@@ -94,40 +94,31 @@
             <img src="/images/justjavaLogo.svg" class="w-8 h-8">
             <h1 class="text-2xl font-bold text-white mt-1 brand-title">JustJava</h1>
         </div>
-        <nav class="space-y-4">
+        <nav th:each="name : ${session.processNames}" class="space-y-4">
             <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
                th:href="@{/dashboard}"
                th:classappend="${currentPath == '/dashboard'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">dashboard</span>
                 <span>Dashboard</span>
             </a>
-
-<!--            <a th:if="${session.isAdmin == true or session.isManager == true}"-->
-<!--               class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"-->
-<!--               th:classappend="${currentPath == '/processes/' + name.processKey} ? ' bg-blue-600'"-->
-<!--               th:each="name : ${session.processNames}"-->
-<!--               th:href="@{'/processes/' + ${name.processKey}}">-->
-<!--                <span class="material-icons mr-3">task_alt</span>-->
-<!--                <span th:text="${name.processName}">Process Name</span>-->
-<!--                <span>Tasks</span>-->
-<!--            </a>-->
-            <div th:each="name : ${session.processNames}">
-                <button th:attr="onclick='toggleDropdown(&quot;' + ${name.processName} + '&quot;)'"
-                 class="w-full flex items-center justify-between px-4 py-3 text-slate-300 transition-all duration-200 menu-item">
-                    <div class="flex items-center space-x-3">
-                        <span class="material-icons">task_alt</span>
-                        <span th:text="${#strings.arraySplit(name.processName, ' ')[0]}"
-                        >Default</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs dropdown-icon transition-transform duration-200" th:id="${name.processName} + '-icon'"></i>
-                </button>
-
-                <div class="submenu mt-1 ml-10" th:id="${name.processName} + '-submenu'" style="max-height: 0px;">
-                    <a th:href="@{'/processes/' + ${name.processKey}}" th:text="${name.processName}" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Account</a>
-                    <a th:href="@{'/tasks/' + ${name.processKey}}" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Tasks</a>
-                    <a th:href="@{'/forms/' + ${name.processKey}}" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Manage Forms</a>
-                </div>
-            </div>
+            <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
+               th:href="@{'/processes/' + ${name.processKey}}"
+               th:classappend="${currentPath == '/processes/caseManager'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">sync_alt</span>
+                <span th:text="${name.processName}">Dashboard</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
+               th:href="@{'/tasks/' + ${name.processKey}}"
+               th:classappend="${currentPath == '/tasks/caseManager'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">task_alt</span>
+                <span>Active Tasks</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
+               th:href="@{'/forms/' + ${name.processKey}}"
+               th:classappend="${currentPath == '/forms/caseManager'} ? ' bg-blue-600'">
+                <span class="material-icons mr-3">note_add</span>
+                <span>Manage Forms</span>
+            </a>
 
             <!--<a class="f lex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/processes}"
                th:classappend="${currentPath == '/processes'} ? ' bg-blue-600'">
@@ -144,11 +135,11 @@
                 <span class="material-icons mr-3">bar_chart</span>
                 <span>Reports</span>
             </a>
-            <!--<a th:if="${session.isAdmin}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/users}"
+            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/users}"
                th:classappend="${currentPath == '/users'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">group</span>
                 <span>User Management</span>
-            </a>-->
+            </a>
             <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/invoice}"
                th:classappend="${currentPath == '/invoice'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">receipt_long</span>

@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5433/theAttorneyAI}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/theAttorneyAI}
     username: ${JDBC_DATABASE_USERNAME:postgres}
-    password: ${JDBC_DATABASE_PASSWORD:020775Rashy!}
+    password: ${JDBC_DATABASE_PASSWORD:rashy0207}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
@@ -36,13 +36,13 @@ spring:
       client:
         provider:
           keycloak:
-            issuer-uri: ${ISSUER_URI:https://ngcloak.onrender.com/realms/ProcessManagement}
+            issuer-uri: ${ISSUER_URI:https://ngcloak.onrender.com/realms/attorneyAI}
 
         registration:
           keycloak:
             provider: keycloak
-            client_id: ${KEYCLOAK_CLIENT_ID:processManager}
-            client_secret: ${KEYCLOAK_CLIENT_SECRET:ttXmZIEHmwmO4E2NeSUCllD3NIEVpZUW}
+            client_id: ${KEYCLOAK_CLIENT_ID:attorneyAI}
+            client_secret: ${KEYCLOAK_CLIENT_SECRET:IGKp4ZN3L0VSAqrlFQB5qW1WYn59qZS8}
             authorization-grant-type: authorization_code
             scope: openid,profile,email
 error:
@@ -59,13 +59,13 @@ error:
 server:
   tomcat:
     max-part-count: '100'
-  port: 9000
+  port: 9001
 springdoc:
   pathsToMatch: /api/**
 keycloak:
   base-url: ${KEYCLOAK_BASE_URI:https://ngcloak.onrender.com}
-  client-id: ${KEYCLOAK_CLIENT_ID:processManager}
-  client-secret: ${KEYCLOAK_CLIENT_SECRET:ttXmZIEHmwmO4E2NeSUCllD3NIEVpZUW}
+  client-id: ${KEYCLOAK_CLIENT_ID:attorneyAI}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:IGKp4ZN3L0VSAqrlFQB5qW1WYn59qZS8}
 app:
   processKey: "caseManager"
 message:
