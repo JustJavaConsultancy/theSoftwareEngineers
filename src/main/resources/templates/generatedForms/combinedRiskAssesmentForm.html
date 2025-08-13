@@ -1,3 +1,5 @@
+<form id="formContainer" th:action="@{http://localhost:9001/tasks/complete}" th:object="${formData}" method="post" hx-post="http://localhost:9001/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML" hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'">
+<input type="hidden" th:value="${id}" id="id" name="id">
 <div class="max-w-6xl mx-auto">
   <div class="mb-6 md:mb-8">
     <h2 class="text-2xl md:text-3xl font-bold">Acquisition Risk Assessment</h2>
@@ -288,14 +290,9 @@
         </div>
       </div>
     </div>
-
-    <div class="p-4 md:p-6 bg-slate-800/50 border-t border-slate-700 rounded-b-lg flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
-      <button class="px-4 sm:px-6 py-2 border border-slate-600 text-xs sm:text-sm font-medium rounded-md hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-slate-500" type="button">
-        Save Draft
-      </button>
       <button class="px-4 sm:px-6 py-2 bg-indigo-600 text-xs sm:text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-indigo-500" type="submit">
         Submit Assessment
       </button>
     </div>
   </div>
-</div>
+</div></form>

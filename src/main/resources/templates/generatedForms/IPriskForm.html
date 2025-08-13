@@ -1,4 +1,5 @@
 <form id="formContainer" th:action="@{http://localhost:9001/tasks/complete}" th:object="${formData}" method="post" hx-post="http://localhost:9001/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML" hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'">
+  <input type="hidden" th:value="${id}" id="id" name="id">
   <div class="max-w-6xl mx-auto">
     <!-- Assessment Header -->
     <div class="mb-6 md:mb-8">
