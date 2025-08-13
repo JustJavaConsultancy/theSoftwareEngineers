@@ -1,0 +1,395 @@
+<form id="formContainer" th:action="@{http://localhost:9001/tasks/complete}" th:object="${formData}" method="post" hx-post="http://localhost:9001/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML" hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'">
+  <div class="max-w-6xl mx-auto">
+    <!-- Assessment Header -->
+    <div class="mb-6 md:mb-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold">Consolidated IP Risk Assessment</h2>
+          <p class="text-slate-400 mt-1 text-sm md:text-base">Analysis of TechSolutions Inc.'s combined IP portfolio</p>
+        </div>
+        <div class="mt-3 md:mt-0 flex items-center space-x-3">
+          <div class="bg-indigo-600/20 px-3 py-1 rounded-full text-indigo-400 text-sm flex items-center">
+            <span class="material-icons text-sm mr-1">merge_type</span>
+            Consolidated Report
+          </div>
+          <div class="bg-slate-700 px-3 py-1 rounded-full text-slate-300 text-sm flex items-center">
+            <span class="material-icons text-sm mr-1">update</span>
+            Generated: Just now
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consolidated Document Overview -->
+    <div class="bg-slate-800 rounded-lg shadow-lg mb-6 p-5">
+      <div class="ip-overview-card flex flex-col md:flex-row items-start md:items-center">
+        <div class="flex items-center mb-4 md:mb-0 md:mr-6">
+          <div class="bg-indigo-500/10 p-3 rounded-lg">
+            <span class="material-icons text-indigo-400 text-3xl">library_books</span>
+          </div>
+          <div class="ml-4">
+            <h3 class="font-semibold text-lg">Combined IP Portfolio</h3>
+            <p class="text-slate-400 text-sm">Single comprehensive analysis of all IP assets</p>
+          </div>
+        </div>
+        <div class="flex-1 w-full">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-600">
+              <div class="text-xs text-slate-400 mb-1">Total Assets</div>
+              <div class="text-xl font-bold">44</div>
+            </div>
+            <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-600">
+              <div class="text-xs text-slate-400 mb-1">Risk Score</div>
+              <div class="text-xl font-bold text-amber-400">68/100</div>
+            </div>
+            <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-600">
+              <div class="text-xs text-slate-400 mb-1">Critical Issues</div>
+              <div class="text-xl font-bold text-red-400">5</div>
+            </div>
+            <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-600">
+              <div class="text-xs text-slate-400 mb-1">Expiring Soon</div>
+              <div class="text-xl font-bold">3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="bg-slate-800 rounded-lg shadow-lg mb-6">
+      <div class="p-5 border-b border-slate-700 bg-slate-700/50">
+        <h3 class="text-lg font-semibold flex items-center">
+          <span class="material-icons text-indigo-400 mr-2">summarize</span>
+          Executive Summary
+        </h3>
+      </div>
+      <div class="p-5">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div class="bg-slate-700/30 p-4 rounded-lg border border-slate-600">
+            <h4 class="font-medium text-slate-300 mb-3">Strengths</h4>
+            <ul class="text-sm text-slate-300 space-y-2">
+              <li class="flex items-start">
+                <span class="material-icons text-green-400 text-sm mr-2">check_circle</span>
+                Strong patent portfolio in core technology
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-green-400 text-sm mr-2">check_circle</span>
+                Comprehensive US trademark coverage
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-green-400 text-sm mr-2">check_circle</span>
+                Well-documented proprietary codebase
+              </li>
+            </ul>
+          </div>
+          <div class="bg-slate-700/30 p-4 rounded-lg border border-slate-600">
+            <h4 class="font-medium text-slate-300 mb-3">Weaknesses</h4>
+            <ul class="text-sm text-slate-300 space-y-2">
+              <li class="flex items-start">
+                <span class="material-icons text-amber-400 text-sm mr-2">warning</span>
+                Gaps in international patent coverage
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-amber-400 text-sm mr-2">warning</span>
+                Pending trademark disputes
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-amber-400 text-sm mr-2">warning</span>
+                Open source license compliance issues
+              </li>
+            </ul>
+          </div>
+          <div class="bg-slate-700/30 p-4 rounded-lg border border-slate-600">
+            <h4 class="font-medium text-slate-300 mb-3">Critical Risks</h4>
+            <ul class="text-sm text-slate-300 space-y-2">
+              <li class="flex items-start">
+                <span class="material-icons text-red-400 text-sm mr-2">error</span>
+                GPL license violation in product code
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-red-400 text-sm mr-2">error</span>
+                Key patent expiring in 8 months
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-red-400 text-sm mr-2">error</span>
+                Active trademark opposition
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="bg-indigo-900/20 p-4 rounded-lg border border-indigo-700/50">
+          <div class="flex items-start">
+            <span class="material-icons text-indigo-400 mr-3">lightbulb</span>
+            <div>
+              <h4 class="font-medium text-indigo-300 mb-2">Assessment Note</h4>
+              <p class="text-slate-300 text-sm">The combined IP portfolio shows moderate overall risk (68/100), with several high-value assets offset by critical compliance issues that require immediate attention. Valuation impact estimated at 12-15% of acquisition price if unaddressed.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Risk Factor Analysis -->
+    <div class="bg-slate-800 rounded-lg shadow-lg mb-6">
+      <div class="p-5 border-b border-slate-700">
+        <h3 class="text-lg font-semibold flex items-center">
+          <span class="material-icons text-indigo-400 mr-2">analytics</span>
+          Risk Factor Analysis
+        </h3>
+      </div>
+      <div class="p-5">
+        <div class="risk-factor-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Legal Compliance Risk -->
+          <div class="risk-pill bg-slate-700/50 p-4 rounded-lg border border-red-500/30">
+            <div class="flex items-center mb-2">
+              <div class="bg-red-500/10 p-1 rounded-full mr-2">
+                <span class="material-icons text-red-400 text-sm">gavel</span>
+              </div>
+              <h4 class="font-medium">Legal Compliance</h4>
+            </div>
+            <div class="flex items-center mb-3">
+              <div class="risk-indicator flex-1 bg-slate-600 mr-2">
+                <div class="risk-indicator bg-red-500" style="width: 85%"></div>
+              </div>
+              <span class="text-red-400 text-sm font-medium">High</span>
+            </div>
+            <p class="text-slate-300 text-xs">Multiple license compliance issues including GPL violations and unclear 3rd-party rights</p>
+          </div>
+
+          <!-- Patent Coverage Risk -->
+          <div class="risk-pill bg-slate-700/50 p-4 rounded-lg border border-amber-500/30">
+            <div class="flex items-center mb-2">
+              <div class="bg-amber-500/10 p-1 rounded-full mr-2">
+                <span class="material-icons text-amber-400 text-sm">description</span>
+              </div>
+              <h4 class="font-medium">Patent Coverage</h4>
+            </div>
+            <div class="flex items-center mb-3">
+              <div class="risk-indicator flex-1 bg-slate-600 mr-2">
+                <div class="risk-indicator bg-amber-500" style="width: 65%"></div>
+              </div>
+              <span class="text-amber-400 text-sm font-medium">Medium</span>
+            </div>
+            <p class="text-slate-300 text-xs">Strong US coverage but gaps in EU/Asia. 2 key patents expiring soon.</p>
+          </div>
+
+          <!-- Trademark Risk -->
+          <div class="risk-pill bg-slate-700/50 p-4 rounded-lg border border-red-500/30">
+            <div class="flex items-center mb-2">
+              <div class="bg-red-500/10 p-1 rounded-full mr-2">
+                <span class="material-icons text-red-400 text-sm">tag</span>
+              </div>
+              <h4 class="font-medium">Trademark Security</h4>
+            </div>
+            <div class="flex items-center mb-3">
+              <div class="risk-indicator flex-1 bg-slate-600 mr-2">
+                <div class="risk-indicator bg-red-500" style="width: 75%"></div>
+              </div>
+              <span class="text-red-400 text-sm font-medium">High</span>
+            </div>
+            <p class="text-slate-300 text-xs">Active opposition in Canada. 3 marks require renewal within 12 months.</p>
+          </div>
+
+          <!-- Trade Secret Risk -->
+          <div class="risk-pill bg-slate-700/50 p-4 rounded-lg border border-green-500/30">
+            <div class="flex items-center mb-2">
+              <div class="bg-green-500/10 p-1 rounded-full mr-2">
+                <span class="material-icons text-green-400 text-sm">visibility_off</span>
+              </div>
+              <h4 class="font-medium">Trade Secrets</h4>
+            </div>
+            <div class="flex items-center mb-3">
+              <div class="risk-indicator flex-1 bg-slate-600 mr-2">
+                <div class="risk-indicator bg-green-500" style="width: 30%"></div>
+              </div>
+              <span class="text-green-400 text-sm font-medium">Low</span>
+            </div>
+            <p class="text-slate-300 text-xs">Strong protection measures documented. No known breaches.</p>
+          </div>
+
+          <!-- Copyright Risk -->
+          <div class="risk-pill bg-slate-700/50 p-4 rounded-lg border border-amber-500/30">
+            <div class="flex items-center mb-2">
+              <div class="bg-amber-500/10 p-1 rounded-full mr-2">
+                <span class="material-icons text-amber-400 text-sm">code</span>
+              </div>
+              <h4 class="font-medium">Code Copyrights</h4>
+            </div>
+            <div class="flex items-center mb-3">
+              <div class="risk-indicator flex-1 bg-slate-600 mr-2">
+                <div class="risk-indicator bg-amber-500" style="width: 60%"></div>
+              </div>
+              <span class="text-amber-400 text-sm font-medium">Medium</span>
+            </div>
+            <p class="text-slate-300 text-xs">Most code well-documented but some 3rd-party components need verification.</p>
+          </div>
+
+          <!-- Portfolio Diversity -->
+          <div class="risk-pill bg-slate-700/50 p-4 rounded-lg border border-green-500/30">
+            <div class="flex items-center mb-2">
+              <div class="bg-green-500/10 p-1 rounded-full mr-2">
+                <span class="material-icons text-green-400 text-sm">diversity_3</span>
+              </div>
+              <h4 class="font-medium">Portfolio Diversity</h4>
+            </div>
+            <div class="flex items-center mb-3">
+              <div class="risk-indicator flex-1 bg-slate-600 mr-2">
+                <div class="risk-indicator bg-green-500" style="width: 40%"></div>
+              </div>
+              <span class="text-green-400 text-sm font-medium">Low</span>
+            </div>
+            <p class="text-slate-300 text-xs">Good mix of patents, trademarks, and copyrights across product lines.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Critical Findings Detail -->
+    <div class="bg-slate-800 rounded-lg shadow-lg mb-6">
+      <div class="p-5 border-b border-slate-700 bg-red-900/20">
+        <h3 class="text-lg font-semibold flex items-center">
+          <span class="material-icons text-red-400 mr-2">priority_high</span>
+          Critical Findings Requiring Action
+        </h3>
+      </div>
+      <div class="p-5">
+        <div class="space-y-4">
+          <!-- Finding 1 -->
+          <div class="bg-slate-700/30 p-4 rounded-lg border border-red-500/50">
+            <div class="flex items-start">
+              <div class="bg-red-500/10 p-2 rounded-full mr-3">
+                <span class="material-icons text-red-400">warning</span>
+              </div>
+              <div>
+                <div class="flex flex-wrap items-center justify-between">
+                  <h4 class="font-semibold text-red-400">GPL License Violation</h4>
+                  <span class="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded-full">Legal Exposure</span>
+                </div>
+                <p class="text-slate-300 text-sm mt-2">Core product modules contain GPL-licensed code but are distributed under proprietary terms, creating significant compliance risk.</p>
+                <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <div class="text-xs text-slate-400 mb-1">Impact</div>
+                    <div class="text-sm text-slate-300 bg-slate-800/50 p-2 rounded">
+                      Could force open-sourcing of proprietary code or lead to litigation
+                    </div>
+                  </div>
+                  <div>
+                    <div class="text-xs text-slate-400 mb-1">Recommended Actions</div>
+                    <ul class="text-sm text-slate-300 list-disc list-inside space-y-1 bg-slate-800/50 p-2 rounded">
+                      <li>Immediate code audit to identify all GPL components</li>
+                      <li>Consult with open source legal specialist</li>
+                      <li>Develop remediation plan within 30 days</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Finding 2 -->
+          <div class="bg-slate-700/30 p-4 rounded-lg border border-red-500/50">
+            <div class="flex items-start">
+              <div class="bg-red-500/10 p-2 rounded-full mr-3">
+                <span class="material-icons text-red-400">warning</span>
+              </div>
+              <div>
+                <div class="flex flex-wrap items-center justify-between">
+                  <h4 class="font-semibold text-red-400">Key Patent Expiration</h4>
+                  <span class="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded-full">Revenue Risk</span>
+                </div>
+                <p class="text-slate-300 text-sm mt-2">US Patent #9,876,543 (covering core technology) expires in 8 months with no continuation filed, potentially opening market to competitors.</p>
+                <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <div class="text-xs text-slate-400 mb-1">Impact</div>
+                    <div class="text-sm text-slate-300 bg-slate-800/50 p-2 rounded">
+                      Could reduce market exclusivity and enable competitor products
+                    </div>
+                  </div>
+                  <div>
+                    <div class="text-xs text-slate-400 mb-1">Recommended Actions</div>
+                    <ul class="text-sm text-slate-300 list-disc list-inside space-y-1 bg-slate-800/50 p-2 rounded">
+                      <li>File continuation application immediately</li>
+                      <li>Evaluate defensive publication strategy</li>
+                      <li>Assess product roadmap for next-gen technology</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Valuation Impact -->
+    <div class="bg-slate-800 rounded-lg shadow-lg mb-6 p-6">
+      <h3 class="text-lg font-semibold mb-4">IP Valuation Impact</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
+          <div class="text-xs text-slate-400 mb-1">Current IP Valuation</div>
+          <div class="text-2xl font-bold mb-2">$142M</div>
+          <div class="text-xs text-slate-400">Estimated standalone value of IP portfolio</div>
+        </div>
+        <div class="bg-slate-700/50 p-4 rounded-lg border border-red-600/50">
+          <div class="text-xs text-slate-400 mb-1">Value at Risk</div>
+          <div class="text-2xl font-bold text-red-400 mb-2">$18-25M</div>
+          <div class="text-xs text-slate-400">Potential erosion from identified risks</div>
+        </div>
+        <div class="bg-slate-700/50 p-4 rounded-lg border border-amber-600/50">
+          <div class="text-xs text-slate-400 mb-1">Remediation Cost</div>
+          <div class="text-2xl font-bold text-amber-400 mb-2">$3.2-4.5M</div>
+          <div class="text-xs text-slate-400">Estimated to address critical issues</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="bg-slate-800 rounded-lg shadow-lg mb-6 p-6">
+      <h3 class="text-lg font-semibold mb-4">Recommended Next Steps</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-indigo-900/20 p-4 rounded-lg border border-indigo-700/50">
+          <h4 class="font-medium text-indigo-300 mb-3 flex items-center">
+            <span class="material-icons mr-2">schedule</span>
+            Immediate Actions (0-30 days)
+          </h4>
+          <ol class="text-sm text-slate-300 list-decimal list-inside space-y-2">
+            <li>Engage IP counsel for GPL violation assessment</li>
+            <li>File continuation for expiring patent</li>
+            <li>Initiate trademark opposition response</li>
+            <li>Conduct full code audit for license compliance</li>
+          </ol>
+        </div>
+        <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
+          <h4 class="font-medium text-slate-300 mb-3 flex items-center">
+            <span class="material-icons mr-2">calendar_today</span>
+            Strategic Actions (30-90 days)
+          </h4>
+          <ol class="text-sm text-slate-300 list-decimal list-inside space-y-2">
+            <li>Develop international patent strategy</li>
+            <li>Implement IP training for engineering teams</li>
+            <li>Establish open source review process</li>
+            <li>Evaluate portfolio for divestiture opportunities</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assessment Completion -->
+    <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800/50 p-4 rounded-lg border border-slate-700">
+      <div class="mb-3 sm:mb-0">
+        <div class="text-sm text-slate-400">Assessment Status</div>
+        <div class="flex items-center">
+          <div class="w-32 bg-slate-700 rounded-full h-2 mr-2">
+            <div class="bg-indigo-500 h-2 rounded-full" style="width: 90%"></div>
+          </div>
+          <span class="text-sm font-medium">90% Complete</span>
+        </div>
+      </div>
+      <div class="flex space-x-3">
+        <button class="px-4 py-2 bg-indigo-600 text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-indigo-500">
+          Complete Assessment
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

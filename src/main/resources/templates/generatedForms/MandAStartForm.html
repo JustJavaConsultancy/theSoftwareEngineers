@@ -1,0 +1,62 @@
+<form id="form-container"
+      th:attr="hx-post=@{http://localhost:9001/processes/start}"
+      hx-target="#form-container"
+      method="post"
+      hx-swap="outerHTML"
+      hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Starting...'"
+
+      class="space-y-4">
+
+  <input type="hidden" th:value="${id}" id="id" name="id">
+
+  <!-- Transaction Type -->
+  <div>
+    <label for="transactionType" class="block text-sm font-medium text-slate-300 mb-2">Transaction Type</label>
+    <select id="transactionType" name="transactionType" required class="form-input w-full px-4 py-3 rounded-lg border bg-gray-800 text-white">
+      <option value="">Select Transaction Type</option>
+      <option value="Merger">Merger</option>
+      <option value="Acquisition">Acquisition</option>
+    </select>
+  </div>
+
+  <!-- Company 1 -->
+  <div class="bg-gray-800 p-4 rounded-lg space-y-4">
+    <h3 class="text-lg font-semibold text-blue-600">Company 1 Information</h3>
+    <div>
+      <label for="company1Name" class="block text-sm font-medium text-slate-300 mb-2">Company Name</label>
+      <input type="text" id="company1Name" name="company1Name" required placeholder="Company 1 Name" class="form-input w-full px-4 py-3 rounded-lg border pr-12" />
+    </div>
+    <div>
+      <label for="company1Email" class="block text-sm font-medium text-slate-300 mb-2">Email</label>
+      <input type="email" id="company1Email" name="company1Email" required placeholder="Company 1 Email" class="form-input w-full px-4 py-3 rounded-lg border pr-12" />
+    </div>
+    <div>
+      <label for="company1Phone" class="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
+      <input type="tel" id="company1Phone" name="company1Phone" required placeholder="Company 1 Phone" class="form-input w-full px-4 py-3 rounded-lg border pr-12" />
+    </div>
+  </div>
+
+  <!-- Company 2 -->
+  <div class="bg-gray-800 p-4 rounded-lg space-y-4">
+    <h3 class="text-lg font-semibold text-blue-600">Company 2 Information</h3>
+    <div>
+      <label for="company2Name" class="block text-sm font-medium text-slate-300 mb-2">Company Name</label>
+      <input type="text" id="company2Name" name="company2Name" required placeholder="Company 2 Name" class="form-input w-full px-4 py-3 rounded-lg border pr-12" />
+    </div>
+    <div>
+      <label for="company2Email" class="block text-sm font-medium text-slate-300 mb-2">Email</label>
+      <input type="email" id="company2Email" name="company2Email" required placeholder="Company 2 Email" class="form-input w-full px-4 py-3 rounded-lg border pr-12" />
+    </div>
+    <div>
+      <label for="company2Phone" class="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
+      <input type="tel" id="company2Phone" name="company2Phone" required placeholder="Company 2 Phone" class="form-input w-full px-4 py-3 rounded-lg border pr-12" />
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <div>
+    <button type="submit" class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg transition-colors duration-200">
+      Start
+    </button>
+  </div>
+</form>

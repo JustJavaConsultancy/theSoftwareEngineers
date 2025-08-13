@@ -1,0 +1,79 @@
+<form id="formContainer"
+      th:action="@{http://localhost:9001/tasks/complete}"
+      method="post"
+      hx-post="http://localhost:9001/tasks/complete"
+      hx-target="#formContainer"
+      hx-swap="outerHTML"
+      hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'"
+>
+
+  <input type="hidden" th:value="${id}" id="id" name="id">
+
+  <!-- Upload Fields Wrapper -->
+  <div id="uploadFields" class="space-y-4">
+    <div class="upload-field flex items-center gap-3 p-4 bg-slate-800 rounded-lg border border-slate-600 shadow-md">
+      <div class="flex-1">
+        <label class="block text-sm font-medium text-slate-200 mb-1">Upload File</label>
+        <input type="file" name="file_1" required
+               class="block w-full text-sm text-slate-300
+                              file:mr-4 file:py-2 file:px-4
+                              file:rounded-lg file:border-0
+                              file:text-sm file:font-semibold
+                              file:bg-sky-500 file:text-white
+                              hover:file:bg-sky-600
+                              border border-slate-600 rounded-lg p-2 bg-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500">
+      </div>
+      <button type="button" class="delete-btn text-red-400 hover:text-red-600 text-lg font-bold">&times;</button>
+    </div>
+  </div>
+
+  <!-- Add More Button -->
+  <button type="button" id="addMoreBtn"
+          style="background-color:#4b5563"
+          class="w-full py-2 px-4
+                   text-white rounded-lg transition font-semibold mt-3">
+    + Add More
+  </button>
+
+  <!-- Submit Button -->
+  <button type="submit"
+          class="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600
+                   text-white rounded-lg transition font-semibold mt-5">
+    Complete
+  </button>
+</form>
+
+<script>
+  let uploadCount = 1;
+
+  document.getElementById("addMoreBtn").addEventListener("click", function () {
+      uploadCount++;
+      const wrapper = document.getElementById("uploadFields");
+
+      const newField = document.createElement("div");
+      newField.classList.add("upload-field", "flex", "items-center", "gap-3", "p-4", "bg-slate-800", "rounded-lg", "border", "border-slate-600", "shadow-md");
+      newField.innerHTML = `
+          <div class="flex-1">
+              <label class="block text-sm font-medium text-slate-200 mb-1">Upload File</label>
+              <input type="file" name="file_${uploadCount}" required
+                     class="block w-full text-sm text-slate-300
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-lg file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-sky-500 file:text-white
+                            hover:file:bg-sky-600
+                            border border-slate-600 rounded-lg p-2 bg-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+          <button type="button" class="delete-btn text-red-400 hover:text-red-600 text-lg font-bold">&times;</button>
+      `;
+
+      wrapper.appendChild(newField);
+  });
+
+  // Event delegation for delete buttons
+  document.getElementById("uploadFields").addEventListener("click", function (e) {
+      if (e.target.classList.contains("delete-btn")) {
+          e.target.closest(".upload-field").remove();
+      }
+  });
+</script>

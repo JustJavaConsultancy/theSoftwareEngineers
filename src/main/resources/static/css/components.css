@@ -6,11 +6,62 @@
     padding: 1rem;
     text-align: center;
 }
+.document-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+        .document-highlight {
+                    transition: all 0.2s ease;
+                }
+                .document-highlight:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+                }
+                @media (max-width: 768px) {
+                    .risk-factors {
+                        grid-template-columns: 1fr;
+                    }
+                }
 
 .form-card {
     background-color: #1E293B;
     border: 1px solid #334155;
 }
+.risk-pill {
+            transition: all 0.2s ease;
+        }
+        .risk-pill:hover {
+            transform: scale(1.05);
+        }
+        .risk-indicator {
+            height: 8px;
+            border-radius: 4px;
+        }
+        @media (max-width: 768px) {
+            .ip-overview-card {
+                flex-direction: column;
+            }
+            .risk-factor-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+                    .employee-overview-card {
+                        flex-direction: column;
+                    }
+                }
+          .compliance-indicator {
+                    height: 8px;
+                    border-radius: 4px;
+                }
+                .severity-badge {
+                    transition: all 0.2s ease;
+                }
+         @media (max-width: 640px) {
+                    .risk-assessment-card {
+                        padding: 1rem;
+                    }
+                }
  .status-completed {
             background-color: #166534;
             color: #BBF7D0;

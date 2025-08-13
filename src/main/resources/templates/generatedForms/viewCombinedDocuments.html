@@ -1,0 +1,72 @@
+<form id="formContainer" th:action="@{http://localhost:9001/tasks/complete}" th:object="${formData}" method="post" hx-post="http://localhost:9001/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML" hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Saving...'">
+  <input type="hidden" th:value="${id}" id="id" name="id">
+
+  <div class="mb-6">
+    <!-- This div will be replaced with textarea when editing -->
+    <div
+            id="notesDisplay"
+            class="form-input w-full px-4 py-3 rounded-lg border pr-12 bg-white whitespace-pre-wrap"
+            style="min-height: 350px; font-family: inherit;"
+    >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.
+
+      Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.
+
+      Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.</div>
+
+    <!-- This textarea will be hidden initially -->
+    <textarea
+            id="notes"
+            name="notes"
+            class="form-input w-full px-4 py-3 rounded-lg border pr-12 hidden"
+            rows="14"
+    >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.
+
+Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.
+
+Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.</textarea>
+  </div>
+
+  <div class="flex justify-end space-x-3">
+    <button
+            type="button"
+            id="editBtn"
+            class="px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300"
+            onclick="toggleEdit()"
+    >
+      Edit
+    </button>
+    <button
+            type="submit"
+            class="px-4 py-2 rounded-md bg-blue-500 text-white-800 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+    >
+      Save
+    </button>
+  </div>
+</form>
+
+<script>
+  function toggleEdit() {
+      const textarea = document.getElementById('notes');
+      const notesDisplay = document.getElementById('notesDisplay');
+      const editBtn = document.getElementById('editBtn');
+
+      if (textarea.classList.contains('hidden')) {
+          // Switch to edit mode
+          textarea.classList.remove('hidden');
+          notesDisplay.classList.add('hidden');
+          textarea.classList.add('ring-2', 'ring-sky-500');
+          editBtn.textContent = 'Cancel';
+          editBtn.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+          editBtn.classList.add('bg-red-100', 'hover:bg-red-200', 'text-red-800');
+      } else {
+          // Switch back to display mode
+          textarea.classList.add('hidden');
+          notesDisplay.classList.remove('hidden');
+          textarea.classList.remove('ring-2', 'ring-sky-500');
+          notesDisplay.textContent = textarea.value; // Update display with any changes
+          editBtn.textContent = 'Edit';
+          editBtn.classList.remove('bg-red-100', 'hover:bg-red-200', 'text-red-800');
+          editBtn.classList.add('bg-gray-200', 'hover:bg-gray-300');
+      }
+  }
+</script>

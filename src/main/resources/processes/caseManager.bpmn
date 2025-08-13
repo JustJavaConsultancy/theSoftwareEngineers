@@ -69,7 +69,7 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
           <flowable:string><![CDATA[POST]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestUrl">
-          <flowable:string><![CDATA[http://localhost:8089/brief]]></flowable:string>
+          <flowable:string><![CDATA[https://genaiandrag.onrender.com/brief]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestHeaders">
           <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
@@ -159,7 +159,7 @@ execution.setVariable("incidentData", data);]]></script>
           <flowable:string><![CDATA[POST]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestUrl">
-          <flowable:string><![CDATA[http://localhost:8089/analyzebrief]]></flowable:string>
+          <flowable:string><![CDATA[https://genaiandrag.onrender.com/analyzebrief]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestHeaders">
           <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>

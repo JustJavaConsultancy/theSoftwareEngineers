@@ -94,42 +94,37 @@
             <img src="/images/justjavaLogo.svg" class="w-8 h-8">
             <h1 class="text-2xl font-bold text-white mt-1 brand-title">JustJava</h1>
         </div>
-        <nav th:each="name : ${session.processNames}" class="space-y-4">
+        <nav class="space-y-4">
             <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
                th:href="@{/dashboard}"
                th:classappend="${currentPath == '/dashboard'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">dashboard</span>
                 <span>Dashboard</span>
             </a>
-            <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
-               th:href="@{'/processes/' + ${name.processKey}}"
-               th:classappend="${currentPath == '/processes/caseManager'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">sync_alt</span>
-                <span th:text="${name.processName}">Dashboard</span>
-            </a>
-            <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
-               th:href="@{'/tasks/' + ${name.processKey}}"
-               th:classappend="${currentPath == '/tasks/caseManager'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">task_alt</span>
-                <span>Active Tasks</span>
-            </a>
-            <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
-               th:href="@{'/forms/' + ${name.processKey}}"
-               th:classappend="${currentPath == '/forms/caseManager'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">note_add</span>
-                <span>Manage Forms</span>
-            </a>
 
-            <!--<a class="f lex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/processes}"
-               th:classappend="${currentPath == '/processes'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">sync_alt</span>
-                <span>Cases</span>
-            </a>
-            <a th:if="${session.isAdmin}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/forms}"
-               th:classappend="${currentPath == '/forms'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">note_add</span>
-                <span>Task Forms</span>
-            </a>-->
+            <!-- Process-specific menu items (will be repeated for each process) -->
+            <div th:each="name : ${session.processNames}">
+                <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
+                   th:href="@{'/processes/' + ${name.processKey}}"
+                   th:classappend="${#strings.concat('/processes/', name.processKey) == currentPath} ? ' bg-blue-600'">
+                    <span class="material-icons mr-3">sync_alt</span>
+                    <span th:text="${name.processName}">Process</span>
+                </a>
+                <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
+                   th:href="@{'/tasks/' + ${name.processKey}}"
+                   th:classappend="${#strings.concat('/tasks/', name.processKey) == currentPath} ? ' bg-blue-600'">
+                    <span class="material-icons mr-3">task_alt</span>
+                    <span th:text="${#strings.arraySplit(name.processName, ' ')[0] + ' Active Tasks'}">Active Tasks</span>
+                </a>
+                <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
+                   th:href="@{'/forms/' + ${name.processKey}}"
+                   th:classappend="${#strings.concat('/forms/', name.processKey) == currentPath} ? ' bg-blue-600'">
+                    <span class="material-icons mr-3">note_add</span>
+                    <span>Manage Forms</span>
+                </a>
+            </div>
+
+            <!-- Static menu items (not repeated) -->
             <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/report}"
                th:classappend="${currentPath == '/report'} ? ' bg-blue-600'">
                 <span class="material-icons mr-3">bar_chart</span>
@@ -160,7 +155,7 @@
             </a>
             <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/gallery}"
                th:classappend="${currentPath == '/gallery' or currentPath == '/addFile'} ? ' bg-blue-600'">
-            <span class="material-icons mr-3">collections</span>
+                <span class="material-icons mr-3">collections</span>
                 <span>Gallery</span>
             </a>
         </nav>
