@@ -9,9 +9,9 @@
         <relativePath /><!-- lookup parent from repository -->
     </parent>
     <groupId>tech.justjava</groupId>
-    <artifactId>TheAttorneyAI</artifactId>
+    <artifactId>theSoftwareEngineers</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>theAttorneyAI</name>
+    <name>theSoftwareEngineers</name>
 
     <properties>
         <java.version>21</java.version>
@@ -170,7 +170,7 @@
                         <image>eclipse-temurin:21-jre-jammy</image>
                     </from>
                     <to>
-                        <image>kazeemakinrinde/theattorneyai</image>
+                        <image>kazeemakinrinde/thesoftwareengineers</image>
                         <auth>
                             <username>kazeemakinrinde</username>
                             <password>020775Rashy!</password>

@@ -1,4 +1,4 @@
-name: build-theAttorney
+name: build-theSoftwareEngineers
 on:
   push:
     branches:

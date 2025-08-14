@@ -45,6 +45,8 @@ spring:
             client_secret: ${KEYCLOAK_CLIENT_SECRET:rJuSSQDWuFvATo2pNlAlj0pTVJAbBNPo}
             authorization-grant-type: authorization_code
             scope: openid,profile,email
+  application:
+    name: theSoftwareEngineers
 error:
   handling:
     http-status-in-json-response: true
