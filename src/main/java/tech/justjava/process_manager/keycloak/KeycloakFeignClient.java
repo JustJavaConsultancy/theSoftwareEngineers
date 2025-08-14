@@ -18,75 +18,75 @@ import java.util.Map;
 @FeignClient(name="KeycloakFeignClient",url="${keycloak.base-url}")
 public interface KeycloakFeignClient {
 
-    @PostMapping(path = "/realms/attorneyAI/protocol/openid-connect/token",
+    @PostMapping(path = "/realms/softwareEngineer/protocol/openid-connect/token",
             consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     Map<String, Object> getAccessToken(Map<String,?> paramMap);
 
-    @GetMapping("/admin/realms/attorneyAI/users")
+    @GetMapping("/admin/realms/softwareEngineer/users")
     List<Map<String, Object>> getUsers(@RequestHeader(value = "Authorization") String authorizationHeader);
 
-    @GetMapping("/admin/realms/attorneyAI/users/{userId}")
+    @GetMapping("/admin/realms/softwareEngineer/users/{userId}")
     Map<String, Object> getUser(@RequestHeader(value = "Authorization") String authorizationHeader,
                                        @PathVariable String userId);
 
-    @GetMapping("/admin/realms/attorneyAI/groups")
+    @GetMapping("/admin/realms/softwareEngineer/groups")
     List<Map<String, Object>> getRealmGroups(
             @RequestHeader(value = "Authorization") String authorizationHeader);
 
-    @GetMapping("/admin/realms/attorneyAI/groups/{groupId}/members")
+    @GetMapping("/admin/realms/softwareEngineer/groups/{groupId}/members")
     List<Map<String, Object>> getAllUserInGroup(
             @RequestHeader(value = "Authorization") String authorizationHeader,
             @PathVariable("groupId") String groupId
     );
 
-    @GetMapping("/admin/realms/attorneyAI/users")
+    @GetMapping("/admin/realms/softwareEngineer/users")
     ResponseEntity<List<Map<String, Object>>> getUserByEmail(
             @RequestHeader(value = "Authorization") String authorizationHeader,
             @RequestParam(name = "email") String email
     );
 
-    @PostMapping("/admin/realms/attorneyAI/users")
+    @PostMapping("/admin/realms/softwareEngineer/users")
     ResponseEntity<Void> createUser(@RequestHeader(value = "Authorization")
                                     String authorizationHeader, Map<String,Object> user);
 
-    @PutMapping("/admin/realms/attorneyAI/users/{userId}/groups/{groupId}")
+    @PutMapping("/admin/realms/softwareEngineer/users/{userId}/groups/{groupId}")
     ResponseEntity<Void> addUserToGroup(@RequestHeader(value = "Authorization") String authorizationHeader,
                              @PathVariable String userId,
                              @PathVariable String groupId,
                              @RequestBody Map<String, Object> groupBody
     );
 
-    @GetMapping("/admin/realms/attorneyAI/users/{id}/groups")
+    @GetMapping("/admin/realms/softwareEngineer/users/{id}/groups")
     List<Map<String, Object>> getUserGroups(
             @RequestHeader(value = "Authorization") String authorizationHeader,
             @PathVariable("id") String userId
     );
 
-    @PutMapping("/admin/realms/attorneyAI/groups/{groupId}")
+    @PutMapping("/admin/realms/softwareEngineer/groups/{groupId}")
     ResponseEntity<Void> updateGroup(
             @RequestHeader(value = "Authorization") String authorizationHeader,
             @PathVariable String groupId,
             @RequestBody Map<String, Object> groupBody);
 
-    @PutMapping("/admin/realms/attorneyAI/users/{userId}")
+    @PutMapping("/admin/realms/softwareEngineer/users/{userId}")
     ResponseEntity<Void> updateUser(
             @RequestHeader(value = "Authorization") String authorizationHeader,
             @PathVariable String userId,
             @RequestBody Map<String, Object> body);
 
-    @PostMapping("/admin/realms/attorneyAI/groups")
+    @PostMapping("/admin/realms/softwareEngineer/groups")
     void createGroup(
             @RequestHeader(value = "Authorization") String authorizationHeader,
             Map<String,?> paramMap
             );
 
-    @DeleteMapping("/admin/realms/attorneyAI/users/{userId}")
+    @DeleteMapping("/admin/realms/softwareEngineer/users/{userId}")
     void deleteUser(
             @RequestHeader(value = "Authorization") String authorizationHeader,
             @PathVariable String userId
     );
 
-    @DeleteMapping("/admin/realms/attorneyAI/groups/{groupId}")
+    @DeleteMapping("/admin/realms/softwareEngineer/groups/{groupId}")
     ResponseEntity<Void> deleteGroup(
             @RequestHeader(value = "Authorization") String authorizationHeader,
             @PathVariable String groupId
