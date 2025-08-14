@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5433/theAttorneyAI}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5433/theSoftwareEngineers}
     username: ${JDBC_DATABASE_USERNAME:postgres}
     password: ${JDBC_DATABASE_PASSWORD:020775Rashy!}
     hikari:
@@ -45,6 +45,8 @@ spring:
             client_secret: ${KEYCLOAK_CLIENT_SECRET:IGKp4ZN3L0VSAqrlFQB5qW1WYn59qZS8}
             authorization-grant-type: authorization_code
             scope: openid,profile,email
+  application:
+    name: theSoftwareEngineers
 error:
   handling:
     http-status-in-json-response: true
@@ -59,7 +61,7 @@ error:
 server:
   tomcat:
     max-part-count: '100'
-  port: 9001
+  port: 9004
 springdoc:
   pathsToMatch: /api/**
 keycloak:
