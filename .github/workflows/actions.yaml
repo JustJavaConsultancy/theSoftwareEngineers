@@ -24,8 +24,11 @@ jobs:
       - name: Install Railway CLI
         run: curl -fsSL https://railway.app/install.sh | sh
       # Step 6: Log in to Railway using API token
-      - name: Authenticate Railway
-        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
+      - name: Railway Login
+        run: railway login
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
 
       # Step 4: Deploy directly from Docker Hub image
       - name: Deploy from Docker Hub
