@@ -48,7 +48,7 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
       <flowable:processInstanceBusinessKey><![CDATA[${projectId}]]></flowable:processInstanceBusinessKey>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
       <design:creationdate><![CDATA[2025-06-23T04:16:00.924Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-08-15T16:33:54.205Z]]></design:modificationdate>
+      <design:modificationdate><![CDATA[2025-08-16T12:24:32.407Z]]></design:modificationdate>
     </extensionElements>
     <userTask id="FormTask_1" name="Review Current User Story" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
       <extensionElements>
@@ -83,7 +83,7 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
     </userTask>
-    <userTask id="FormTask_5" name="Finalize the Project" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
+    <userTask id="FormTask_5" name="Deliver the Project" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
       <extensionElements>
         <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
         <design:stencilid><![CDATA[FormTask]]></design:stencilid>
@@ -185,6 +185,9 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
         <flowable:field name="disallowRedirects">
           <flowable:string><![CDATA[false]]></flowable:string>
         </flowable:field>
+        <flowable:field name="responseVariableName">
+          <flowable:string><![CDATA[architecture]]></flowable:string>
+        </flowable:field>
         <flowable:field name="ignoreException">
           <flowable:string><![CDATA[false]]></flowable:string>
         </flowable:field>
@@ -220,6 +223,9 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
         </flowable:field>
         <flowable:field name="disallowRedirects">
           <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="responseVariableName">
+          <flowable:string><![CDATA[proposal]]></flowable:string>
         </flowable:field>
         <flowable:field name="ignoreException">
           <flowable:string><![CDATA[false]]></flowable:string>
