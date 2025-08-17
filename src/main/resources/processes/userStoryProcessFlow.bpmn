@@ -21,7 +21,7 @@
           <flowable:string><![CDATA[POST]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestUrl">
-          <flowable:string><![CDATA[http://localhost:8089/generateAcceptanceCriteria]]></flowable:string>
+          <flowable:string><![CDATA[https://genaiandrag.onrender.com/generateAcceptanceCriteria]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestHeaders">
           <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
@@ -74,7 +74,7 @@ println "Body Selenium Steps: $steps"]]></script>
           <flowable:string><![CDATA[POST]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestUrl">
-          <flowable:string><![CDATA[http://localhost:8089/steps]]></flowable:string>
+          <flowable:string><![CDATA[https://genaiandrag.onrender.com/steps]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestHeaders">
           <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
@@ -116,7 +116,7 @@ println "Body Selenium Steps: $steps"]]></script>
           <flowable:string><![CDATA[POST]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestUrl">
-          <flowable:string><![CDATA[http://localhost:8089/generateCode]]></flowable:string>
+          <flowable:string><![CDATA[https://genaiandrag.onrender.com/generateCode]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestHeaders">
           <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
