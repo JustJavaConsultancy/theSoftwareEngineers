@@ -9,14 +9,14 @@
   <div class="mb-3">
     <label for="followupQuestions" class="block text-sm font-medium text-slate-300 mb-2">Followup Questions</label>
     <ul class="w-full px-4 py-3 rounded-lg border bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 space-y-2 list-disc list-inside">
-      <li th:each="question : ${aiBriefAnalysis.followUpQuestions}" th:text="${question}"></li>
+      <li th:each="question : ${aiRequirementAnalysis.followUpQuestions}" th:text="${question}"></li>
     </ul>
   </div>
 
   <div class="mb-3">
     <label for="requiredDocuments" class="block text-sm font-medium text-slate-300 mb-2">Required Documents</label>
     <ul class="w-full px-4 py-3 rounded-lg border bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 space-y-2 list-disc list-inside">
-      <li th:each="document : ${aiBriefAnalysis.requiredDocuments}" th:text="${document}"></li>
+      <li th:each="document : ${aiRequirementAnalysis.requiredDocuments}" th:text="${document}"></li>
     </ul>
   </div>
 
