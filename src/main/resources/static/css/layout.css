@@ -1,10 +1,10 @@
 body {
             font-family: 'Inter', sans-serif;
-            background-color: #0F172A;
-            color: #E2E8F0;
+            background-color: #f4f8fb;
+            color: #1E293B;
         }
         .sidebar {
-            background-color: #1E293B;
+            background-color: #fff;
         }
         .submenu {
                     transition: all 0.3s ease;
@@ -15,72 +15,72 @@ body {
                 }
 
         .upload-btn-primary {
-        background-color: #3b82f6;
+        background-color: #2563eb;
         }
 
         .btn-primary2 {
-                  background-color: #3b82f6;
-                }
-                .btn-primary2:hover {
                   background-color: #2563eb;
                 }
+                .btn-primary2:hover {
+                  background-color: #1d4ed8;
+                }
                 .search-bar2 {
-                  background-color: #374151;
+                  background-color: #f8fafc;
                 }
 
                 .upload-area {
-                        border-color: #4b5563;
+                        border-color: #e0e0e0;
                       }
 
                       .tab-active {
-                                background-color: #3b82f6 !important;
+                                background-color: #2563eb !important;
                                 color: white !important;
                               }
                               .file-row {
                                 transition: background-color 0.2s ease;
                               }
                               .file-row:hover {
-                                background-color: #374151;
+                                background-color: #f8fafc;
                               }
 
         .main-content {
-            background-color: #0F172A;
+            background-color: #f4f8fb;
         }
         .card {
-            background-color: #1E40AF;
+            background-color: #fff;
         }
 
         .upload-card {
-                background-color: #374151;
+                background-color: #fff;
               }
 
         .table-header, .table-row {
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid #e0e0e0;
         }
         .table-container {
-            background-color: #1E293B;
+            background-color: #fff;
         }
         .status-in-progress {
-            background-color: #1D4ED8;
-            color: #BFDBFE;
+            background-color: #e0e7ff;
+            color: #1D4ED8;
             white-space: nowrap;
         }
         .status-opened {
-            background-color: #991B1B;
-            color: #FECACA;
+            background-color: #fee2e2;
+            color: #991B1B;
             white-space: nowrap;
         }
         .status-completed {
-            background-color: #166534;
-            color: #BBF7D0;
+            background-color: #bbf7d0;
+            color: #166534;
             white-space: nowrap;
         }
         .search-input {
-            background-color: #334155;
-            border: 1px solid #475569;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
         }
         .search-input::placeholder {
-            color: #94A3B8;
+            color: #64748b;
         }
         @media (max-width: 768px) {
             .sidebar {
