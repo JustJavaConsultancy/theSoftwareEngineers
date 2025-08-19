@@ -440,72 +440,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Theme toggle functionality
-  const modeToggleBtn = document.getElementById('mode-toggle');
+  // Light theme initialization
   const body = document.body;
   const html = document.documentElement;
-  const MODE_KEY = 'colorMode';
-  const ICON_MOON = 'nightlight_round';
-  const ICON_SUN = 'wb_sunny';
 
-  function setMode(mode) {
-    // Remove all theme classes first
-    body.classList.remove('light-mode');
-    html.classList.remove('dark');
-    
-    // Apply the new theme
-    if (mode === 'light') {
-      body.classList.add('light-mode');
-      html.classList.remove('dark');
-    } else {
-      body.classList.remove('light-mode');
-      html.classList.add('dark');
-    }
-
-    // Update the icon
-    if (modeToggleBtn) {
-      const icon = modeToggleBtn.querySelector('.material-icons');
-      if (icon) {
-        icon.textContent = mode === 'light' ? ICON_SUN : ICON_MOON;
-      }
-    }
-
-    // Trigger a custom event for other components that might need to react to theme changes
-    document.dispatchEvent(new CustomEvent('themeChanged', { detail: { mode } }));
-  }
-
-  // Initialize theme on page load
-  function initializeTheme() {
-  const savedMode = localStorage.getItem(MODE_KEY);
-  if (savedMode === 'light' || savedMode === 'dark') {
-    setMode(savedMode);
-  } else {
-      // Default to dark mode if no preference is saved
-    setMode('dark');
-    }
-  }
-
-  // Initialize theme immediately
-  initializeTheme();
-
-  // Add click event listener for theme toggle
-  if (modeToggleBtn) {
-    modeToggleBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const isCurrentlyLight = body.classList.contains('light-mode');
-      const newMode = isCurrentlyLight ? 'dark' : 'light';
-      
-      // Save to localStorage
-      localStorage.setItem(MODE_KEY, newMode);
-      
-      // Apply the new theme
-      setMode(newMode);
-      
-      console.log('Theme changed to:', newMode);
-    });
-  }
+  // Always set light mode
+  body.classList.add('light-mode');
+  html.classList.remove('dark');
 });
 
 // === GALLERY FUNCTIONALITY ===
