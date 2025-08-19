@@ -6,7 +6,7 @@
         <div class="modal-body">
             <div class="search-container relative mb-4">
                 <span class="search-icon material-icons">search</span>
-                <input class="search-input w-full bg-gray-700 text-white placeholder-gray-400 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Search users..." type="text" id="userSearchStart"/>
+                <input class="search-input w-full bg-white text-gray-800 placeholder-gray-500 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Search users..." type="text" id="userSearchStart"/>
             </div>
             <div class="user-list-start">
                 <div th:each="user : ${users}" class="user-item flex items-center p-3 cursor-pointer transition-colors select-user">
@@ -20,7 +20,7 @@
                     </div>
                     <div class="flex-1">
                         <div class="font-medium" th:text="${user.firstName + ' ' + user.lastName}"></div>
-                        <div class="text-sm text-gray-400" th:text="${user.email}"></div>
+                        <div class="text-sm text-gray-600" th:text="${user.email}"></div>
                     </div>
                 </div>
             </div>
@@ -44,7 +44,7 @@
         </div>
         <div class="modal-body">
             <div class="mb-4">
-                <input class="w-full bg-gray-700 text-white placeholder-gray-400 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                <input class="w-full bg-white text-gray-800 placeholder-gray-500 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                        placeholder="Group name (required)"
                        type="text"
                        id="groupName"
@@ -53,7 +53,7 @@
             </div>
             <div class="search-container relative mb-4">
                 <span class="search-icon material-icons">search</span>
-                <input class="search-input w-full bg-gray-700 text-white placeholder-gray-400 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Search users..." type="text" id="userSearchGroup"/>
+                <input class="search-input w-full bg-white text-gray-800 placeholder-gray-500 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Search users..." type="text" id="userSearchGroup"/>
             </div>
             <div class="user-list-group">
                 <div th:each="user : ${users}" class="user-item flex items-center p-3 cursor-pointer transition-colors">
@@ -66,7 +66,7 @@
                     </div>
                     <div class="flex-1">
                         <div class="font-medium" th:text="${user.firstName + ' ' + user.lastName}"></div>
-                        <div class="text-sm text-gray-400" th:text="${user.email}"></div>
+                        <div class="text-sm text-gray-600" th:text="${user.email}"></div>
                     </div>
                     <label class="checkbox-container">
                         <input type="checkbox" class="user-checkbox" th:value="${user.userId}">
@@ -76,7 +76,7 @@
             </div>
         </div>
         <div class="modal-footer flex justify-end space-x-3">
-            <button class="px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors" id="cancelCreateGroup">
+            <button class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" id="cancelCreateGroup">
                 Cancel
             </button>
             <button class="px-4 py-2 bg-blue-600 text-white rounded-lg transition-colors btn-disabled" id="confirmCreateGroup" disabled>
