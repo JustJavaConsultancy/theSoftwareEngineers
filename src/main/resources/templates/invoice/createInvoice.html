@@ -6,7 +6,7 @@
     <title>Create Invoice</title>
     <style>
         .search-bar {
-            background-color: #374151;
+            background-color: #ffffff;
         }
         .btn-primary {
             background-color: #3B82F6;
@@ -18,20 +18,22 @@
             box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
         }
         .btn-secondary {
-            background-color: #374151;
+            background-color: #e5e7eb;
+            color: #1E293B;
             transition: all 0.3s ease;
         }
         .btn-secondary:hover {
-            background-color: #4B5563;
+            background-color: #f1f5f9;
             transform: translateY(-1px);
         }
         .card {
-            background-color: #1F2937;
+            background-color: #ffffff;
             transition: all 0.3s ease;
         }
         .form-input {
-            background-color: #1F2937;
-            border: 1px solid #374151;
+            background-color: #ffffff;
+            color: #1E293B;
+            border: 1px solid #e0e0e0;
             transition: all 0.3s ease;
         }
         .form-input:focus {
@@ -39,7 +41,7 @@
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
         .form-label {
-            color: #D1D5DB;
+            color: #1E293B;
         }
         .fade-in {
             animation: fadeIn 0.5s ease-in;
@@ -119,7 +121,7 @@
                     <div>
                         <label class="form-label block text-sm mb-1">Amount</label>
                         <div class="flex">
-                            <span class="inline-flex items-center px-3 rounded-l-lg bg-gray-700 text-gray-300 text-sm">₦</span>
+                            <span class="inline-flex items-center px-3 rounded-l-lg bg-gray-100 text-gray-700 text-sm">₦</span>
                             <input name="amount" th:value="${status != 'new'} ? ${reviewData.amount} : ''"
                                    type="number" class="form-input flex-1 rounded-r-lg rounded-l-none"
                                    placeholder="0.00" step="0.01" min="0" required>
