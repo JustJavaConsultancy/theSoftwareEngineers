@@ -4,6 +4,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.stereotype.Service;
 import tech.justjava.process_manager.process.form.Form;
 import tech.justjava.process_manager.process.form.FormRepository;
 
@@ -11,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+@Service
 public class FormInitializer implements ApplicationRunner {
     private final FormRepository formRepository;
 
@@ -49,6 +51,7 @@ public class FormInitializer implements ApplicationRunner {
                 Form form = new Form();
                 form.setFormCode(code);
                 form.setFormInterface(content);
+                form.setFormName(processKey);
                 form.setProcessKey(processKey);
                 formRepository.save(form);
                 System.out.println("Loaded and saved form: " + code);
