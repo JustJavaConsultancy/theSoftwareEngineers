@@ -48,7 +48,7 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
       <flowable:processInstanceBusinessKey><![CDATA[${projectId}]]></flowable:processInstanceBusinessKey>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
       <design:creationdate><![CDATA[2025-08-19T21:50:29.461Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-08-19T22:29:00.825Z]]></design:modificationdate>
+      <design:modificationdate><![CDATA[2025-08-20T15:24:03.206Z]]></design:modificationdate>
     </extensionElements>
     <userTask id="FormTask_1" name="Review Current User Story" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
       <extensionElements>
@@ -333,7 +333,7 @@ if (stories && stories.size() > 0) {
     
     // Add first story to completedStories
     completedStories.add(firstStory);
-    
+    var usCode = "usCode"+completedStories.size();
     // Remove the first story from stories
     stories.remove(firstStory);
     
@@ -341,6 +341,7 @@ if (stories && stories.size() > 0) {
     execution.setVariable('completedStories', completedStories);
     execution.setVariable('activeStory', firstStory);
     execution.setVariable('stories', stories);
+  	execution.setVariable('usCode', usCode);
 } else {
     // Handle case when stories is empty or null
     execution.setVariable('activeStory', null);
