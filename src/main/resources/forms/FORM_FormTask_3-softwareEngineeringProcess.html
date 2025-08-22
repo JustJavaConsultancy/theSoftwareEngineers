@@ -1,0 +1,10 @@
+<form id="formContainer" th:action="@{http://localhost:9010/tasks/complete}" th:object="${formData}" method="post" hx-post="http://localhost:9010/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML" hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'">
+    <input type="hidden" th:value="${id}" id="id" name="id">
+    <div class="mb-3">
+        <label for="activeStory" class="block text-sm font-medium text-slate-300 mb-2">Comment</label>
+        <textarea id="activeStory" name="milestoneComment" class="form-input w-full px-4 py-3 rounded-lg border pr-12" rows="4"></textarea>
+    </div>
+    <button style="color:white" type="submit" class="flex items-center bg-blue-600 hover:bg-blue-700 font-medium py-2.5 px-6 rounded-lg transition-colors duration-200">
+        Approve
+    </button>
+</form>
