@@ -107,7 +107,7 @@ public class TaskController {
         }
 
         Map<String,Object> formData= task.getProcessVariables();
-        System.out.println(" The FormData Here ===="+formData);
+        //System.out.println(" The FormData Here ===="+formData);
 
 
         formData.put("id", task.getId());
@@ -147,9 +147,10 @@ public class TaskController {
         if(formData.get("nextPage")!=null){
             Task nextTask =taskService.getTaskByInstanceAndDefinitionKey(task.getProcessInstanceId(),
                     (String) task.getProcessVariables().get("nextPage"));
-            nextPage ="/tasks/add/"+nextTask.getId();
+            if(nextTask!=null)
+                nextPage ="/tasks/add/"+nextTask.getId();
 
-            System.out.println(" Is this next task actually active?==="+nextTask.getState());
+            //System.out.println(" Is this next task actually active?==="+nextTask.getState());
             task.getProcessVariables().remove("nextPage");
         }
 
@@ -158,6 +159,7 @@ public class TaskController {
                 .status(200)
                 .header("HX-Redirect", nextPage)
                 .build();
+
     }
 
     @GetMapping("/edit/{id}")

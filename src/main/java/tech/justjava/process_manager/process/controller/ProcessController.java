@@ -262,7 +262,7 @@ processInstances.forEach(processInstance -> {
     }
     @PostMapping("/start")
     public ResponseEntity<Void> handleFormSubmit(@RequestParam Map<String,Object> formData) {
-        System.out.println(" The Form Data==="+formData);
+        //System.out.println(" The Form Data==="+formData);
 
         String nextPage = "/processes";
         String hashCode= String.valueOf((String.valueOf(authenticationManager.get("preferred_username"))+String.valueOf(System.currentTimeMillis())).hashCode());

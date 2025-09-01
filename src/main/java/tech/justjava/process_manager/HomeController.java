@@ -117,7 +117,7 @@ public class HomeController {
         String processInstanceId = processInstance.getProcessInstanceId();
         Task handleTask = taskService.getTaskByInstanceAndDefinitionKey(processInstanceId,
                 "FormTask_HandleIssue");
-        System.out.println("This is the current task " + handleTask);
+        //System.out.println("This is the current task " + handleTask);
         taskService.completeTask(handleTask.getId(), formData);
 
 

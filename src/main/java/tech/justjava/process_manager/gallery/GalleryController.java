@@ -68,26 +68,26 @@ public class GalleryController {
                                    @RequestParam(value = "caseValues", required = false) List<String> caseValues,
                                    Model model) {
 
-        System.out.println("=== handleFileUpload METHOD CALLED ===");
-        System.out.println("Number of files received: " + (files != null ? files.length : "null"));
-        System.out.println("Case tags received: " + caseTags);
-        System.out.println("Case values received: " + caseValues);
+        //System.out.println("=== handleFileUpload METHOD CALLED ===");
+        //System.out.println("Number of files received: " + (files != null ? files.length : "null"));
+        //System.out.println("Case tags received: " + caseTags);
+        //System.out.println("Case values received: " + caseValues);
 
         List<String> uploadResults = new ArrayList<>();
         List<String> errors = new ArrayList<>();
 
         // Build case tags JSON from form data
         String caseTagsJson = buildCaseTagsJson(caseTags, caseValues);
-        System.out.println("Built case tags JSON: " + caseTagsJson);
+        //System.out.println("Built case tags JSON: " + caseTagsJson);
 
         // Generate case number once for all files in this batch
         long committedCount = fileInfoRepository.countByStatus("COMMITTED");
         String batchCaseNumber = "CASE-" + String.format("%04d", committedCount + 1);
-        System.out.println("Generated batch case number: " + batchCaseNumber);
+        //System.out.println("Generated batch case number: " + batchCaseNumber);
 
         for (MultipartFile file : files) {
-            System.out.println("=== Processing file: " + (file != null ? file.getOriginalFilename() : "null") + " ===");
-            System.out.println("File empty check: " + (file != null ? file.isEmpty() : "file is null"));
+            //System.out.println("=== Processing file: " + (file != null ? file.getOriginalFilename() : "null") + " ===");
+            //System.out.println("File empty check: " + (file != null ? file.isEmpty() : "file is null"));
 
             if (!file.isEmpty()) {
                 try {

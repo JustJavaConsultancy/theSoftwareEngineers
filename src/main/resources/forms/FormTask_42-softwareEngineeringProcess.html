@@ -1,0 +1,211 @@
+<form id="formContainer" th:action="@{http://localhost:9010/tasks/complete}" th:object="${formData}" method="post"
+      hx-post="http://localhost:9010/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML"
+      hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'"
+      class="max-w-5xl mx-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-lg">
+
+    <input type="hidden" th:value="${id}" id="id" name="id">
+    <input type="hidden" value="FormTask_12" id="nextPage" name="nextPage">
+
+    <!-- Header Section -->
+    <div class="mb-8 text-center">
+        <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Document Review</h1>
+        <p class="text-slate-600 dark:text-slate-300">Review and edit the document below</p>
+    </div>
+
+    <!-- Document Section -->
+    <div class="mb-8 bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-semibold text-white">Document Content</h2>
+            <button type="button" id="toggleViewBtn" class="text-blue-100 hover:text-white text-sm font-medium flex items-center px-3 py-1 rounded-md bg-blue-700/30 hover:bg-blue-700/50 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                Edit Mode
+            </button>
+        </div>
+
+        <!-- Display View (Rendered HTML) -->
+        <div id="documentDisplay" class="p-0 max-h-96 overflow-y-auto">
+            <div class="p-4 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 document-content">
+                <div th:utext="${artifact}"></div>
+            </div>
+        </div>
+
+        <!-- Edit View (Textarea for editing) -->
+        <div id="documentEdit" class="hidden p-0">
+            <textarea id="artifact" name="artifact"
+                      class="w-full h-96 p-4 border-0 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-mono text-sm rounded-none focus:ring-0"
+                      th:text="${#strings.replace(#strings.replace(artifact, '&lt;', '<'), '&gt;', '>')}" required></textarea>
+            <div class="px-4 py-2 bg-slate-100 dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600">
+                <p class="text-sm text-slate-600 dark:text-slate-300">Edit the HTML content as needed.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-center">
+        <button type="submit"
+                class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold rounded-lg shadow-md transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            Complete Review
+        </button>
+    </div>
+
+    <!-- JavaScript for view switching -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggleViewBtn');
+            const displayView = document.getElementById('documentDisplay');
+            const editView = document.getElementById('documentEdit');
+            const textarea = document.getElementById('artifact');
+
+            // Function to update display view from textarea content
+            function updateDisplayView() {
+                displayView.querySelector('.document-content').innerHTML = textarea.value;
+            }
+
+            toggleBtn.addEventListener('click', function() {
+                if (displayView.classList.contains('hidden')) {
+                    // Switching to view mode - update display with current textarea content
+                    updateDisplayView();
+                    displayView.classList.remove('hidden');
+                    editView.classList.add('hidden');
+                    toggleBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H极狐v-3.572L16.732 3.732z" />
+                        </svg>
+                        Edit Mode
+                    `;
+                } else {
+                    // Switching to edit mode
+                    displayView.classList.add('hidden');
+                    editView.classList.remove('hidden');
+                    toggleBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        View Mode
+                    `;
+                }
+            });
+
+            // Update display when form is submitted to show latest changes
+            document.getElementById('formContainer').addEventListener('submit', function() {
+                updateDisplayView();
+            });
+        });
+    </script>
+
+    <!-- Enhanced Styles for Document Content -->
+    <style>
+        .document-content {
+            font-family: 'Inter', system-ui, sans-serif;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        .document-content section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .document-content header {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1e40af;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+
+        .document-content article {
+            margin-bottom: 1.5rem;
+        }
+
+        .document-content article header {
+            font-size: 1.25rem;
+            color: #374151;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        .document-content ul, .document-content ol {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+
+        .document-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .document-content p {
+            margin-bottom: 1rem;
+        }
+
+        .document-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .document-content th, .document-content td {
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .document-content th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+
+        .document-content pre {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .document-content code {
+            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        /* Dark mode styles */
+        .dark .document-content {
+            color: #e5e7eb;
+        }
+
+        .dark .document-content section {
+            background: #1f2937;
+        }
+
+        .dark .document-content header {
+            color: #93c5fd;
+            border-bottom-color: #4b5563;
+        }
+
+        .dark .document-content article header {
+            color: #d1d5db;
+            border-bottom-color: #4b5563;
+        }
+
+        .dark .document-content th, .dark .document-content td {
+            border-color: #4b5563;
+        }
+
+        .dark .document-content th {
+            background-color: #374151;
+        }
+
+        .dark .document-content pre {
+            background: #1e293b;
+            border-color: #475569;
+        }
+    </style>
+</form>
