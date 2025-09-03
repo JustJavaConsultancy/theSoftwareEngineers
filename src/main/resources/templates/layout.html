@@ -25,133 +25,133 @@
     <!-- Application CSS -->
     <link th:href="@{/css/app.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    
+
     <!-- Light theme initialization script -->
     <script>
-      (function() {
-        const html = document.documentElement;
-        const body = document.body;
-        
-        // Always set light mode
-        body.classList.add('light-mode');
-        html.classList.remove('dark');
-      })();
-        function toggleDropdown(menuId) {
-            const submenu = document.getElementById(`${menuId}-submenu`);
-            const icon = document.getElementById(`${menuId}-icon`);
+        (function() {
+          const html = document.documentElement;
+          const body = document.body;
 
-            if (submenu.style.maxHeight === '0px' || !submenu.style.maxHeight) {
-                // Open the dropdown
-                submenu.style.maxHeight = `${submenu.scrollHeight}px`;
-                icon.classList.add('rotate-90');
+          // Always set light mode
+          body.classList.add('light-mode');
+          html.classList.remove('dark');
+        })();
+          function toggleDropdown(menuId) {
+              const submenu = document.getElementById(`${menuId}-submenu`);
+              const icon = document.getElementById(`${menuId}-icon`);
 
-                // Show submenu items with delay for staggered effect
-                const items = submenu.querySelectorAll('a');
-                items.forEach((item, index) => {
-                    setTimeout(() => {
-                        item.classList.remove('opacity-0');
-                    }, index * 100);
-                });
-            } else {
-                // Close the dropdown
-                submenu.style.maxHeight = '0px';
-                icon.classList.remove('rotate-90');
+              if (submenu.style.maxHeight === '0px' || !submenu.style.maxHeight) {
+                  // Open the dropdown
+                  submenu.style.maxHeight = `${submenu.scrollHeight}px`;
+                  icon.classList.add('rotate-90');
 
-                // Hide submenu items
-                const items = submenu.querySelectorAll('a');
-                items.forEach(item => {
-                    item.classList.add('opacity-0');
-                });
-            }
+                  // Show submenu items with delay for staggered effect
+                  const items = submenu.querySelectorAll('a');
+                  items.forEach((item, index) => {
+                      setTimeout(() => {
+                          item.classList.remove('opacity-0');
+                      }, index * 100);
+                  });
+              } else {
+                  // Close the dropdown
+                  submenu.style.maxHeight = '0px';
+                  icon.classList.remove('rotate-90');
+
+                  // Hide submenu items
+                  const items = submenu.querySelectorAll('a');
+                  items.forEach(item => {
+                      item.classList.add('opacity-0');
+                  });
+              }
+          }
+    </script>
+    <script>
+        let stompClient = null
+        function connectStomp() {
+        const socket = new SockJS('/ws');
+          stompClient = Stomp.over(socket);
+
+          stompClient.connect({}, function (frame) {
+            console.log('Connected:', frame);
+
+            stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function () {
+              console.log('connection is ready');
+            });
         }
     </script>
-<script>
-    let stompClient = null
-    function connectStomp() {
-    const socket = new SockJS('/ws');
-      stompClient = Stomp.over(socket);
-
-      stompClient.connect({}, function (frame) {
-        console.log('Connected:', frame);
-
-        stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function () {
-          console.log('connection is ready');
-        });
-    }
-</script>
 </head>
 
 <body class="flex h-screen">
 <div class="sidebar-overlay"></div>
-<aside class="sidebar w-64 p-6 flex flex-col justify-between fixed lg:relative h-screen overflow-y-auto">
+<aside class="sidebar w-72 p-4 flex flex-col justify-between fixed lg:relative h-screen overflow-y-auto">
     <div>
-        <div class="flex items-center mb-10 space-x-2">
-            <img src="/images/justjavaLogo.svg" class="w-8 h-8">
-            <h1 class="text-2xl font-bold text-white mt-1 brand-title">TheSoftwareEngineers</h1>
+        <div class="flex items-center mb-8 space-x-3">
+            <img src="/images/justjavaLogo.svg" class="w-8 h-8 flex-shrink-0">
+            <h1 class="text-lg font-bold text-white leading-tight brand-title">The Software<br>Engineers</h1>
         </div>
-        <nav class="space-y-4">
-            <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+        <nav class="space-y-2">
+            <a class="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
                th:href="@{/dashboard}"
                th:classappend="${currentPath == '/dashboard'} ? ' bg-blue-600 text-white'">
-                <span class="material-icons mr-3">dashboard</span>
-                <span>Dashboard</span>
+                <span class="material-icons mr-3 text-lg">dashboard</span>
+                <span class="text-sm font-medium">Dashboard</span>
             </a>
 
             <!-- Process-specific menu items (will be repeated for each process) -->
             <div th:each="name : ${session.processNames}">
-                <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                <a class="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
                    th:href="@{'/processes/' + ${name.processKey}}"
                    th:classappend="${#strings.concat('/processes/', name.processKey) == currentPath} ? ' bg-blue-600 text-white'">
-                    <span class="material-icons mr-3">sync_alt</span>
-                    <span th:text="${name.processName}">Process</span>
+                    <span class="material-icons mr-3 text-lg">sync_alt</span>
+                    <span class="text-sm font-medium truncate" th:text="${name.processName}">Process</span>
                 </a>
-                <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                <a class="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
                    th:href="@{'/tasks/' + ${name.processKey}}"
                    th:classappend="${#strings.concat('/tasks/', name.processKey) == currentPath} ? ' bg-blue-600 text-white'">
-                    <span class="material-icons mr-3">task_alt</span>
-                    <span th:text="${#strings.arraySplit(name.processName, ' ')[0] + ' Active Tasks'}">Active Tasks</span>
+                    <span class="material-icons mr-3 text-lg">task_alt</span>
+                    <span class="text-sm font-medium truncate" th:text="${#strings.arraySplit(name.processName, ' ')[0] + ' Tasks'}">Active Tasks</span>
                 </a>
-                <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                <a class="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
                    th:href="@{'/forms/' + ${name.processKey}}"
                    th:classappend="${#strings.concat('/forms/', name.processKey) == currentPath} ? ' bg-blue-600 text-white'">
-                    <span class="material-icons mr-3">note_add</span>
-                    <span>Manage Forms</span>
+                    <span class="material-icons mr-3 text-lg">note_add</span>
+                    <span class="text-sm font-medium">Manage Forms</span>
                 </a>
             </div>
 
             <!-- Static menu items (not repeated) -->
-            <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg" th:href="@{/report}"
+            <a class="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200" th:href="@{/report}"
                th:classappend="${currentPath == '/report'} ? ' bg-blue-600 text-white'">
-                <span class="material-icons mr-3">bar_chart</span>
-                <span>Reports</span>
+                <span class="material-icons mr-3 text-lg">bar_chart</span>
+                <span class="text-sm font-medium">Reports</span>
             </a>
-            <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg" th:href="@{/users}"
+            <a class="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200" th:href="@{/users}"
                th:classappend="${currentPath == '/users'} ? ' bg-blue-600 text-white'">
-                <span class="material-icons mr-3">group</span>
-                <span>User Management</span>
+                <span class="material-icons mr-3 text-lg">group</span>
+                <span class="text-sm font-medium">User Management</span>
             </a>
-            <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg" th:href="@{/invoice}"
+            <a class="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200" th:href="@{/invoice}"
                th:classappend="${currentPath == '/invoice'} ? ' bg-blue-600 text-white'">
-                <span class="material-icons mr-3">receipt_long</span>
-                <span>Invoices</span>
+                <span class="material-icons mr-3 text-lg">receipt_long</span>
+                <span class="text-sm font-medium">Invoices</span>
             </a>
 
-            <a th:if="${session.isManager}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+            <a th:if="${session.isManager}" class="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
                th:href="@{/invoice/invoice-review}"
                th:classappend="${currentPath == '/invoice/invoice-review'} ? ' bg-blue-600 text-white'">
-                <span class="material-icons mr-3">receipt_long</span>
-                <span>Invoice Review</span>
+                <span class="material-icons mr-3 text-lg">receipt_long</span>
+                <span class="text-sm font-medium">Invoice Review</span>
             </a>
 
-            <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg" th:href="@{/chat}"
+            <a class="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200" th:href="@{/chat}"
                th:classappend="${currentPath == '/chat'} ? ' bg-blue-600 text-white'">
-                <span class="material-icons mr-3">chat</span>
-                <span>Chat</span>
+                <span class="material-icons mr-3 text-lg">chat</span>
+                <span class="text-sm font-medium">Chat</span>
             </a>
-            <a class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg" th:href="@{/gallery}"
+            <a class="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200" th:href="@{/gallery}"
                th:classappend="${currentPath == '/gallery' or currentPath == '/addFile'} ? ' bg-blue-600 text-white'">
-                <span class="material-icons mr-3">collections</span>
-                <span>Gallery</span>
+                <span class="material-icons mr-3 text-lg">collections</span>
+                <span class="text-sm font-medium">Gallery</span>
             </a>
         </nav>
     </div>

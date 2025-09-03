@@ -75,6 +75,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // === FORM SUBMISSION HANDLING ===
+  initializeFormSubmissionHandling();
+
   // === GALLERY PAGE FUNCTIONALITY ===
   if (window.location.pathname.includes('/gallery')) {
     initializeGalleryFunctionality();
@@ -448,6 +451,129 @@ document.addEventListener('DOMContentLoaded', function () {
   body.classList.add('light-mode');
   html.classList.remove('dark');
 });
+
+// === FORM SUBMISSION HANDLING ===
+function initializeFormSubmissionHandling() {
+  console.log('Initializing form submission handling');
+
+  // Function to attach event listeners to the form and button
+  function attachFormListeners() {
+    const form = document.getElementById('formContainer');
+    const startButton = document.getElementById('startButton');
+
+    console.log('Looking for form elements:', {
+      form: !!form,
+      startButton: !!startButton
+    });
+
+    if (form && startButton) {
+      console.log('Form elements found, attaching listeners');
+
+      // Remove any existing listeners to prevent duplicates
+      form.removeEventListener('submit', handleFormSubmit);
+      startButton.removeEventListener('click', handleButtonClick);
+
+      // Add event listeners
+      form.addEventListener('submit', handleFormSubmit);
+      startButton.addEventListener('click', handleButtonClick);
+    } else {
+      console.log('Form elements not found, will retry...');
+      // Retry after a short delay if elements aren't found yet
+      setTimeout(attachFormListeners, 100);
+    }
+  }
+
+  // Handle form submission
+  function handleFormSubmit(e) {
+    console.log('Form submit event triggered');
+    const startButton = document.getElementById('startButton');
+
+    if (startButton && !startButton.disabled) {
+      console.log('Setting button to processing state');
+      startButton.disabled = true;
+      startButton.classList.add('processing');
+    }
+  }
+
+  // Handle button click
+  function handleButtonClick(e) {
+    console.log('Button click event triggered');
+    const startButton = e.target;
+
+    if (startButton && !startButton.disabled) {
+      console.log('Button clicked, will process on form submit');
+    }
+  }
+
+  // Reset button state after HTMX requests
+  document.body.addEventListener('htmx:afterRequest', function(event) {
+    console.log('HTMX after request event:', event.detail);
+    if (event.detail.target && event.detail.target.id === 'formContainer') {
+      console.log('Form container updated, resetting button state');
+      setTimeout(() => {
+        const newButton = document.getElementById('startButton');
+        if (newButton) {
+          console.log('Resetting button state to normal');
+          newButton.disabled = false;
+          newButton.classList.remove('processing');
+          // Reattach listeners to the new form
+          attachFormListeners();
+        }
+      }, 50);
+    }
+  });
+
+  // Handle any errors and reset button state
+  document.body.addEventListener('htmx:responseError', function(event) {
+    console.log('HTMX response error:', event.detail);
+    if (event.detail.target && event.detail.target.id === 'formContainer') {
+      console.log('Form error, resetting button state');
+      const startButton = document.getElementById('startButton');
+      if (startButton) {
+        startButton.disabled = false;
+        startButton.classList.remove('processing');
+      }
+    }
+  });
+
+  // Handle HTMX before request (additional safety)
+  document.body.addEventListener('htmx:beforeRequest', function(event) {
+    console.log('HTMX before request event:', event.detail);
+    if (event.detail.target && event.detail.target.id === 'formContainer') {
+      console.log('Form about to submit via HTMX');
+      const startButton = document.getElementById('startButton');
+      if (startButton) {
+        console.log('Setting button to processing state via HTMX');
+        startButton.disabled = true;
+        startButton.classList.add('processing');
+      }
+    }
+  });
+
+  // Initial attachment
+  attachFormListeners();
+
+  // Also try to attach listeners when DOM content changes (for dynamic content)
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach(function(node) {
+          if (node.nodeType === 1) { // Element node
+            if (node.id === 'formContainer' || node.querySelector('#formContainer')) {
+              console.log('Form container added to DOM, attaching listeners');
+              setTimeout(attachFormListeners, 50);
+            }
+          }
+        });
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+}
 
 // === GALLERY FUNCTIONALITY ===
 function initializeGalleryFunctionality() {
