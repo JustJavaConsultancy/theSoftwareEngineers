@@ -16,7 +16,7 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
             <div class="card p-4 md:p-6 rounded-xl dashboard-metric-card">
-                <p class="text-slate-300">Active Cases</p>
+                <p class="text-slate-300">Active Projects</p>
                 <div class="flex justify-between items-end">
                     <p th:text="${processInstancesCount}" class="text-3xl md:text-5xl font-bold text-white mt-2">12</p>
                     <a th:href="@{/processes}" class="view-all-link">
@@ -46,7 +46,7 @@
                 </div>
             </div>
             <div class="card p-4 md:p-6 rounded-xl dashboard-metric-card">
-                <p class="text-slate-300">Completed Cases</p>
+                <p class="text-slate-300">Completed Projects</p>
                 <div class="flex justify-between items-end">
                     <p th:text="${completedProcessCount}" class="text-3xl md:text-5xl font-bold text-white mt-2">145</p>
                     <a th:href="@{/processes}" class="view-all-link">
