@@ -31,7 +31,7 @@ public class OnlineEventListener {
         String userId = getUserId(event);
         if (userId != null) {
             onlineUsers.add(userId);
-            System.out.println("User connected to Web Socket: " + getUserId(event));
+            //System.out.println("User connected to Web Socket: " + getUserId(event));
             messagingTemplate.convertAndSend("/topic/online", getStatusPayload(userId, true));
         }
     }
@@ -41,7 +41,7 @@ public class OnlineEventListener {
         String userId = getUserId(event);
         if (userId != null) {
             onlineUsers.remove(userId);
-            System.out.println("User disconnected from Web Socket: " + getUserFullName(event));
+            //System.out.println("User disconnected from Web Socket: " + getUserFullName(event));
             messagingTemplate.convertAndSend("/topic/online", getStatusPayload(userId, false));
         }
     }

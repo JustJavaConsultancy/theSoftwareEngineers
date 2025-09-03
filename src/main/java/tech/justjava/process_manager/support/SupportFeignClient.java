@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-@FeignClient(name = "supportFeignClient", url="https://genaiandrag.onrender.com")
+@FeignClient(name = "supportFeignClient", url="http://localhost:8089")
 public interface SupportFeignClient {
     @PostMapping("/support")
    String postAiMessage(@RequestBody String request);

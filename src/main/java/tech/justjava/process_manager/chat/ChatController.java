@@ -37,8 +37,8 @@ public class ChatController {
     public String chatPage(Model model)
     {
         List<UserDTO> users = chatService.getUsers();
-        System.out.println(users);
-        System.out.println(authenticationManager.get("name"));
+        //System.out.println(users);
+        //System.out.println(authenticationManager.get("name"));
         model.addAttribute("currentUser",authenticationManager.get("sub"));
         model.addAttribute("currentUserName",authenticationManager.get("name"));
         model.addAttribute("users",users);

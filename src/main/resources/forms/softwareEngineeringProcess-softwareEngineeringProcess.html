@@ -1,0 +1,34 @@
+<form id="formContainer" th:action="@{http://localhost:9010/processes/start}" th:object="${formData}" method="post" hx-post="http://localhost:9010/processes/start" hx-target="#formContainer" hx-swap="outerHTML">
+    <input type="hidden" th:value="${id}" id="id" name="id">
+
+    <div class="row mb-3">
+        <div class="col mb-3">
+            <label for="projectOwner" class="block text-sm font-medium text-slate-300 mb-2">Project Owner</label>
+            <input type="text" th:value="${projectOwner}" name="projectOwner" id="projectOwner" class="form-input w-full px-4 py-3 rounded-lg border pr-12" placeholder="Project Owner" required>
+        </div>
+        <div class="col mb-3">
+            <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email</label>
+            <input type="text" th:value="${email}" name="email" id="email" class="form-input w-full px-4 py-3 rounded-lg border pr-12" placeholder="Email" required>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col mb-3">
+            <label for="phoneNumber" class="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
+            <input type="text" th:value="${phoneNumber}" name="phoneNumber" id="phoneNumber" class="form-input w-full px-4 py-3 rounded-lg border pr-12" placeholder="Phone Number" required>
+        </div>
+        <div class="col mb-3">
+            <label for="address" class="block text-sm font-medium text-slate-300 mb-2">Address</label>
+            <input type="text" th:value="${address}" name="address" id="address" class="form-input w-full px-4 py-3 rounded-lg border pr-12" placeholder="Address" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="requirement" class="block text-sm font-medium text-slate-300 mb-2">Requirement</label>
+        <textarea th:text="${requirement}" name="requirement" id="requirement" class="form-input w-full px-4 py-3 rounded-lg border pr-12" rows="4" placeholder="Enter your Detailed Requirement" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="background-color: #87CEEB;">
+        Start
+    </button>
+</form>

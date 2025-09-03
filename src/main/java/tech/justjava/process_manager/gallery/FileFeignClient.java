@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
-@FeignClient (name = "file-service", url = "https://genaiandrag.onrender.com", configuration = FeignConfig.class)
+@FeignClient (name = "file-service", url = "http://localhost:8089", configuration = FeignConfig.class)
 public interface FileFeignClient {
         @GetMapping("/download/{id}")
         ResponseEntity<Resource > downloadFile(@PathVariable("id") String id);
