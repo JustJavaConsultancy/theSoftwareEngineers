@@ -26,57 +26,18 @@
 
         <!-- Display View (Read-only) -->
         <div id="requirementDisplay" class="p-6 max-h-96 overflow-y-auto document-content">
-            <div th:utext="${requirement}"></div>
+            <div th:utext="${aiRequirementAnalysis}"></div>
         </div>
 
         <!-- Edit View (Textarea for editing) -->
         <div id="requirementEdit" class="hidden p-4">
             <textarea id="requirement" name="requirement"
                       class="w-full h-96 p-4 border border-slate-300 rounded-lg font-mono text-sm"
-                      th:text="${requirement}" required></textarea>
+                      th:text="${aiRequirementAnalysis}" required></textarea>
             <p class="text-sm text-slate-500 mt-2">Edit the requirement document as needed. HTML tags are supported.</p>
         </div>
     </div>
 
-    <!-- Follow-up Questions Section -->
-    <div class="mb-8 bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden">
-        <div class="bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-4">
-            <h2 class="text-xl font-semibold text-white">Follow-up Questions</h2>
-        </div>
-        <div class="p-6">
-            <ul class="space-y-3">
-                <li th:each="question : ${aiRequirementAnalysis.followUpQuestions}"
-                    class="flex items-start">
-                    <span class="flex-shrink-0 w-5 h-5 mt-1 mr-3 text-purple-600 dark:text-purple-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                    </span>
-                    <span class="text-slate-700 dark:text-slate-300" th:text="${question}"></span>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Reasons Section -->
-    <div class="mb-8 bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden">
-        <div class="bg-gradient-to-r from-emerald-600 to-emerald-800 px-6 py-4">
-            <h2 class="text-xl font-semibold text-white">Analysis Reasons</h2>
-        </div>
-        <div class="p-6">
-            <ul class="space-y-3">
-                <li th:each="reason : ${aiRequirementAnalysis.reasons}"
-                    class="flex items-start">
-                    <span class="flex-shrink-0 w-5 h-5 mt-1 mr-3 text-emerald-600 dark:text-emerald-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                    </span>
-                    <span class="text-slate-700 dark:text-slate-300" th:text="${reason}"></span>
-                </li>
-            </ul>
-        </div>
-    </div>
 
     <!-- Submit Button -->
     <div class="text-center">

@@ -1,204 +1,133 @@
-<form id="formContainer"
-      th:action="@{http://localhost:9010/tasks/complete}"
-      th:object="${formData}"
-      method="post"
-      hx-post="http://localhost:9010/tasks/complete"
-      hx-target="#formContainer"
-      hx-swap="outerHTML"
-      hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'">
+<form id="formContainer" th:action="@{http://localhost:9010/tasks/complete}" th:object="${formData}" method="post"
+      hx-post="http://localhost:9010/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML"
+      hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'"
+      class="max-w-4xl mx-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-lg">
 
   <input type="hidden" th:value="${id}" id="id" name="id">
+  <input type="hidden" value="FormTask_12" id="nextPage" name="nextPage">
 
-  <div class="mb-6">
-    <!-- Display area with rendered HTML -->
-    <div id="notesDisplay1"
-         class="form-input w-full px-4 py-3 rounded-lg border pr-12 bg-white"
-         style="min-height: 350px; font-family: inherit;"></div>
-
-    <!-- Hidden textarea for form submission -->
-    <textarea id="notes"
-              name="architecture"
-              class="hidden form-input w-full px-4 py-3 rounded-lg border pr-12"
-              th:utext="${architecture}"></textarea>
+  <!-- Header Section -->
+  <div class="mb-8 text-center">
+    <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Document Requirements Review</h1>
+    <p class="text-slate-600 dark:text-slate-300">Review and edit the requirement document below</p>
   </div>
 
-  <div class="flex justify-end space-x-3">
-    <!-- Download as PDF Button -->
-    <button type="button"
-            id="downloadBtn"
-            class="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
-            onclick="downloadAsPDF()">
-      Download as PDF
-    </button>
+  <!-- Requirement Document Section - Now Editable -->
+  <div class="mb-8 bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-4 flex justify-between items-center">
+      <h2 class="text-xl font-semibold text-white">Requirement Document</h2>
+      <button type="button" id="toggleViewBtn" class="text-blue-100 hover:text-white text-sm font-medium flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        </svg>
+        Edit Mode
+      </button>
+    </div>
 
-    <!-- Edit Button -->
-    <button type="button"
-            id="editBtn"
-            class="px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300"
-            onclick="toggleEdit()">
-      Edit
-    </button>
+    <!-- Display View (Read-only) -->
+    <div id="architecture" class="p-6 max-h-96 overflow-y-auto document-content">
+      <div th:utext="${architecture}"></div>
+    </div>
 
-    <!-- Submit Button -->
+    <!-- Edit View (Textarea for editing) -->
+    <div id="requirementEdit" class="hidden p-4">
+            <textarea id="requirement" name="requirement"
+                      class="w-full h-96 p-4 border border-slate-300 rounded-lg font-mono text-sm"
+                      th:text="${aiRequirementAnalysis}" required></textarea>
+      <p class="text-sm text-slate-500 mt-2">Edit the Architecture document as needed. HTML tags are supported.</p>
+    </div>
+  </div>
+
+
+  <!-- Submit Button -->
+  <div class="text-center">
     <button type="submit"
-            class="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
-      Complete
+            class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold rounded-lg shadow-md transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+      Complete Review
     </button>
   </div>
-</form>
 
-<!-- Load jsPDF and AutoTable -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <!-- Toggle between view and edit mode JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const toggleBtn = document.getElementById('toggleViewBtn');
+      const displayView = document.getElementById('requirementDisplay');
+      const editView = document.getElementById('requirementEdit');
 
-<script>
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', function() {
-    const textarea = document.getElementById('notes');
-    const notesDisplay = document.getElementById('notesDisplay1');
-    notesDisplay.innerHTML = textarea.value;
-  });
-
-  function toggleEdit() {
-    const textarea = document.getElementById('notes');
-    const notesDisplay = document.getElementById('notesDisplay1');
-    const editBtn = document.getElementById('editBtn');
-
-    if (textarea.classList.contains('hidden')) {
-      textarea.value = notesDisplay.innerHTML;
-      textarea.classList.remove('hidden');
-      notesDisplay.classList.add('hidden');
-      editBtn.textContent = 'Cancel';
-      editBtn.classList.remove('bg-gray-200', 'hover:bg-gray-300');
-      editBtn.classList.add('bg-red-100', 'hover:bg-red-200', 'text-red-800');
-    } else {
-      notesDisplay.innerHTML = textarea.value;
-      textarea.classList.add('hidden');
-      notesDisplay.classList.remove('hidden');
-      editBtn.textContent = 'Edit';
-      editBtn.classList.remove('bg-red-100', 'hover:bg-red-200', 'text-red-800');
-      editBtn.classList.add('bg-gray-200', 'hover:bg-gray-300');
-    }
-  }
-
-  async function downloadAsPDF() {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
-    const contentDiv = document.getElementById('notesDisplay1');
-
-    // Page margins
-    const margin = 50;
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    let y = margin;
-    const defaultLineHeight = 16;
-
-    // === Add Logo + Company Name ===
-    const logoUrl = "/images/justjavaLogo.svg"; // served from static folder
-    const logo = await loadImage(logoUrl);
-    pdf.addImage(logo, "SVG", margin, 20, 40, 40); // logo size 40x40
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(18);
-    pdf.setTextColor("");
-    pdf.text("", margin + 50, 45); // company name beside logo
-    y = 90; // push content below header
-
-    function checkPageBreak(extra = 0) {
-      if (y + extra > pageHeight - margin) {
-        pdf.addPage();
-        y = margin;
-      }
-    }
-
-    function addText(text, fontSize = 12, bold = false, indent = 0, spacing = defaultLineHeight, extraGap = 0) {
-      pdf.setFont("helvetica", bold ? "bold" : "normal");
-      pdf.setFontSize(fontSize);
-      const lines = pdf.splitTextToSize(text, pageWidth - 2 * margin - indent);
-
-      if (extraGap > 0) y += extraGap;
-
-      lines.forEach(line => {
-        checkPageBreak(spacing);
-        pdf.text(line, margin + indent, y);
-        y += spacing;
-      });
-
-      y += 4;
-    }
-
-    function processNode(node) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        if (node.textContent.trim()) addText(node.textContent.trim(), 12, false, 0, 16, 4);
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const tag = node.tagName.toLowerCase();
-
-        if (tag === "h1") { addText(node.textContent.trim(), 22, true, 0, 28, 12); }
-        else if (tag === "h2") { addText(node.textContent.trim(), 18, true, 0, 24, 10); }
-        else if (tag === "h3") { addText(node.textContent.trim(), 15, true, 0, 20, 8); }
-        else if (tag === "p") { addText(node.textContent.trim(), 12, false, 0, 18, 6); }
-        else if (tag === "li") { addText("• " + node.textContent.trim(), 12, false, 15, 18, 2); }
-        else if (tag === "ul" || tag === "ol") {
-          y += 4;
-          node.childNodes.forEach(child => processNode(child));
-          y += 6;
-        }
-        else if (tag === "table") {
-          const rows = [];
-          node.querySelectorAll("tr").forEach(tr => {
-            const row = [];
-            tr.querySelectorAll("td, th").forEach(td => {
-              row.push(td.innerText.trim());
-            });
-            rows.push(row);
-          });
-
-          if (rows.length > 0) {
-            y += 10;
-            checkPageBreak(40);
-            pdf.autoTable({
-              head: [rows[0]],
-              body: rows.slice(1),
-              startY: y,
-              margin: { left: margin, right: margin },
-              styles: { font: "helvetica", fontSize: 10, cellPadding: 5 },
-              headStyles: { fillColor: [66, 133, 244], textColor: 255, halign: "center" }
-            });
-            y = pdf.lastAutoTable.finalY + 20;
-          }
+      toggleBtn.addEventListener('click', function() {
+        if (displayView.classList.contains('hidden')) {
+          // Switching to view mode
+          displayView.classList.remove('hidden');
+          editView.classList.add('hidden');
+          toggleBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        Edit Mode
+                    `;
         } else {
-          node.childNodes.forEach(child => processNode(child));
+          // Switching to edit mode
+          displayView.classList.add('hidden');
+          editView.classList.remove('hidden');
+          toggleBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        View Mode
+                    `;
         }
-      }
-    }
-
-    // Traverse and render
-    contentDiv.childNodes.forEach(node => processNode(node));
-
-    // Footer with page numbers
-    const pageCount = pdf.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      pdf.setPage(i);
-      pdf.setFontSize(10);
-      pdf.setTextColor(150);
-      pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 20, { align: "right" });
-    }
-
-    pdf.save("formatted-document.pdf");
-  }
-
-  function loadImage(url) {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.crossOrigin = "Anonymous";
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        resolve(canvas.toDataURL("image/png"));
-      };
-      img.src = url;
+      });
     });
-  }
-</script>
+  </script>
+
+  <!-- Custom Styles for Document Content -->
+  <style>
+    .document-content {
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.6;
+      color: #374151;
+    }
+    .document-content section {
+      margin-bottom: 1.5rem;
+    }
+    .document-content header {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      color: #1e40af;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+    }
+    .document-content article {
+      margin-bottom: 1.25rem;
+    }
+    .document-content article header {
+      font-size: 1.1rem;
+      color: #374151;
+      border-bottom: 1px dashed #e5e7eb;
+    }
+    .document-content ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin: 0.5rem 0;
+    }
+    .document-content li {
+      margin-bottom: 0.25rem;
+    }
+    .document-content p {
+      margin-bottom: 0.75rem;
+    }
+    .dark .document-content {
+      color: #e5e7eb;
+    }
+    .dark .document-content header {
+      color: #93c5fd;
+      border-bottom-color: #4b5563;
+    }
+    .dark .document-content article header {
+      color: #d1d5db;
+      border-bottom-color: #4b5563;
+    }
+  </style>
+</form>

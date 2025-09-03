@@ -1,0 +1,101 @@
+<form id="storiesForm"
+      th:action="@{http://localhost:9010/tasks/complete}"
+      th:object="${stories}"
+      method="post"
+      hx-post="http://localhost:9010/tasks/complete"
+      hx-target="#storiesForm"
+      hx-swap="outerHTML"
+      class="space-y-6">
+
+  <input type="hidden" th:value="${id}" id="id" name="id">
+  <!-- Total count -->
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-slate-300 mb-2">Total Stories</label>
+    <input type="number" th:value="*{total}" name="total"
+           class="form-input w-full px-4 py-3 rounded-lg border"
+           readonly>
+  </div>
+
+  <!-- Loop over user stories -->
+  <div th:each="story, iterStat : *{user_stories}" class="border rounded-2xl shadow p-6 mb-6 bg-white">
+
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold text-slate-700" th:text="'User Story ' + ${story.id}"></h2>
+      <button type="button"
+              class="toggleEdit bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg transition"
+              th:attr="data-target=${'edit-' + iterStat.index}">
+        Edit
+      </button>
+    </div>
+
+    <!-- View Mode -->
+    <div th:id="${'view-' + iterStat.index}" class="space-y-3">
+      <p class="text-gray-700"><strong>Story:</strong> <span th:text="${story.story}"></span></p>
+      <div>
+        <strong>Acceptance Criteria:</strong>
+        <ul class="list-disc list-inside text-gray-600 mt-1">
+          <li th:each="criteria : ${story.acceptance_criteria}" th:text="${criteria}"></li>
+        </ul>
+      </div>
+      <p class="text-gray-700"><strong>Priority:</strong> <span th:text="${story.priority}"></span></p>
+    </div>
+
+    <!-- Edit Mode (Hidden by default) -->
+    <div th:id="${'edit-' + iterStat.index}" class="hidden space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Story</label>
+        <textarea th:field="*{user_stories[__${iterStat.index}__].story}"
+                  rows="3"
+                  class="form-input w-full px-4 py-3 rounded-lg border"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Acceptance Criteria</label>
+        <div th:each="criteria, ci : ${story.acceptance_criteria}" class="mb-2">
+          <input type="text"
+                 th:field="*{user_stories[__${iterStat.index}__].acceptance_criteria[__${ci.index}__]}"
+                 class="form-input w-full px-4 py-2 rounded-lg border"/>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Priority</label>
+        <select th:field="*{user_stories[__${iterStat.index}__].priority}"
+                class="form-input w-full px-4 py-3 rounded-lg border">
+          <option>Must have</option>
+          <option>Should have</option>
+          <option>Could have</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <button type="submit"
+          class="flex items-center bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-6 rounded-lg transition-colors duration-200">
+    <span class="material-icons mr-2">save</span>
+    Save All Stories
+  </button>
+</form>
+
+<!-- Small script for toggling view/edit -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".toggleEdit").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.getAttribute("data-target");
+        const editSection = document.getElementById(targetId);
+        const viewSection = document.getElementById(targetId.replace("edit-", "view-"));
+        if (editSection.classList.contains("hidden")) {
+          editSection.classList.remove("hidden");
+          viewSection.classList.add("hidden");
+          btn.textContent = "Cancel";
+        } else {
+          editSection.classList.add("hidden");
+          viewSection.classList.remove("hidden");
+          btn.textContent = "Edit";
+        }
+      });
+    });
+  });
+</script>

@@ -1,0 +1,21 @@
+<form id="formContainer" th:action="@{http://localhost:9010/tasks/complete}" th:object="${formData}" method="post" hx-post="http://localhost:9010/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML">
+  <input type="hidden" th:value="${id}" id="id" name="id">
+  <div class="row mb-3">
+    <div class="col mb-3">
+      <label for="fullName" class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
+      <input type="text" th:value="${fullName}" name="fullName" id="fullName" class="form-input w-full px-4 py-3 rounded-lg border pr-12" placeholder="Enter your full name" required>
+    </div>
+    <div class="col">
+      <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email</label>
+      <input type="email" th:value="${email}" id="email" name="email" class="form-input w-full px-4 py-3 rounded-lg border pr-12" placeholder="Enter your email" required>
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="message" class="block text-sm font-medium text-slate-300 mb-2">Message</label>
+    <textarea th:text="${message}" id="message" name="message" class="form-input w-full px-4 py-3 rounded-lg border pr-12" rows="4" placeholder="Your message"></textarea>
+  </div>
+  <button type="submit" class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg transition-colors duration-200">
+    <span class="material-icons mr-2">play_arrow</span>
+    Complete Task
+  </button>
+</form>
