@@ -28,7 +28,11 @@
         <textarea th:text="${requirement}" name="requirement" id="requirement" class="form-input w-full px-4 py-3 rounded-lg border pr-12" rows="4" placeholder="Enter your Detailed Requirement" required></textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary" style="background-color: #87CEEB;">
-        Start
+    <button type="submit" id="startButton" class="btn-start">
+        <span class="default-text">Start Process</span>
+        <span class="processing-text">
+            <span class="loading-spinner"></span>
+            Processing...
+        </span>
     </button>
 </form>
