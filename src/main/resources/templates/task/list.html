@@ -59,8 +59,8 @@
                                 <a th:if="${task.state == 'created'}" th:href="@{'/tasks/add/'+${task.id}}" class="dropdown-item">
                                     <span>Claim Task</span>
                                 </a>
-                                <a th:if="${task.state != 'created'}" th:href="@{/tasks/add}" class="dropdown-item">
-                                    <span>Complete Task</span>
+                                <a th:if="${task.state != 'created'}" th:href="@{'/tasks/add/'+${task.id}}" class="dropdown-item">
+                                    <span>View</span>
                                 </a>
                             </div>
                         </div>
