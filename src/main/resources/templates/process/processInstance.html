@@ -95,7 +95,7 @@
             <div class="card-content">
               <div class="flex justify-between items-start mb-3">
                 <div class="flex-grow-1">
-                  <h3 class="font-bold text-lg text-white mb-1" th:text="${@stringUtils.camelToWords(process.processDefinitionName)}">Employee Onboarding</h3>
+                  <h3 class="font-bold text-lg text-white mb-1" th:text="${@stringUtils.camelToWords(process.processVariables['projectName'])}">Employee Onboarding</h3>
                 </div>
                 <span class="status-pill "
                       th:classappend="${process.ended ? 'status-completed' : 'status-inprogress'}"
@@ -122,7 +122,7 @@
                   <i class="fas fa-clock text-yellow-400 mr-3 w-4"></i>
                   <div>
                     <p class="text-xs text-slate-400">Status</p>
-                    <p class="text-sm font-medium">In Progress</p>
+                    <p class="text-sm font-medium" th:text="${'In Progress('+ process.processVariables['currentTask'] +')'}">In Progress</p>
                   </div>
                 </div>
                 <div class="flex items-center">

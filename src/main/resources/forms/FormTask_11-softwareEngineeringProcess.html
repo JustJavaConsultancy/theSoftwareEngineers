@@ -1,102 +1,289 @@
 <form id="formContainer" th:action="@{http://localhost:9010/tasks/complete}" th:object="${formData}" method="post"
       hx-post="http://localhost:9010/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML"
-      class="form-section">
+      className="form-section">
+  <style>
+    #completeButton .processing-text {
+      display: none;
+    }
+
+    #completeButton.processing .default-text {
+      display: none;
+    }
+
+    #completeButton.processing .processing-text {
+      display: inline-block;
+    }
+
+
+    h1, h2, h3 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      color: #1a365d;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      color: #2c5282;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      color: #2d3748;
+    }
+
+    p, ul, li {
+      margin-bottom: 10px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.85rem; /* smaller and readable */
+      table-layout: auto; /* avoid wrapping issues */
+    }
+
+    table th,
+    table td {
+      border: 1px solid #ddd;
+      padding: 8px 10px;
+      white-space: nowrap; /* prevent wrapping */
+      text-align: left;
+      vertical-align: top;
+    }
+
+    table th {
+      background-color: #edf2f7;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+
 
   <input type="hidden" th:value="${id}" id="id" name="id">
   <input type="hidden" value="FormTask_11" id="nextPage" name="nextPage">
 
   <!-- Header Section -->
-  <div class="form-header">
+  <div className="form-header">
     <h1>Document Requirements Review</h1>
     <p>Review and edit the requirement document below</p>
   </div>
 
   <!-- Form Content -->
-  <div class="form-content">
+  <div className="form-content">
     <!-- Requirement Document Section -->
-    <div class="mb-6">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-semibold text-gray-800">Requirement Document</h2>
-        <button type="button" id="toggleViewBtn" class="toggle-btn flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+    <div className="mb-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold text-gray-800">Requirement Document</h2>
+        <button type="button" id="toggleViewBtn" className="toggle-btn flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+               stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
           </svg>
           Edit Mode
+        </button>
+        <button type="button"
+                id="downloadBtn"
+                className="px-4 py-2 toggle-btn rounded-md "
+                onClick="downloadAsPDF()">
+          Download as PDF
         </button>
       </div>
 
       <!-- Display View (Read-only) -->
-      <div id="requirementDisplay" class="document-content max-h-96 overflow-y-auto">
-        <div th:utext="${aiRequirementAnalysis}"></div>
+      <div id="requirementDisplay" className="document-content max-h-96 overflow-y-auto">
+        <div th:utext="${architecture}"></div>
       </div>
 
       <!-- Edit View (Textarea for editing) -->
-      <div id="requirementEdit" class="hidden">
-                <textarea id="requirement" name="requirement"
-                          class="form-textarea w-full h-96"
-                          th:text="${aiRequirementAnalysis}" required></textarea>
-        <p class="text-sm text-gray-600 mt-2">Edit the requirement document as needed. HTML tags are supported.</p>
+      <div id="requirementEdit" className="hidden">
+                <textarea id="architecture" name="architecture"
+                          className="form-textarea w-full h-96"
+                          th:text="${architecture}" required></textarea>
+        <p className="text-sm text-gray-600 mt-2">Edit the requirement document as needed. HTML tags are
+          supported.</p>
       </div>
     </div>
 
     <!-- Submit Button -->
-    <div class="text-center mt-8">
-      <button type="submit" id="completeButton" class="btn-complete">
-        <span class="default-text">Complete Review</span>
-        <span class="processing-text">
-                    <span class="loading-spinner"></span>
+    <div className="text-center mt-8">
+      <button type="submit" id="completeButton" className="btn-complete">
+        <span className="default-text">Complete Review</span>
+        <span className="processing-text">
+                    <span className="loading-spinner"></span>
                     Processing...
                 </span>
       </button>
     </div>
   </div>
 
-  <!-- Toggle between view and edit mode JavaScript -->
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const toggleBtn = document.getElementById('toggleViewBtn');
-        const displayView = document.getElementById('requirementDisplay');
-        const editView = document.getElementById('requirementEdit');
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggleBtn = document.getElementById('toggleViewBtn');
+      const displayView = document.getElementById('requirementDisplay');
+      const editView = document.getElementById('requirementEdit');
+      const form = document.getElementById('formContainer');
+      const completeButton = document.getElementById('completeButton');
 
-        if (toggleBtn && displayView && editView) {
-            toggleBtn.addEventListener('click', function() {
-                if (displayView.classList.contains('hidden')) {
-                    // Switching to view mode
-                    displayView.classList.remove('hidden');
-                    editView.classList.add('hidden');
-                    toggleBtn.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                        Edit Mode
-                    `;
-                } else {
-                    // Switching to edit mode
-                    displayView.classList.add('hidden');
-                    editView.classList.remove('hidden');
-                    toggleBtn.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        View Mode
-                    `;
-                }
-            });
-        }
+      // Toggle edit/view
+      toggleBtn.addEventListener('click', function () {
+        displayView.classList.toggle('hidden');
+        editView.classList.toggle('hidden');
+        toggleBtn.textContent = displayView.classList.contains('hidden') ? 'View Mode' : 'Edit Mode';
+      });
 
-        // Handle form submission with button state
-        const form = document.getElementById('formContainer');
-        const completeButton = document.getElementById('completeButton');
-
-        if (form && completeButton) {
-            form.addEventListener('submit', function(e) {
-                if (completeButton && !completeButton.disabled) {
-                    completeButton.disabled = true;
-                    completeButton.classList.add('processing');
-                }
-            });
-        }
+      // Button state on submit
+      form.addEventListener('submit', function () {
+        completeButton.disabled = true;
+        completeButton.classList.add('processing');
+      });
     });
+
+    // PDF export
+    async function downloadAsPDF() {
+      const {jsPDF} = window.jspdf;
+      const pdf = new jsPDF({unit: 'pt', format: 'a4'});
+      const contentDiv = document.getElementById('requirementDisplay');
+
+      // Page margins
+      const margin = 50;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      let y = margin;
+      const defaultLineHeight = 16;
+
+      // === Add Logo + Company Name ===
+      const logoUrl = "/images/justjavaLogo.svg"; // served from static folder
+      const logo = await loadImage(logoUrl);
+      pdf.addImage(logo, "SVG", margin, 20, 40, 40); // logo size 40x40
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(18);
+      pdf.setTextColor("");
+      pdf.text("", margin + 50, 45); // company name beside logo
+      y = 90; // push content below header
+
+      function checkPageBreak(extra = 0) {
+        if (y + extra > pageHeight - margin) {
+          pdf.addPage();
+          y = margin;
+        }
+      }
+
+      function addText(text, fontSize = 12, bold = false, indent = 0, spacing = defaultLineHeight, extraGap = 0) {
+        pdf.setFont("helvetica", bold ? "bold" : "normal");
+        pdf.setFontSize(fontSize);
+        const lines = pdf.splitTextToSize(text, pageWidth - 2 * margin - indent);
+
+        if (extraGap > 0) y += extraGap;
+
+        lines.forEach(line => {
+          checkPageBreak(spacing);
+          pdf.text(line, margin + indent, y);
+          y += spacing;
+        });
+
+        y += 4;
+      }
+
+      function processNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          if (node.textContent.trim()) addText(node.textContent.trim(), 12, false, 0, 16, 4);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const tag = node.tagName.toLowerCase();
+
+          if (tag === "h1") {
+            addText(node.textContent.trim(), 22, true, 0, 28, 12);
+          } else if (tag === "h2") {
+            addText(node.textContent.trim(), 18, true, 0, 24, 10);
+          } else if (tag === "h3") {
+            addText(node.textContent.trim(), 15, true, 0, 20, 8);
+          } else if (tag === "p") {
+            addText(node.textContent.trim(), 12, false, 0, 18, 6);
+          } else if (tag === "li") {
+            addText("• " + node.textContent.trim(), 12, false, 15, 18, 2);
+          } else if (tag === "ul" || tag === "ol") {
+            y += 4;
+            node.childNodes.forEach(child => processNode(child));
+            y += 6;
+          } else if (tag === "table") {
+            const rows = [];
+            node.querySelectorAll("tr").forEach(tr => {
+              const row = [];
+              tr.querySelectorAll("td, th").forEach(td => {
+                row.push(td.innerText.trim());
+              });
+              rows.push(row);
+            });
+
+            if (rows.length > 0) {
+              y += 10;
+              checkPageBreak(40);
+              pdf.autoTable({
+                head: [rows[0]],
+                body: rows.slice(1),
+                startY: y,
+                margin: {left: margin, right: margin},
+                styles: {font: "helvetica", fontSize: 10, cellPadding: 5},
+                headStyles: {fillColor: [66, 133, 244], textColor: 255, halign: "center"}
+              });
+              y = pdf.lastAutoTable.finalY + 20;
+            }
+          } else {
+            node.childNodes.forEach(child => processNode(child));
+          }
+        }
+      }
+
+      // Traverse and render
+      contentDiv.childNodes.forEach(node => processNode(node));
+
+      // Footer with page numbers
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(10);
+        pdf.setTextColor(150);
+        pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 20, {align: "right"});
+      }
+
+      pdf.save("formatted-document.pdf");
+    }
+
+    function loadImage(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.src = url;
+      });
+    }
+
   </script>
 </form>

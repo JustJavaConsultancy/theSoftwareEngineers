@@ -150,6 +150,9 @@ processInstances.forEach(processInstance -> {
         List<Map<String, String>> processName = processService.getProcessDefinitionNames();
         Map<String, String> processNames = processName.stream().filter(p -> p.get("processKey").equals(processKey)).findFirst().orElse(null);
 
+        processInstances.forEach(processInstance -> {
+            //processInstance.processVariables.projectName;
+        });
         model.addAttribute("processKey", processNames.get("processKey"));
         model.addAttribute("processes", processInstances);
 

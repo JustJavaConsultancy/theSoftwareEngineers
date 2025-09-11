@@ -50,6 +50,11 @@ public class ProcessService {
         Set<String> visitedDefinitions = new HashSet<>();
         List<UserTask> userTasks = new ArrayList<>();
         collectUserTasksFromDefinition(processDefinitionID, userTasks, visitedDefinitions);
+        userTasks.sort(Comparator.comparingInt(UserTask::getXmlRowNumber));
+
+        userTasks.forEach(userTask -> {
+            System.out.println(" The Task sorted =="+userTask.getName() +" The rownumber=="+userTask.getXmlRowNumber()+"\n\n");
+        });
         return userTasks;
 
     }
@@ -64,9 +69,11 @@ public class ProcessService {
 
         org.flowable.bpmn.model.Process mainProcess = bpmnModel.getMainProcess();
         collectUserTasks(mainProcess.getFlowElements(), userTasks, visitedDefinitions);
+
     }
     private void collectUserTasks(Collection<FlowElement> elements, List<UserTask> userTasks, Set<String> visitedDefinitions) {
         for (FlowElement element : elements) {
+
             if (element instanceof UserTask) {
                 userTasks.add((UserTask) element);
             } else if (element instanceof SubProcess) {
@@ -75,7 +82,8 @@ public class ProcessService {
                 String calledProcessDefinitionKey = callActivity.getCalledElement();
                 if (calledProcessDefinitionKey != null) {
                     // Fetch latest version of the called process
-                    ProcessDefinition calledProcDef = repositoryService.createProcessDefinitionQuery()
+                    ProcessDefinition calledProcDef = repositoryService
+                            .createProcessDefinitionQuery()
                             .processDefinitionKey(calledProcessDefinitionKey)
                             .latestVersion()
                             .singleResult();

@@ -25,7 +25,7 @@ println "Body Selenium Steps: $steps"]]></script>
           <flowable:string><![CDATA[POST]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestUrl">
-          <flowable:string><![CDATA[http://localhost:8089/generateCode]]></flowable:string>
+          <flowable:string><![CDATA[${env.get('app.ai.url')}/generateCode]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestHeaders">
           <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
