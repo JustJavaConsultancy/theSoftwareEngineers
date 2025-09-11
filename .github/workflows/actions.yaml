@@ -33,7 +33,7 @@ jobs:
         run: railway --version
 
       - name: Print Help
-        run: railway variables --help
+        run: railway variables --help 
 
 
       - name: Deploy to Railway
