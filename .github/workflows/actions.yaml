@@ -1,4 +1,4 @@
-name: build-theSoftwareEngineers
+name: build-thesoftwareengineers
 on:
   push:
     branches:
@@ -10,36 +10,40 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
+
       - name: Set up JDK 21
         uses: actions/setup-java@v1
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+
       - name: Install glibc
         run: sudo apt-get update && sudo apt-get install -y libc6
-      - name: Build jar
+
+      - name: Build jar and push to Docker Hub
+        id: jib-build
         run: mvn clean compile jib:build
-      # Step 5: Install Railway CLI in the GitHub Actions runner
+
+      # Install Railway CLI
       - name: Install Railway CLI
-        run: curl -fsSL https://railway.app/install.sh | sh
-      # Step 6: Log in to Railway using API token
-      - name: Railway Login
-        run: railway login
+        run: npm install -g @railway/cli@latest
+
+      - name: Print Railway CLI version
+        run: railway --version
+
+      - name: Print Help
+        run: railway variables --help
+
+
+      - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: 7edc707c-73e3-4b8b-915b-019e9d0b6114
+          RAILWAY_SERVICE_ID: 92e3dea4-2b36-4a50-ba87-b2927e91c9d9
+        run: |
+          IMAGE_REF="kazeemakinrinde/thesoftwareengineers:latest"
+          echo "Updating service image to: $IMAGE_REF"
+          railway variables --set "RAILWAY_SERVICE_IMAGE=$IMAGE_REF" --service $RAILWAY_SERVICE_ID
 
-
-      # Step 4: Deploy directly from Docker Hub image
-      - name: Deploy from Docker Hub
-        run: railway up --image docker.io/${{ secrets.DOCKERHUB_USERNAME }}/theattorneyai:latest
-#      - name: Deploy to test
-#        uses: johnbeynon/render-deploy-action@v0.0.8
-#        with:
-#          service-id: srv-cvr6b2je5dus7387aij0
-#          api-key: rnd_VmQJ50o6AWfdo2RB0vmrjOpur53F
-#          wait-for-success: true
-
-# https://api.render.com/deploy/srv-cvr6b2je5dus7387aij0?key=VciC2INsDjw
-# https://api.render.com/deploy/srv-cvr6b2je5dus7387aij0?key=VciC2INsDjw
-# https://api.render.com/deploy/srv-d28tmeer433s73bv9qbg?key=O_ecYtPkZc4
+#          railway up --service 44789973-0362-4a36-a751-5e97098a7090 --detach
