@@ -1,18 +1,10 @@
-<form id="formContainer" th:action="@{http://localhost:9010/tasks/complete}" th:object="${formData}" method="post"
-      hx-post="http://localhost:9010/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML"
-      className="form-section">
+<form id="formContainer" th:action="@{~/tasks/complete}" th:object="${formData}" method="post"
+      hx-post="/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML"
+      class="form-section">
   <style>
-    #completeButton .processing-text {
-      display: none;
-    }
-
-    #completeButton.processing .default-text {
-      display: none;
-    }
-
-    #completeButton.processing .processing-text {
-      display: inline-block;
-    }
+    #completeButton .processing-text { display: none; }
+    #completeButton.processing .default-text { display: none; }
+    #completeButton.processing .processing-text { display: inline-block; }
 
 
     h1, h2, h3 {
@@ -22,7 +14,7 @@
     }
 
     h1 {
-      text-align: center;
+      text-align:center;
       font-size: 1.8rem;
       color: #1a365d;
     }
@@ -79,54 +71,51 @@
   <input type="hidden" value="FormTask_11" id="nextPage" name="nextPage">
 
   <!-- Header Section -->
-  <div className="form-header">
+  <div class="form-header">
     <h1>Document Requirements Review</h1>
     <p>Review and edit the requirement document below</p>
   </div>
 
   <!-- Form Content -->
-  <div className="form-content">
+  <div class="form-content">
     <!-- Requirement Document Section -->
-    <div className="mb-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">Requirement Document</h2>
-        <button type="button" id="toggleViewBtn" className="toggle-btn flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-               stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+    <div class="mb-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold text-gray-800">Requirement Document</h2>
+        <button type="button" id="toggleViewBtn" class="toggle-btn flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
           </svg>
           Edit Mode
         </button>
         <button type="button"
                 id="downloadBtn"
-                className="px-4 py-2 toggle-btn rounded-md "
-                onClick="downloadAsPDF()">
+                class="px-4 py-2 toggle-btn rounded-md "
+                onclick="downloadAsPDF()">
           Download as PDF
         </button>
       </div>
 
       <!-- Display View (Read-only) -->
-      <div id="requirementDisplay" className="document-content max-h-96 overflow-y-auto">
+      <div id="requirementDisplay" class="document-content max-h-96 overflow-y-auto">
         <div th:utext="${architecture}"></div>
       </div>
 
       <!-- Edit View (Textarea for editing) -->
-      <div id="requirementEdit" className="hidden">
+      <div id="requirementEdit" class="hidden">
                 <textarea id="architecture" name="architecture"
-                          className="form-textarea w-full h-96"
+                          class="form-textarea w-full h-96"
                           th:text="${architecture}" required></textarea>
-        <p className="text-sm text-gray-600 mt-2">Edit the requirement document as needed. HTML tags are
-          supported.</p>
+        <p class="text-sm text-gray-600 mt-2">Edit the requirement document as needed. HTML tags are supported.</p>
       </div>
     </div>
 
     <!-- Submit Button -->
-    <div className="text-center mt-8">
-      <button type="submit" id="completeButton" className="btn-complete">
-        <span className="default-text">Complete Review</span>
-        <span className="processing-text">
-                    <span className="loading-spinner"></span>
+    <div class="text-center mt-8">
+      <button type="submit" id="completeButton" class="btn-complete">
+        <span class="default-text">Complete Review</span>
+        <span class="processing-text">
+                    <span class="loading-spinner"></span>
                     Processing...
                 </span>
       </button>
@@ -138,7 +127,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
       const toggleBtn = document.getElementById('toggleViewBtn');
       const displayView = document.getElementById('requirementDisplay');
       const editView = document.getElementById('requirementEdit');
@@ -146,14 +135,14 @@
       const completeButton = document.getElementById('completeButton');
 
       // Toggle edit/view
-      toggleBtn.addEventListener('click', function () {
+      toggleBtn.addEventListener('click', function() {
         displayView.classList.toggle('hidden');
         editView.classList.toggle('hidden');
         toggleBtn.textContent = displayView.classList.contains('hidden') ? 'View Mode' : 'Edit Mode';
       });
 
       // Button state on submit
-      form.addEventListener('submit', function () {
+      form.addEventListener('submit', function() {
         completeButton.disabled = true;
         completeButton.classList.add('processing');
       });
@@ -161,8 +150,8 @@
 
     // PDF export
     async function downloadAsPDF() {
-      const {jsPDF} = window.jspdf;
-      const pdf = new jsPDF({unit: 'pt', format: 'a4'});
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
       const contentDiv = document.getElementById('requirementDisplay');
 
       // Page margins
@@ -211,21 +200,17 @@
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           const tag = node.tagName.toLowerCase();
 
-          if (tag === "h1") {
-            addText(node.textContent.trim(), 22, true, 0, 28, 12);
-          } else if (tag === "h2") {
-            addText(node.textContent.trim(), 18, true, 0, 24, 10);
-          } else if (tag === "h3") {
-            addText(node.textContent.trim(), 15, true, 0, 20, 8);
-          } else if (tag === "p") {
-            addText(node.textContent.trim(), 12, false, 0, 18, 6);
-          } else if (tag === "li") {
-            addText("• " + node.textContent.trim(), 12, false, 15, 18, 2);
-          } else if (tag === "ul" || tag === "ol") {
+          if (tag === "h1") { addText(node.textContent.trim(), 22, true, 0, 28, 12); }
+          else if (tag === "h2") { addText(node.textContent.trim(), 18, true, 0, 24, 10); }
+          else if (tag === "h3") { addText(node.textContent.trim(), 15, true, 0, 20, 8); }
+          else if (tag === "p") { addText(node.textContent.trim(), 12, false, 0, 18, 6); }
+          else if (tag === "li") { addText("• " + node.textContent.trim(), 12, false, 15, 18, 2); }
+          else if (tag === "ul" || tag === "ol") {
             y += 4;
             node.childNodes.forEach(child => processNode(child));
             y += 6;
-          } else if (tag === "table") {
+          }
+          else if (tag === "table") {
             const rows = [];
             node.querySelectorAll("tr").forEach(tr => {
               const row = [];
@@ -242,9 +227,9 @@
                 head: [rows[0]],
                 body: rows.slice(1),
                 startY: y,
-                margin: {left: margin, right: margin},
-                styles: {font: "helvetica", fontSize: 10, cellPadding: 5},
-                headStyles: {fillColor: [66, 133, 244], textColor: 255, halign: "center"}
+                margin: { left: margin, right: margin },
+                styles: { font: "helvetica", fontSize: 10, cellPadding: 5 },
+                headStyles: { fillColor: [66, 133, 244], textColor: 255, halign: "center" }
               });
               y = pdf.lastAutoTable.finalY + 20;
             }
@@ -263,7 +248,7 @@
         pdf.setPage(i);
         pdf.setFontSize(10);
         pdf.setTextColor(150);
-        pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 20, {align: "right"});
+        pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 20, { align: "right" });
       }
 
       pdf.save("formatted-document.pdf");
@@ -285,5 +270,4 @@
       });
     }
 
-  </script>
-</form>
+  </script></form>

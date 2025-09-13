@@ -1,5 +1,6 @@
 package tech.justjava.process_manager.task.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import org.flowable.bpmn.model.FlowElement;
 import org.flowable.bpmn.model.UserTask;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
+import org.flowable.task.api.TaskInfo;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -65,6 +67,36 @@ public class TaskService {
                 .desc()
                 .list();
     }
+    // Method to get combined tasks
+    public List<TaskInfo> getCombinedTasks(String processInstanceId) {
+
+        System.out.println("1 Entering here....."+processInstanceId);
+        List<TaskInfo> combinedTasks = new ArrayList<>();
+
+        // Get active tasks
+        List<org.flowable.task.api.Task> activeTasks = flowableTaskService.createTaskQuery()
+                .processInstanceId(processInstanceId)
+                .list();
+
+        System.out.println("2 Entering here activeTasks ....."+activeTasks.size());
+        // Get completed tasks
+        List<HistoricTaskInstance> completedTasks = historyService.createHistoricTaskInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .finished()
+                .orderByTaskCreateTime().desc()
+                .list();
+        System.out.println("3 Entering here completedTasks ....."+completedTasks.size());
+        // Combine both lists
+        combinedTasks.addAll(activeTasks);
+        combinedTasks.addAll(completedTasks);
+        combinedTasks.sort((t1, t2) -> t2.getCreateTime().compareTo(t1.getCreateTime()));
+        combinedTasks.forEach(taskInfo -> {
+            System.out.println(" The task here combined Name=="+taskInfo.getName()
+            + " "+taskInfo.getCreateTime());
+        });
+
+        return combinedTasks;
+    }
     public org.flowable.task.api.Task findTaskById(String taskId) {
         return flowableTaskService
                 .createTaskQuery()
@@ -75,7 +107,15 @@ public class TaskService {
                 .singleResult();
 
     }
+    public HistoricTaskInstance findCompletedTaskById(String taskId) {
+        return historyService
+                .createHistoricTaskInstanceQuery()
+                .includeTaskLocalVariables()
+                .includeProcessVariables()
+                .taskId(taskId)
+                .singleResult();
 
+    }
     //new addition
     public org.flowable.task.api.Task getTaskByInstanceAndDefinitionKey(String processInstanceId, String taskDefinitionKey){
         return flowableTaskService.

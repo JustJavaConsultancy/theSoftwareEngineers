@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.flowable.engine.RuntimeService;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -78,53 +79,117 @@ public class TaskController {
         model.addAttribute("tasks", taskService.findActiveflowableTasksByProcess(processKey));
         return "task/list";
     }
-
+    @GetMapping({"/fullList/{processInstanceId}"})
+    public String listCombined(@PathVariable String processInstanceId, final Model model) {
+        model.addAttribute("tasks", taskService.getCombinedTasks(processInstanceId));
+        return "task/list";
+    }
     @GetMapping("/add/{taskId}")
-    public String add(@PathVariable("taskId") final String taskId, Model model) {
+    public String add(@PathVariable("taskId") String taskId, Model model) {
+
+        System.out.println(" The task ID inside the add method ==="+taskId);
+/*        taskId = taskId.replaceAll("\'","");
+        System.out.println(" The task ID inside the add method ==="+taskId);*/
 
         Task  task=taskService.findTaskById(taskId);
-        String processKey=runtimeService.createProcessInstanceQuery()
-                .processInstanceId(task.getProcessInstanceId())
-                .singleResult().getProcessDefinitionKey();
-        System.out.println(" Process Variable =="+task.getProcessVariables());
-        String formThymeleaf=null;
-        Optional<Form> form=formService.findByFormCode(task.getTaskDefinitionKey());
-        //System.out.println(" The form code==="+task.getTaskDefinitionKey()+"");
-        if(form.isPresent()){
-            formThymeleaf=form.get().getFormInterface();
-            //System.out.println(" formThymeleaf  "+formThymeleaf);
-        }else{
+        if(task!=null) {
+            String processKey = runtimeService.createProcessInstanceQuery()
+                    .processInstanceId(task.getProcessInstanceId())
+                    .singleResult().getProcessDefinitionKey();
+            System.out.println(" Process Variable ==" + task.getProcessVariables());
+            String formThymeleaf = null;
+            Optional<Form> form = formService.findByFormCode(task.getTaskDefinitionKey());
+            //System.out.println(" The form code==="+task.getTaskDefinitionKey()+"");
+            if (form.isPresent()) {
+                formThymeleaf = form.get().getFormInterface();
+                //System.out.println(" formThymeleaf  "+formThymeleaf);
+            } else {
 
-            Form newForm=new Form();
-            newForm.setFormCode(task.getTaskDefinitionKey());
-            newForm.setFormName(task.getName());
-            newForm.setFormDetails(task.getDescription());
-            newForm.setProcessKey(processKey);
-            formThymeleaf=processServiceAI.generateTaskThymeleafForm(task.getDescription());
-            formThymeleaf=formThymeleaf.replace("```","").replace("html","");
-            newForm.setFormInterface(formThymeleaf);
-            formService.save(newForm);
+                Form newForm = new Form();
+                newForm.setFormCode(task.getTaskDefinitionKey());
+                newForm.setFormName(task.getName());
+                newForm.setFormDetails(task.getDescription());
+                newForm.setProcessKey(processKey);
+                formThymeleaf = processServiceAI.generateTaskThymeleafForm(task.getDescription());
+                formThymeleaf = formThymeleaf.replace("```", "").replace("html", "");
+                newForm.setFormInterface(formThymeleaf);
+                formService.save(newForm);
+            }
+
+            Map<String, Object> formData = task.getProcessVariables();
+            //System.out.println(" The FormData Here ===="+formData);
+
+
+            formData.put("id", task.getId());
+
+        /*        List<String> lawyerDocuments = List.of(
+                        "Letter of Demand",
+                        "Statement of Claim",
+                        "Affidavit of Evidence",
+                        "Preliminary Objections"
+                );
+                formData.put("lawyerDocuments",lawyerDocuments);*/
+            String formHtml = templateRenderer.render(formThymeleaf, formData);
+
+            //model.addAttribute("lawyerDocuments", lawyerDocuments);
+
+            model.addAttribute("formHtml", formHtml);
+            model.addAttribute("name", task.getName());
         }
+        return "task/add";
+    }
+    @GetMapping("/completed/{taskId}")
+    public String completedTasks(@PathVariable("taskId") String taskId, Model model) {
 
-        Map<String,Object> formData= task.getProcessVariables();
-        //System.out.println(" The FormData Here ===="+formData);
+        System.out.println(" The task ID inside the add method ==="+taskId);
+/*        taskId = taskId.replaceAll("\'","");
+        System.out.println(" The task ID inside the add method ==="+taskId);*/
+
+        HistoricTaskInstance task=taskService.findCompletedTaskById(taskId);
+        if(task!=null) {
+            String processKey = runtimeService.createProcessInstanceQuery()
+                    .processInstanceId(task.getProcessInstanceId())
+                    .singleResult().getProcessDefinitionKey();
+            System.out.println(" Process Variable ==" + task.getProcessVariables());
+            String formThymeleaf = null;
+            Optional<Form> form = formService.findByFormCode(task.getTaskDefinitionKey());
+            //System.out.println(" The form code==="+task.getTaskDefinitionKey()+"");
+            if (form.isPresent()) {
+                formThymeleaf = form.get().getFormInterface();
+                //System.out.println(" formThymeleaf  "+formThymeleaf);
+            } else {
+
+                Form newForm = new Form();
+                newForm.setFormCode(task.getTaskDefinitionKey());
+                newForm.setFormName(task.getName());
+                newForm.setFormDetails(task.getDescription());
+                newForm.setProcessKey(processKey);
+                formThymeleaf = processServiceAI.generateTaskThymeleafForm(task.getDescription());
+                formThymeleaf = formThymeleaf.replace("```", "").replace("html", "");
+                newForm.setFormInterface(formThymeleaf);
+                formService.save(newForm);
+            }
+
+            Map<String, Object> formData = task.getProcessVariables();
+            //System.out.println(" The FormData Here ===="+formData);
 
 
-        formData.put("id", task.getId());
+            formData.put("id", task.getId());
 
-/*        List<String> lawyerDocuments = List.of(
-                "Letter of Demand",
-                "Statement of Claim",
-                "Affidavit of Evidence",
-                "Preliminary Objections"
-        );
-        formData.put("lawyerDocuments",lawyerDocuments);*/
-        String formHtml=templateRenderer.render(formThymeleaf,formData);
+        /*        List<String> lawyerDocuments = List.of(
+                        "Letter of Demand",
+                        "Statement of Claim",
+                        "Affidavit of Evidence",
+                        "Preliminary Objections"
+                );
+                formData.put("lawyerDocuments",lawyerDocuments);*/
+            String formHtml = templateRenderer.render(formThymeleaf, formData);
 
-        //model.addAttribute("lawyerDocuments", lawyerDocuments);
+            //model.addAttribute("lawyerDocuments", lawyerDocuments);
 
-        model.addAttribute("formHtml",formHtml);
-        model.addAttribute("name",task.getName());
+            model.addAttribute("formHtml", formHtml);
+            model.addAttribute("name", task.getName());
+        }
         return "task/add";
     }
 
@@ -154,7 +219,7 @@ public class TaskController {
             task.getProcessVariables().remove("nextPage");
         }
 
-        System.out.println(" The next page here==="+nextPage);
+        //System.out.println(" The next page here==="+nextPage);
         return ResponseEntity
                 .status(200)
                 .header("HX-Redirect", nextPage)
