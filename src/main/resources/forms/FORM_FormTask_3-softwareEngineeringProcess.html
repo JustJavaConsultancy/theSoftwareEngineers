@@ -1,4 +1,4 @@
-<form id="formContainer" th:action="@{http://localhost:9010/tasks/complete}" th:object="${formData}" method="post" hx-post="http://localhost:9010/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML" hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'">
+<form id="formContainer" th:action="@{~/tasks/complete}" th:object="${formData}" method="post" hx-post="/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML" hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'">
     <input type="hidden" th:value="${id}" id="id" name="id">
     <div class="mb-3">
         <label for="activeStory" class="block text-sm font-medium text-slate-300 mb-2">Comment</label>

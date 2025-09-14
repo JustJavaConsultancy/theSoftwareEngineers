@@ -1,4 +1,4 @@
-<form id="formContainer" th:action="@{http://localhost:9010/tasks/complete}" th:object="${formData}" method="post" hx-post="http://localhost:9010/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML">
+<form id="formContainer" th:action="@{~/tasks/complete}" th:object="${formData}" method="post" hx-post="/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML">
   <input type="hidden" th:value="${id}" id="id" name="id">
   <div class="row mb-3">
     <div class="col mb-3">

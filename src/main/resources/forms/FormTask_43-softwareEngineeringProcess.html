@@ -1,8 +1,8 @@
 <form id="storiesForm"
-      th:action="@{http://localhost:9010/tasks/complete}"
+      th:action="@{~/tasks/complete}"
       th:object="${stories}"
       method="post"
-      hx-post="http://localhost:9010/tasks/complete"
+      hx-post="/tasks/complete"
       hx-target="#storiesForm"
       hx-swap="outerHTML"
       class="space-y-8 bg-gray-50 p-8 rounded-2xl shadow-md">

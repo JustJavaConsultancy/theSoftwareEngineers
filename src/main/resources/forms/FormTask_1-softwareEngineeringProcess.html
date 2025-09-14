@@ -1,5 +1,5 @@
-<form id="formContainer" th:action="@{http://localhost:9010/tasks/complete}" th:object="${formData}" method="post"
-      hx-post="http://localhost:9010/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML"
+<form id="formContainer" th:action="@{~/tasks/complete}" th:object="${formData}" method="post"
+      hx-post="/tasks/complete" hx-target="#formContainer" hx-swap="outerHTML"
       hx-on:htmx:before-request="this.querySelector('button[type=submit]').disabled = true; this.querySelector('button[type=submit]').innerHTML = 'Processing...'"
       class="max-w-4xl mx-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-lg">
 
